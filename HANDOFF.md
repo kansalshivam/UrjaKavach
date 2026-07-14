@@ -134,6 +134,7 @@ UrjaKavach/
 - `web/src/screens/Dashboard.tsx` — NEW: Command Dashboard component with interactive weights.
 - `web/src/screens/Simulator.tsx` — NEW: Crisis Simulator slider component.
 - `web/src/screens/Narrative.tsx` — NEW: Risk Narrative markdown display component.
+- `web/src/screens/Landing.tsx` — NEW: Landing screen with Operator login and timeline tracker.
 - `web/src/screens/App.tsx` — modified to wire up tab switching for twin map, dashboard, simulator, and narrative.
 - `web/src/styles.css` — modified to add layout, navigation tabs, sidebars, dashboard grid, and leaflet styles.
 - `HANDOFF.md` — this update

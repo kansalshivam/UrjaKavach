@@ -3,11 +3,17 @@ import { TwinMap } from "./TwinMap";
 import { Dashboard } from "./Dashboard";
 import { Simulator } from "./Simulator";
 import { Narrative } from "./Narrative";
+import { Landing } from "./Landing";
 
 type Tab = "dashboard" | "map" | "simulator" | "narrative";
 
 export function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("map"); // Default to map for Phase 5
+
+  if (!isLoggedIn) {
+    return <Landing onLogin={() => setIsLoggedIn(true)} />;
+  }
 
   return (
     <div className="app-container">
@@ -52,5 +58,6 @@ export function App() {
     </div>
   );
 }
+
 
 

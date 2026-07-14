@@ -182,6 +182,12 @@
 - Wired `Narrative` screen in `web/src/screens/App.tsx` routing.
 - Re-executed `npm run build` in web container, compiling successfully with zero errors.
 
+## 2026-07-14 - Screen 0 Landing Page & Authentication Completed
+- Created `web/src/screens/Landing.tsx` implementing operator authorization login form and 2026 crisis timeline tracker.
+- Wired `Landing` screen in `web/src/screens/App.tsx` as entry block before isLoggedIn state is true.
+- Re-executed `npm run build` in web container: build compiled successfully with zero errors.
+
+
 
 
 

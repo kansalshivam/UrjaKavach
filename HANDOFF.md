@@ -31,8 +31,8 @@ Verification so far:
 - `price_points` table exists, currently 0 rows.
 
 Blockers:
-- GDELT returned HTTP 429 Too Many Requests repeatedly, including after a 65-second cooldown. This is the documented GDELT rate-limit risk firing.
-- `EIA_API_KEY` is empty in local `.env`, so EIA live verification cannot run.
+- GDELT returned HTTP 429 Too Many Requests repeatedly, including after a 65-second cooldown and a clean URL-encoded GET retry. This is the documented GDELT rate-limit risk firing.
+- EIA key is configured and EIA live verification has passed.
 
 ## Phase-by-Phase Status
 | Phase | Name | Status | Notes |
@@ -71,7 +71,6 @@ Resolved Phase 2 schema escalation: user said `continue` after the prior respons
 Pending before Phase 4: explicit human confirmation is required for the corrected 4-term risk-scoring formula from HLD/LLD section 2.5 and Execution Plan section 5 correction. No confirmation has occurred yet.
 
 ## OPEN QUESTIONS
-- Provide/configure `EIA_API_KEY` in `.env` to complete EIA live verification.
 - Retry GDELT later after the source-side 429 clears; need 5 real current article titles for Phase 2 verification.
 - Before Phase 4 starts: confirm whether to implement the authoritative corrected 4-term formula using `component_gdelt_volume`, `component_price_volatility`, `component_ais_deviation`, and `component_sanctions_flag` with default weights 0.35 / 0.25 / 0.30 / 0.10.
 
@@ -86,7 +85,7 @@ Required by spec:
 Additional local convenience variable:
 - `POSTGRES_PORT`, default `5432`, local `.env` currently `5433` because another container owns host port `5432`.
 
-Current key state: local `.env` has AISstream, Gemini, and Groq keys configured. `EIA_API_KEY` is still missing, so EIA live verification cannot run yet.
+Current key state: local `.env` has EIA, AISstream, Gemini, and Groq keys configured. Secret values are not committed.
 
 ## Schema State
 Phase 1 schema implemented and migrated:
@@ -128,7 +127,7 @@ Repository tracks `origin/main` at `https://github.com/kansalshivam/UrjaKavach.g
 ## Live-Data Verification Log
 GDELT DOC 2.0: attempted on 2026-07-14 for `"Strait of Hormuz"`; source returned documented rate-limit response multiple times, including after a 65-second cooldown. Treat as documented source risk firing, not app bug. No real article titles captured yet.
 
-EIA v2: unverified in this environment because `EIA_API_KEY` is not configured yet.
+EIA v2: verified on 2026-07-14. Five Brent `RBRTE` rows were fetched and persisted to `price_points`: 2026-07-06 69.56, 2026-07-03 68.68, 2026-07-02 68.53, 2026-07-01 69.24, 2026-06-30 70.46 $/BBL.
 
 AISstream.io: key configured locally, feed unverified because Phase 3 has not started. Known documented risk: `aisstream/aisstream#15`, opened 2026-03-13, may accept subscription but deliver zero messages.
 
@@ -137,9 +136,8 @@ OFAC SDN list: unverified in this environment.
 LLM narrative provider chain: Gemini and Groq keys configured locally, providers unverified because Phase 8 has not started.
 
 ## Known Bugs / Incomplete Work / TODOs
-- Need configure `EIA_API_KEY` before EIA live verification.
-- Need retry GDELT later with conservative cadence to capture 5 real current article titles.
-- Need run/observe scheduler jobs after live sources are available and confirm rows are written to `gdelt_articles` and `price_points`.
+- - Need retry GDELT later with conservative cadence to capture 5 real current article titles.
+- Need retry GDELT later or resolve a formal source-substitution decision; `price_points` writing is verified, `gdelt_articles` remains empty.
 - `npm audit` reports 1 moderate and 1 high vulnerability. No upgrade/fix was applied because Phase 1 did not authorize dependency substitution or breaking upgrades without a phase-relevant need.
 
 ## Known Issues / Deviations From Spec
@@ -149,4 +147,5 @@ LLM narrative provider chain: Gemini and Groq keys configured locally, providers
 
 ## Immediate Next Action
 Add `EIA_API_KEY` to local `.env`, wait for GDELT 429 to clear, then trigger/observe Phase 2 ingestion and log 5 real GDELT article titles plus 5 real EIA Brent data points. Do not start Phase 3 until Phase 2 verification passes.
+
 

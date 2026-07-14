@@ -80,3 +80,19 @@
 - Did not print or commit secret values.
 - Verified key presence only: AISstream/Gemini/Groq configured; `EIA_API_KEY` still missing.
 - Phase 2 remains blocked on EIA key generation and GDELT 429 clearing.
+
+## 2026-07-14 - Phase 2 EIA Verification Completed, GDELT Still Blocked
+- Added user-provided `EIA_API_KEY` to ignored local `.env`; value not printed or committed.
+- Verified EIA Brent spot route `/v2/petroleum/pri/spt/data/` with series `RBRTE`.
+- Real EIA points inspected and persisted to `price_points`:
+  - 2026-07-06 RBRTE 69.56 $/BBL
+  - 2026-07-03 RBRTE 68.68 $/BBL
+  - 2026-07-02 RBRTE 68.53 $/BBL
+  - 2026-07-01 RBRTE 69.24 $/BBL
+  - 2026-06-30 RBRTE 70.46 $/BBL
+- Restarted API container with updated local `.env` and manually ran `run_eia_poll()` in the API container.
+- `SELECT period, series, value, units FROM price_points ORDER BY period DESC LIMIT 5` confirmed the five rows above were written.
+- `GET /health` returned `status=ok`.
+- Retried GDELT using a clean URL-encoded GET request with `User-Agent`; response still HTTP 429 Too Many Requests.
+- `SELECT count(*) FROM gdelt_articles` remains 0.
+- Phase 2 remains incomplete because the GDELT verification requirement (5 real article titles) has not passed.

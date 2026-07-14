@@ -1,44 +1,61 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { TwinMap } from "./TwinMap";
 
-type HealthState = "checking" | "ok" | "error";
+type Tab = "dashboard" | "map" | "simulator";
 
 export function App() {
-  const [health, setHealth] = useState<HealthState>("checking");
-
-  useEffect(() => {
-    fetch("/health")
-      .then((response) => {
-        setHealth(response.ok ? "ok" : "error");
-      })
-      .catch(() => setHealth("error"));
-  }, []);
+  const [activeTab, setActiveTab] = useState<Tab>("map"); // Default to map for Phase 5
 
   return (
-    <main className="app-shell">
-      <section className="dashboard-panel">
-        <div>
-          <p className="eyebrow">Ministry control-room view - prototype</p>
-          <h1>Urja Kavach</h1>
-          <p className="lede">
-            Foundation shell is online. Tier 1 live data modules are intentionally empty until
-            their phases begin.
-          </p>
+    <div className="app-container">
+      <header className="top-bar">
+        <div className="logo-section">
+          <h1>Urja Kavach Operations Console</h1>
         </div>
-        <div className="status-grid">
-          <Status label="API" value={health} />
-          <Status label="Risk Scores" value="pending" />
-          <Status label="Digital Twin Seed" value="pending verification" />
-        </div>
-      </section>
-    </main>
-  );
-}
+        <nav className="nav-tabs">
+          <button
+            className={`tab-btn ${activeTab === "dashboard" ? "active" : ""}`}
+            onClick={() => setActiveTab("dashboard")}
+          >
+            Command Dashboard
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "map" ? "active" : ""}`}
+            onClick={() => setActiveTab("map")}
+          >
+            Digital Twin Map
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "simulator" ? "active" : ""}`}
+            onClick={() => setActiveTab("simulator")}
+          >
+            Scenario Simulator
+          </button>
+        </nav>
+      </header>
 
-function Status({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="status-card">
-      <span>{label}</span>
-      <strong>{value}</strong>
+      <main className="main-content">
+        {activeTab === "map" && <TwinMap />}
+        {activeTab === "dashboard" && (
+          <div style={{ padding: "32px", maxWidth: "800px" }}>
+            <h2 className="eyebrow" style={{ color: "#38bdf8" }}>System Dashboard</h2>
+            <h1 style={{ fontSize: "2.5rem", marginBottom: "16px" }}>Operations Dashboard</h1>
+            <p className="lede">
+              Ingestion and scoring engines are online. Per-corridor risk scores are computed every 10 minutes from live GDELT and EIA price signals.
+            </p>
+          </div>
+        )}
+        {activeTab === "simulator" && (
+          <div style={{ padding: "32px", maxWidth: "800px" }}>
+            <h2 className="eyebrow" style={{ color: "#38bdf8" }}>Scenario Engine</h2>
+            <h1 style={{ fontSize: "2.5rem", marginBottom: "16px" }}>Crisis Simulator</h1>
+            <p className="lede">
+              Interactive supply chain disruption model. Simulates capacity shortfalls, cascading flow rerouting, and strategic petroleum reserve (SPR) drawdown impacts.
+            </p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
+

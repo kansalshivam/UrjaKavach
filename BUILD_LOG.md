@@ -142,3 +142,16 @@
 - Manually ran `run_risk_score_compute` job in the API container: verified risk score was calculated for all 4 corridors and successfully stored in Postgres.
 - Spot-checked Hormuz corridor score manually (score: 22.1554): verified it matches the exact weights and signal values (gdelt_volume=0.6 * 0.35, price_volatility=0.0462 * 0.25, ais_deviation=0.0 * 0.30, sanctions=0.0 * 0.10) * 100.
 
+## 2026-07-14 - Phase 5 Digital Twin Map Completed
+- Created graph building and BFS-decay propagation model in `api/app/graph/propagation.py`.
+- Added unit tests in `api/tests/test_propagation.py` verifying decay over distance and multiple sources resolving with maximum risk.
+- Implemented `/api/twin/live` route in `api/app/routes/twin.py` querying latest risk scores, running NetworkX propagation across seeded nodes, and querying latest AIS counts.
+- Rebuilt API container and confirmed all 10 tests passed successfully.
+- Verified `/api/twin/live` response returns expected JSON containing counts and propagated risks.
+- Created `web/src/screens/TwinMap.tsx` rendering Leaflet map, seeded nodes using custom risk-colored SVG markers, pipeline/corridor lines, detail cards, and legends.
+- Appended styling rules in `web/src/styles.css` for top-bar navigation, sidebar, custom icons, detail lists, and Leaflet layout overlays.
+- Updated `web/src/screens/App.tsx` with a top-bar tab-routing shell rendering `TwinMap` when the active tab is selected.
+- Executed `npm run build` inside the web container: build compiled successfully with no TypeScript errors.
+- Confirmed node coordinates for `spr_visakhapatnam`, `refinery_reliance_jamnagar`, and `corridor_hormuz` match real-world map coordinates.
+
+

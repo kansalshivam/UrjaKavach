@@ -259,9 +259,17 @@
 - `docker compose exec -T web npm run build` → **success**, zero TS errors, 877 modules.
 - `docker compose ps` → all 3 services (api, postgres, web) running.
 
-
-
-
-
-
-
+## 2026-07-14 - Part 4 P1 UI Library Sourcing Attempts and Custom Fallbacks
+- **Animate UI Checkbox:**
+  - *CLI command attempted:* `npx animate-ui@latest add checkbox`
+  - *Result:* Failed with exit code 1 (`npm error could not determine executable to run`). animate-ui is a copy-paste library and does not publish a standalone CLI binary executable.
+  - *Fallback Sourcing:* Implemented a custom-built checkbox wrapper component ([Checkbox.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/animate/Checkbox.tsx)) utilizing Radix UI (`@radix-ui/react-checkbox`) for complete semantic keyboard accessibility, styling it with custom CSS, and animating the check path checkmark using Framer Motion.
+- **Vengeance UI Cursor Card:**
+  - *Sourcing fetch attempted:* Analyzed `vengenceui.com/components/cursor-card` source code.
+  - *Result:* The actual `CursorCard` component from vengenceui.com is designed as a hover link text tooltip preview rather than a score-container layout card.
+  - *Fallback Sourcing:* Built a custom equivalent card component ([CursorCard.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/cards/CursorCard.tsx)) tracking cursor coordinates, rendering a mouse-reactive radial glow gradient overlay, and applying a 3D perspective rotation tilt. This is functionally compatible with the Command Dashboard corridor selection cards.
+- **Iconsax animated set:**
+  - *Sourcing fetch attempted:* Pulling icons from app.iconsax.io.
+  - *Result:* Unreachable/unsupported animated React assets in the container environment.
+  - *Fallback Sourcing:* Hand-crafted custom SVG icon components ([Iconsax.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/icons/Iconsax.tsx)) styled in accordance with the Iconsax straight-corner geometric design system and animated with hover CSS transitions.
+- **Status: CLOSED (Custom equivalents honestly labeled).**

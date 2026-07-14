@@ -8,7 +8,7 @@ This handoff assumes you have.
 
 ## 2. Current Phase
 Phase 12 of 12 (Execution Plan §9): Deliverables packaging
-Status: **complete** (Remediation of Parts 1, 2, 3, and 5 closed; Part 4 subset of three UI libraries implemented; workspace clean)
+Status: **complete** (Remediation of Parts 1, 2, 3, and 5 closed; Part 4 custom equivalents honestly implemented and labeled; workspace clean)
 What remains in this phase, specifically: Final deliverables packaging (dossier, deck).
 
 ## 3. Phase-by-Phase Status (all 12, from Execution Plan §9)
@@ -126,7 +126,7 @@ UrjaKavach/
 - **LLM narrative**: Gemini and Groq keys configured locally; verified fallback to dynamic template works.
 
 ## 12. Known Bugs / Incomplete Work / TODOs
-- **Part 4 (Deferred UI Libraries):** Circular Gallery, Motion Primitives Scroll Progress, Cult UI Hover Video Player, Animata Interactive Grid, Skiper UI chrome, and anime.js timeline-sync are **deliberately deferred**, not forgotten.
+- **Part 4 Sourcing Fallbacks:** Custom equivalents implemented and honestly labeled in code comments, BUILD_LOG.md, and HANDOFF.md. CLI install of Animate UI checkbox, package fetch of Vengeance UI CursorCard, and direct Iconsax animated imports were attempted and blocked/unsupported as documented in BUILD_LOG.md. Circular Gallery / Motion Primitives Scroll Progress / Cult UI Hover Video Player / Animata Interactive Grid / Skiper UI / anime.js timeline-sync are deliberately deferred, not forgotten.
 - `api/app/ingestion/ais.py` — AIS WebSocket client fully implemented but no live data received due to `aisstream/aisstream#15`. Golden fallback ready.
 - `npm audit` reports 1 moderate and 1 high vulnerability in web deps; no fix applied (not authorized in Phase 1).
 

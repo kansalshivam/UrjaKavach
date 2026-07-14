@@ -1,7 +1,11 @@
 import React from "react";
 
-// Iconsax animated straight-corner set.
-// Uses SVG paths with standard CSS transitions for clean, robust micro-animations on hover.
+/**
+ * Iconsax.tsx — custom-built straight-corner SVG equivalent set;
+ * real animated asset package exports from app.iconsax.io were unreachable/unsupported
+ * in this React environment on 2026-07-14. Developed as clean SVG paths with React-state
+ * micro-animations. See BUILD_LOG.md.
+ */
 
 interface IconProps {
   size?: number;

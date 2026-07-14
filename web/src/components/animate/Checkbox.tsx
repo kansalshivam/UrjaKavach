@@ -2,6 +2,12 @@ import React from "react";
 import * as RadixCheckbox from "@radix-ui/react-checkbox";
 import { motion, AnimatePresence } from "motion/react";
 
+/**
+ * Checkbox.tsx — custom-built equivalent utilizing @radix-ui/react-checkbox and Framer Motion;
+ * real CLI installation (npx animate-ui@latest add checkbox) failed with exit code 1
+ * ("npm error could not determine executable to run") on 2026-07-14. See BUILD_LOG.md.
+ */
+
 interface CheckboxProps {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;

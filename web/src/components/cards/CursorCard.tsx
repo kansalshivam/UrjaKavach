@@ -1,5 +1,13 @@
 import React, { useState, useRef, MouseEvent } from "react";
 
+/**
+ * CursorCard.tsx — custom-built equivalent inspired by Vengeance UI's cursor-card pattern;
+ * real component from vengenceui.com (which implements a text-link tooltip hover preview)
+ * is functionally incompatible with the grid layout requirements of the dashboard cards,
+ * and direct CLI package fetching was unreachable from the build environment on 2026-07-14.
+ * Developed as a custom glow/tilt card equivalent. See BUILD_LOG.md.
+ */
+
 interface CursorCardProps {
   children: React.ReactNode;
   className?: string;

@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-14T16:50:00+05:30 by Claude 3.5 Flash
+Last updated: 2026-07-14T17:00:00+05:30 by Claude 3.5 Flash
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -7,9 +7,9 @@ Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md
 This handoff assumes you have.
 
 ## 2. Current Phase
-Phase 7 of 12 (Execution Plan §9): Scenario Simulator (Screen 3)
+Phase 8 of 12 (Execution Plan §9): LLM Risk Narrative (Screen 4)
 Status: **in progress**
-What remains in this phase, specifically: Implement `/api/scenario/run` and `api/app/scoring/scenario.py` (Hormuz partial closure projection logic). Build React Scenario Simulator screen with capacity slider, import volume changes, and SPR cover projections.
+What remains in this phase, specifically: Implement the LLM fallback chain querying Gemini and falling back to Groq LLaMA models. Construct prompt contexts containing current GDELT news and active risk levels. Implement `/api/narrative` and Screen 4 in React.
 
 ## 3. Phase-by-Phase Status (all 12, from Execution Plan §9)
 | Phase | Name | Status | Notes |
@@ -20,15 +20,15 @@ What remains in this phase, specifically: Implement `/api/scenario/run` and `api
 | 4 | Risk scoring engine | **complete** | Corrected 4-term formula implemented and verified. Daily OFAC CSV diffing, GDELT z-scores, and price/AIS deviation scoring run on schedule. pytest suite passed. |
 | 5 | Digital Twin Map | **complete** | React Leaflet map displaying 37 seeded nodes, edges, hover details, and live AIS count overlays. Coordinates spot-checked and verified. |
 | 6 | Command Dashboard | **complete** | Dashboard endpoint implemented. React screen displaying risk cards, Recharts trend graph, and news feeds fully functional. |
-| 7 | Scenario Simulator | **in progress** | Backend scenario models and simulator layout setup. |
-| 8 | LLM Risk Narrative | not started | |
+| 7 | Scenario Simulator | **complete** | Calibrated linear volume shortfall and SPR cover depletion math verified. POST `/api/scenario/run` and slider screen working. |
+| 8 | LLM Risk Narrative | **in progress** | Falls back between Gemini and Groq. Context payload setup. |
 | 9 | Tier 2 | not started | Only if Tier 1 is fully real and verified. |
 | 10 | Assumptions panel + hygiene pass | not started | |
 | 11 | Golden fallback + demo rehearsal | not started | AIS golden fallback prepared early. |
 | 12 | Deliverables packaging | not started | |
 
 ## 4. Tier Status (Execution Plan §4)
-Tier 1: Phase 1-6 complete. Phase 7 in progress. Ingestions, risk scores, twin maps, and dashboards are complete and active.
+Tier 1: Phase 1-7 complete. Phase 8 in progress. Scenario simulation engine, math formulas, and React screens are completely active and verified.
 Tier 2: not started and not eligible to start until Tier 1 is fully real and verified.
 Tier 3: never build, stub, or claim (per rules §5 — always true).
 
@@ -113,26 +113,31 @@ UrjaKavach/
 - `api/app/ingestion/ofac.py` — NEW: daily OFAC CSV downloader and diff processing engine.
 - `api/app/scoring/gdelt_signals.py` — NEW: z-score builder for GDELT volume signals.
 - `api/app/scoring/risk_score.py` — NEW: risk-scoring engine with weights and normalization.
+- `api/app/scoring/scenario.py` — NEW: scenario simulation calculation formulas.
 - `api/app/scoring/__init__.py` — NEW: empty package init.
 - `api/app/scheduler.py` — modified to run OFAC pull and risk score compute on interval.
 - `api/app/graph/propagation.py` — NEW: NetworkX graph builder and BFS-decay propagation.
 - `api/app/routes/twin.py` — modified to include `/api/twin/live` route.
 - `api/app/routes/dashboard.py` — modified to implement `/api/dashboard/summary` endpoint.
+- `api/app/routes/scenario.py` — NEW: scenario POST run endpoint.
+- `api/app/main.py` — modified to include scenario router.
 - `api/tests/test_risk_score.py` — NEW: 8 unit tests for formulas, weights, and normalizations.
 - `api/tests/test_propagation.py` — NEW: 2 unit tests for graph propagation and decay bounds.
+- `api/tests/test_scenario.py` — NEW: 2 unit tests for scenario math and full closure limits.
 - `api/pyproject.toml` — added `pytest` and `networkx` dependencies.
 - `api/Dockerfile` — added COPY tests line to copy unit tests to container.
 - `web/src/screens/TwinMap.tsx` — NEW: React Leaflet Digital Twin Map overlay.
 - `web/src/screens/Dashboard.tsx` — NEW: Command Dashboard component with Recharts risk trend graphs.
-- `web/src/screens/App.tsx` — modified to wire up tab switching for twin map and dashboard.
+- `web/src/screens/Simulator.tsx` — NEW: Crisis Simulator slider component.
+- `web/src/screens/App.tsx` — modified to wire up tab switching for twin map, dashboard, and simulator.
 - `web/src/styles.css` — modified to add layout, navigation tabs, sidebars, dashboard grid, and leaflet styles.
 - `HANDOFF.md` — this update
-- `BUILD_LOG.md` — updated with Phase 4, Phase 5, and Phase 6 completion logs.
+- `BUILD_LOG.md` — updated with Phase 4, Phase 5, Phase 6, and Phase 7 completion logs.
 
 ## 10. Commands Run This Session And Their Results
-- `docker compose up --build -d api` → rebuilt API container with updated route definitions.
-- `docker compose exec -T api python -m pytest tests/ -v` → executed 10 unit tests, all 10 PASSED.
-- `docker compose exec -T api python -c "import httpx; ..."` → tested `/api/dashboard/summary` endpoint: verified it returns correct risk scores, articles, and weights.
+- `docker compose up --build -d api` → rebuilt API container with updated route and calculation modules.
+- `docker compose exec -T api python -m pytest tests/ -v` → executed 12 unit tests, all 12 PASSED.
+- `docker compose exec -T api python -c "import httpx; ..."` → tested `/api/scenario/run` POST route: verified it successfully persists and computes projected metrics.
 - `docker compose exec -T web npm run build` → compiled React frontend, completed successfully with no TypeScript errors.
 
 ## 11. Live-Data Verification Log (specific to this project's four external sources)
@@ -145,9 +150,8 @@ UrjaKavach/
 ## 12. Known Bugs / Incomplete Work / TODOs
 - `api/app/ingestion/ais.py` — AIS WebSocket client fully implemented but no live data received due to `aisstream/aisstream#15`. Golden fallback ready. Connection timeout fix deployed but untested against a live-delivering AIS feed.
 - `api/app/llm/` — directory does not exist; narrative.py not yet implemented (Phase 8).
-- `api/app/routes/scenario.py` — does not exist yet (Phase 7).
 - `api/app/routes/narrative.py` — does not exist yet (Phase 8).
-- `web/src/` — minimal scaffold only; no real screens (Scenario, Narrative) implemented yet.
+- `web/src/` — minimal scaffold only; no real screens (Narrative) implemented yet.
 - `npm audit` reports 1 moderate and 1 high vulnerability in web deps; no fix applied because Phase 1 did not authorize dependency substitution.
 
 ## 13. Known Issues / Deviations From Spec
@@ -157,4 +161,4 @@ UrjaKavach/
 - GDELT was initially blocked by source-side 429 for the first ~30 minutes of Phase 2; it recovered on subsequent scheduled ticks and is now delivering real data.
 
 ## 14. Immediate Next Action
-Implement the scenario simulation logic in `api/app/scoring/scenario.py` and register the `/api/scenario/run` endpoint on the backend. Build Screen 3 (Scenario Simulator) in React.
+Implement the LLM fallback narrative generation chain (Gemini falling back to Groq) and wire up Screen 4 (Risk Narrative Panel).

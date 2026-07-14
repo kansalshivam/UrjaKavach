@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TwinMap } from "./TwinMap";
 import { Dashboard } from "./Dashboard";
+import { Simulator } from "./Simulator";
 
 type Tab = "dashboard" | "map" | "simulator";
 
@@ -38,15 +39,7 @@ export function App() {
       <main className="main-content">
         {activeTab === "map" && <TwinMap />}
         {activeTab === "dashboard" && <Dashboard />}
-        {activeTab === "simulator" && (
-          <div style={{ padding: "32px", maxWidth: "800px" }}>
-            <h2 className="eyebrow" style={{ color: "#38bdf8" }}>Scenario Engine</h2>
-            <h1 style={{ fontSize: "2.5rem", marginBottom: "16px" }}>Crisis Simulator</h1>
-            <p className="lede">
-              Interactive supply chain disruption model. Simulates capacity shortfalls, cascading flow rerouting, and strategic petroleum reserve (SPR) drawdown impacts.
-            </p>
-          </div>
-        )}
+        {activeTab === "simulator" && <Simulator />}
       </main>
     </div>
   );

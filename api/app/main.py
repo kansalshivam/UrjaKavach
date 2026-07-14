@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 from app.db.session import SessionLocal
 from app.ingestion.ais import run_ais_stream
-from app.routes import dashboard, twin
+from app.routes import dashboard, twin, scenario
 from app.scheduler import build_scheduler
 from app.seed import seed_foundation_data
 
@@ -28,6 +28,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="Urja Kavach API", lifespan=lifespan)
 app.include_router(dashboard.router)
 app.include_router(twin.router)
+app.include_router(scenario.router)
+
 
 
 @app.get("/health")

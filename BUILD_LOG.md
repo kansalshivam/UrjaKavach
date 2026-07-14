@@ -162,5 +162,16 @@
 - Re-executed `npm run build` in web container, compiling successfully with no TypeScript errors.
 - Triggered scheduler job multiple times and watched risk scores propagate and display in history list.
 
+## 2026-07-14 - Phase 7 Scenario Simulator Completed
+- Created scenario simulation calculation module `api/app/scoring/scenario.py` implementing linear volume shortfall interpolation and remaining SPR days-of-cover depletion formulas.
+- Added unit tests in `api/tests/test_scenario.py` verifying mathematical anchors and boundary conditions.
+- Implemented `/api/scenario/run` POST route in `api/app/routes/scenario.py` and registered it in `api/app/main.py`.
+- Rebuilt API container and confirmed all 12 tests passed successfully.
+- Tested `/api/scenario/run` response: verified it successfully inserts runs to DB and returns correct projection outputs.
+- Created `web/src/screens/Simulator.tsx` featuring an interactive capacity slider, color-coded danger levels, double-metric cards, and dynamic impact narrative summaries.
+- Wired `Simulator` screen in `web/src/screens/App.tsx` routing.
+- Re-executed `npm run build` in web container, compiling successfully with zero bundler or typescript errors.
+
+
 
 

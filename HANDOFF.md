@@ -8,8 +8,8 @@ This handoff assumes you have.
 
 ## 2. Current Phase
 Phase 12 of 12 (Execution Plan §9): Deliverables packaging
-Status: **complete** (Tier 1 verified and committed to git)
-What remains in this phase, specifically: Optionally record demo video / finalize deck per Execution Plan §8 checklist.
+Status: **in progress** (Tier 1 verified and committed, pending owner decision on Part 4 UI rollout)
+What remains in this phase, specifically: Resolve Part 4 UI libraries status, then package final deliverables (video, deck).
 
 ## 3. Phase-by-Phase Status (all 12, from Execution Plan §9)
 | Phase | Name | Status | Notes |

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TwinMap } from "./TwinMap";
+import { Dashboard } from "./Dashboard";
 
 type Tab = "dashboard" | "map" | "simulator";
 
@@ -36,15 +37,7 @@ export function App() {
 
       <main className="main-content">
         {activeTab === "map" && <TwinMap />}
-        {activeTab === "dashboard" && (
-          <div style={{ padding: "32px", maxWidth: "800px" }}>
-            <h2 className="eyebrow" style={{ color: "#38bdf8" }}>System Dashboard</h2>
-            <h1 style={{ fontSize: "2.5rem", marginBottom: "16px" }}>Operations Dashboard</h1>
-            <p className="lede">
-              Ingestion and scoring engines are online. Per-corridor risk scores are computed every 10 minutes from live GDELT and EIA price signals.
-            </p>
-          </div>
-        )}
+        {activeTab === "dashboard" && <Dashboard />}
         {activeTab === "simulator" && (
           <div style={{ padding: "32px", maxWidth: "800px" }}>
             <h2 className="eyebrow" style={{ color: "#38bdf8" }}>Scenario Engine</h2>

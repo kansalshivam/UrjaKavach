@@ -154,4 +154,13 @@
 - Executed `npm run build` inside the web container: build compiled successfully with no TypeScript errors.
 - Confirmed node coordinates for `spr_visakhapatnam`, `refinery_reliance_jamnagar`, and `corridor_hormuz` match real-world map coordinates.
 
+## 2026-07-14 - Phase 6 Command Dashboard Completed
+- Implemented `/api/dashboard/summary` route in `api/app/routes/dashboard.py` returning latest risk scores, historical risk trend scores, and recent GDELT articles.
+- Rebuilt API container and verified `/api/dashboard/summary` returns fully populated response.
+- Created `web/src/screens/Dashboard.tsx` displaying interactive corridor cards, Recharts risk trend lines, GDELT article feed, and explainable weights panel.
+- Wired `Dashboard` screen in `web/src/screens/App.tsx` routing.
+- Re-executed `npm run build` in web container, compiling successfully with no TypeScript errors.
+- Triggered scheduler job multiple times and watched risk scores propagate and display in history list.
+
+
 

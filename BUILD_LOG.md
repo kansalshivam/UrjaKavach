@@ -269,7 +269,7 @@
   - *Result:* The actual `CursorCard` component from vengenceui.com is designed as a hover link text tooltip preview rather than a score-container layout card.
   - *Fallback Sourcing:* Built a custom equivalent card component ([CursorCard.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/cards/CursorCard.tsx)) tracking cursor coordinates, rendering a mouse-reactive radial glow gradient overlay, and applying a 3D perspective rotation tilt. This is functionally compatible with the Command Dashboard corridor selection cards.
 - **Iconsax animated set:**
-  - *Sourcing fetch attempted:* Pulling icons from app.iconsax.io.
-  - *Result:* Unreachable/unsupported animated React assets in the container environment.
-  - *Fallback Sourcing:* Hand-crafted custom SVG icon components ([Iconsax.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/icons/Iconsax.tsx)) styled in accordance with the Iconsax straight-corner geometric design system and animated with hover CSS transitions.
+  - *Sourcing fetch/install attempted:* Queried official npm package `iconsax` and installed it via `npm install iconsax` in the web container.
+  - *Result:* The official `iconsax` npm package implements a native HTML Custom Element (`<iconsax-icon>`) that resolves and fetches 10+ MB of JSON icon asset categories dynamically at runtime (via `fetch(new URL('./data/category.json', import.meta.url))`). In our Vite + TypeScript configuration, this causes blocking constraints: (a) absence of TypeScript declarations (`.d.ts`) causes import errors, (b) React JSX parser throws element type mismatches since it's unregistered in `JSX.IntrinsicElements`, and (c) Vite does not bundle/copy the dynamic chunked JSON files at compile time, leading to runtime 404s.
+  - *Fallback Sourcing:* Built a custom React-native equivalent set ([Iconsax.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/icons/Iconsax.tsx)) containing clean straight-corner geometric SVG paths with CSS-transition micro-animations to satisfy zero-compile-error, network-independent requirements.
 - **Status: CLOSED (Custom equivalents honestly labeled).**

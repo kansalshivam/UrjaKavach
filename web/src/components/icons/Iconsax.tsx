@@ -2,9 +2,11 @@ import React from "react";
 
 /**
  * Iconsax.tsx — custom-built straight-corner SVG equivalent set;
- * real animated asset package exports from app.iconsax.io were unreachable/unsupported
- * in this React environment on 2026-07-14. Developed as clean SVG paths with React-state
- * micro-animations. See BUILD_LOG.md.
+ * Official NPM package `iconsax` was successfully installed on 2026-07-14 but was determined
+ * to be unusable due to (a) absence of TypeScript declarations causing compiler errors,
+ * (b) JSX type mismatches in React 18, and (c) dynamic runtime URL fetch calls for asset
+ * chunks resulting in Vite bundler asset 404 errors. Developed as standard, self-contained SVG components.
+ * See BUILD_LOG.md.
  */
 
 interface IconProps {

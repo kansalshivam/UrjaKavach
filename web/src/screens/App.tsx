@@ -11,6 +11,14 @@ export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("map"); // Default to map for Phase 5
 
+  const [weights, setWeights] = useState({
+    gdelt_volume: 0.35,
+    price_volatility: 0.25,
+    ais_deviation: 0.30,
+    sanctions_flag: 0.10,
+  });
+  const [customNodeRisks, setCustomNodeRisks] = useState<Record<string, number> | null>(null);
+
   if (!isLoggedIn) {
     return <Landing onLogin={() => setIsLoggedIn(true)} />;
   }
@@ -50,8 +58,14 @@ export function App() {
       </header>
 
       <main className="main-content">
-        {activeTab === "map" && <TwinMap />}
-        {activeTab === "dashboard" && <Dashboard />}
+        {activeTab === "map" && <TwinMap customNodeRisks={customNodeRisks} />}
+        {activeTab === "dashboard" && (
+          <Dashboard
+            weights={weights}
+            setWeights={setWeights}
+            setCustomNodeRisks={setCustomNodeRisks}
+          />
+        )}
         {activeTab === "simulator" && <Simulator />}
         {activeTab === "narrative" && <Narrative />}
       </main>

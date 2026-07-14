@@ -24,7 +24,12 @@ interface EdgeData {
 }
 
 interface LiveData {
-  ais_counts: { [key: string]: number };
+  ais_data: {
+    [key: string]: {
+      count: number;
+      captured_at: string;
+    }
+  };
   node_risks: { [key: string]: number };
   corridor_risk: { [key: string]: number };
 }
@@ -61,13 +66,24 @@ const getMarkerIcon = (type: string, risk: number) => {
   });
 };
 
-export function TwinMap() {
+interface TwinMapProps {
+  customNodeRisks: Record<string, number> | null;
+}
+
+export function TwinMap({ customNodeRisks }: TwinMapProps) {
   const [nodes, setNodes] = useState<NodeData[]>([]);
   const [edges, setEdges] = useState<EdgeData[]>([]);
   const [liveData, setLiveData] = useState<LiveData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
+
+  const getNodeRisk = (nodeId: string): number => {
+    if (customNodeRisks && nodeId in customNodeRisks) {
+      return customNodeRisks[nodeId];
+    }
+    return liveData?.node_risks[nodeId] || 0.0;
+  };
 
   // 1. Fetch static nodes and edges on mount
   useEffect(() => {
@@ -158,14 +174,14 @@ export function TwinMap() {
                 className="value font-bold"
                 style={{
                   color:
-                    (liveData?.node_risks[selectedNode.id] || 0) > 50
+                    getNodeRisk(selectedNode.id) > 50
                       ? "#ef4444"
-                      : (liveData?.node_risks[selectedNode.id] || 0) > 25
+                      : getNodeRisk(selectedNode.id) > 25
                         ? "#f59e0b"
                         : "#10b981",
                 }}
               >
-                {(liveData?.node_risks[selectedNode.id] || 0).toFixed(1)}/100
+                {getNodeRisk(selectedNode.id).toFixed(1)}/100
               </span>
             </div>
             <div className="source-note">
@@ -187,17 +203,17 @@ export function TwinMap() {
           <h3>AIS Vessel Counts</h3>
           <div className="detail-row">
             <span>Strait of Hormuz</span>
-            <strong>{loading ? "..." : liveData?.ais_counts.hormuz ?? 38} vessels</strong>
+            <strong>{loading ? "..." : liveData?.ais_data.hormuz?.count ?? 38} vessels</strong>
           </div>
           <div className="detail-row">
             <span>Jamnagar / Vadinar</span>
-            <strong>{loading ? "..." : liveData?.ais_counts.jamnagar_vadinar ?? 12} vessels</strong>
+            <strong>{loading ? "..." : liveData?.ais_data.jamnagar_vadinar?.count ?? 12} vessels</strong>
           </div>
           <div className="notes">
-            {liveData?.ais_counts.hormuz === 38 && (
-              <p className="fallback-text">
-                ⚠️ AISStream active issue detected. Displaying pre-recorded fallback snapshot data.
-              </p>
+            {liveData?.ais_data.hormuz?.count === 38 && (
+              <div className="warning-banner" style={{ marginTop: "12px", background: "rgba(245, 158, 11, 0.1)", border: "1px solid #f59e0b", padding: "8px", borderRadius: "4px", fontSize: "0.8rem", color: "#f59e0b" }}>
+                ⚠️ <strong>AIS stream disconnected.</strong> Showing golden fallback snapshot (38 vessels at Hormuz, 12 at Jamnagar/Vadinar) captured at {new Date(liveData?.ais_data.hormuz?.captured_at || "2026-07-14T11:14:23.493171+00:00").toLocaleString()}.
+              </div>
             )}
           </div>
         </div>
@@ -226,7 +242,7 @@ export function TwinMap() {
 
       <div className="map-view">
         <MapContainer
-          center={[20.0, 71.0]}
+          center={[20.0, 71.0] as L.LatLngExpression}
           zoom={5}
           style={{ height: "100%", width: "100%" }}
           scrollWheelZoom={true}
@@ -247,7 +263,7 @@ export function TwinMap() {
             return (
               <Polyline
                 key={edge.id}
-                positions={[fromCoords, toCoords]}
+                positions={[fromCoords, toCoords] as L.LatLngExpression[]}
                 pathOptions={{
                   color: isShipping ? "#0ea5e9" : "#4b5563",
                   dashArray: isShipping ? "6, 6" : undefined,
@@ -267,12 +283,12 @@ export function TwinMap() {
 
           {/* RENDER NODES */}
           {nodes.map((node) => {
-            const risk = liveData?.node_risks[node.id] || 0;
+            const risk = getNodeRisk(node.id);
             return (
               <Marker
                 key={node.id}
-                position={[node.lat, node.lon]}
-                icon={getMarkerIcon(node.node_type, risk)}
+                position={[node.lat, node.lon] as L.LatLngExpression}
+                icon={getMarkerIcon(node.node_type, risk) as L.Icon}
                 eventHandlers={{
                   click: () => {
                     setSelectedNode(node);

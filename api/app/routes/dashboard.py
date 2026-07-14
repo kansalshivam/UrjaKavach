@@ -33,6 +33,10 @@ async def dashboard_summary(session: AsyncSession = Depends(get_session)) -> dic
                 "component_ais_deviation": row.component_ais_deviation,
                 "component_sanctions_flag": row.component_sanctions_flag,
                 "weights_used": row.weights_used,
+                "component_gdelt_stale": row.component_gdelt_stale,
+                "component_price_stale": row.component_price_stale,
+                "component_ais_stale": row.component_ais_stale,
+                "component_sanctions_stale": row.component_sanctions_stale,
             })
 
     # 2. Fetch historical risk scores for trend charts (last 100 entries, ordered chronologically)

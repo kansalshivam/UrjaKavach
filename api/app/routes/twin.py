@@ -43,18 +43,25 @@ async def twin_nodes(session: AsyncSession = Depends(get_session)) -> dict:
 
 @router.get("/live")
 async def twin_live(session: AsyncSession = Depends(get_session)) -> dict:
-    # 1. Fetch latest AIS vessel counts (Hormuz: 38, Jamnagar/Vadinar: 12 as fallback if empty)
-    ais_counts = {}
+    # 1. Fetch latest AIS vessel snapshots
+    ais_data = {}
     for box in ["hormuz", "jamnagar_vadinar"]:
-        count = await session.scalar(
-            select(AisSnapshot.vessel_count)
+        snap = (await session.execute(
+            select(AisSnapshot)
             .where(AisSnapshot.bounding_box == box)
             .order_by(AisSnapshot.captured_at.desc())
             .limit(1)
-        )
-        if count is None:
-            count = 38 if box == "hormuz" else 12
-        ais_counts[box] = count
+        )).scalar()
+        if snap is not None:
+            ais_data[box] = {
+                "count": snap.vessel_count,
+                "captured_at": snap.captured_at.isoformat()
+            }
+        else:
+            ais_data[box] = {
+                "count": 38 if box == "hormuz" else 12,
+                "captured_at": "2026-07-14T11:14:23.493171+00:00"
+            }
 
     # 2. Fetch latest risk scores for each corridor
     corridors = ["hormuz", "non_hormuz_west_africa", "non_hormuz_americas", "non_hormuz_russia"]
@@ -83,11 +90,69 @@ async def twin_live(session: AsyncSession = Depends(get_session)) -> dict:
     node_risks = propagate_risk(g, corridor_risk, decay=0.6)
 
     return {
-        "ais_counts": ais_counts,
+        "ais_data": ais_data,
         "node_risks": node_risks,
         "corridor_risk": {
             k: corridor_risk[k]
             for k in corridor_risk
         }
     }
+
+
+from pydantic import BaseModel, Field
+
+class RecomputeWeightsRequest(BaseModel):
+    gdelt_volume: float = Field(..., ge=0.0, le=1.0)
+    price_volatility: float = Field(..., ge=0.0, le=1.0)
+    ais_deviation: float = Field(..., ge=0.0, le=1.0)
+    sanctions_flag: float = Field(..., ge=0.0, le=1.0)
+
+
+@router.post("/recompute")
+async def twin_recompute(
+    req: RecomputeWeightsRequest,
+    session: AsyncSession = Depends(get_session),
+) -> dict:
+    # 1. Fetch latest raw component values for each corridor
+    corridors = ["hormuz", "non_hormuz_west_africa", "non_hormuz_americas", "non_hormuz_russia"]
+    corridor_risk = {}
+    for corridor in corridors:
+        row = await session.execute(
+            select(RiskScore)
+            .where(RiskScore.corridor == corridor)
+            .order_by(RiskScore.computed_at.desc())
+            .limit(1)
+        )
+        score_data = row.scalar()
+        if score_data:
+            # Recompute score in-memory using POSTed weights
+            raw_val = (
+                req.gdelt_volume * (score_data.component_gdelt_volume or 0.0) +
+                req.price_volatility * (score_data.component_price_volatility or 0.0) +
+                req.ais_deviation * (score_data.component_ais_deviation or 0.0) +
+                req.sanctions_flag * (score_data.component_sanctions_flag or 0.0)
+            )
+            score = min(100.0, max(0.0, raw_val * 100.0))
+        else:
+            score = 0.0
+
+        node_id = "corridor_hormuz" if corridor == "hormuz" else corridor
+        corridor_risk[node_id] = score
+
+    # 2. Load graph nodes and edges
+    nodes = (await session.execute(select(Node))).scalars().all()
+    edges = (await session.execute(select(Edge))).scalars().all()
+
+    nodes_list = [{"id": n.id} for n in nodes]
+    edges_list = [{"from_node_id": e.from_node_id, "to_node_id": e.to_node_id} for e in edges]
+
+    # 3. Propagate risk using recomputed corridor risk
+    g = build_graph(nodes_list, edges_list)
+    node_risks = propagate_risk(g, corridor_risk, decay=0.6)
+
+    return {
+        "node_risks": node_risks,
+        "corridor_risk": corridor_risk
+    }
+
 

@@ -51,6 +51,8 @@ class AisAggregator:
         RAW_AIS_DIR.mkdir(parents=True, exist_ok=True)
 
     async def add_message(self, payload: dict[str, Any]) -> None:
+        global AIS_STALE_STATUS
+        AIS_STALE_STATUS = False
         self._last_message_at = datetime.now(timezone.utc)
         mmsi = _extract_mmsi(payload)
         lat, lon = _extract_lat_lon(payload)
@@ -111,7 +113,11 @@ def aisstream_api_key() -> str:
     return key
 
 
+AIS_STALE_STATUS = False
+
+
 async def run_ais_stream(session_factory: async_sessionmaker) -> None:
+    global AIS_STALE_STATUS
     aggregator = AisAggregator(session_factory=session_factory)
     backoff_seconds = 5
 
@@ -121,14 +127,17 @@ async def run_ais_stream(session_factory: async_sessionmaker) -> None:
             backoff_seconds = 5
         except AisConfigurationError:
             logger.info("AISstream task skipped because AISSTREAM_API_KEY is not configured")
+            AIS_STALE_STATUS = True
             return
         except AisKnownIssueFlagged as exc:
             logger.warning("%s", exc)
+            AIS_STALE_STATUS = True
             await asyncio.sleep(60)
         except asyncio.CancelledError:
             raise
         except Exception:
             logger.exception("AISstream connection failed; backing off for %s seconds", backoff_seconds)
+            AIS_STALE_STATUS = True
             await asyncio.sleep(backoff_seconds)
             backoff_seconds = min(backoff_seconds * 2, 60)
 

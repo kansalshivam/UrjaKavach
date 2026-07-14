@@ -1,6 +1,6 @@
-﻿from datetime import datetime
+from datetime import datetime
 
-from sqlalchemy import DateTime, Double, ForeignKey, Integer, Text, UniqueConstraint, func
+from sqlalchemy import DateTime, Double, ForeignKey, Integer, Text, UniqueConstraint, func, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -59,6 +59,10 @@ class RiskScore(Base):
     component_ais_deviation: Mapped[float | None] = mapped_column(Double)
     component_sanctions_flag: Mapped[float | None] = mapped_column(Double)
     weights_used: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    component_gdelt_stale: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    component_price_stale: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    component_ais_stale: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    component_sanctions_stale: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
 
 class GdeltArticle(Base):

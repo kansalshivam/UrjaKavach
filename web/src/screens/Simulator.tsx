@@ -41,7 +41,7 @@ export function Simulator() {
           setError(err.message);
           setSimulating(false);
         });
-    }, 150); // debounce input slider movements
+    }, 250); // debounce input slider movements (HLD/LLD §2.11)
 
     return () => clearTimeout(triggerSim);
   }, [sliderValue]);
@@ -125,6 +125,21 @@ export function Simulator() {
         {/* Results Panel */}
         {result && (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {/* Calibration Warning block */}
+            <div
+              style={{
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.2)",
+                borderRadius: "8px",
+                padding: "12px 16px",
+                fontSize: "0.82rem",
+                color: "#f59e0b",
+                lineHeight: "1.4",
+              }}
+            >
+              ⚠️ <strong>Calibration Warning:</strong> This simulation uses a two-point linear interpolation based on historical benchmarks. Note that two real data points do not make a validated curve.
+            </div>
+
             {/* Metrics grid */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
               {/* Metric 1: Import decline */}

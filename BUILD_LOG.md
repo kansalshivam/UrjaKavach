@@ -187,6 +187,73 @@
 - Wired `Landing` screen in `web/src/screens/App.tsx` as entry block before isLoggedIn state is true.
 - Re-executed `npm run build` in web container: build compiled successfully with zero errors.
 
+## 2026-07-14 - Part 1 P0 Calibration Disclosure Verification
+- Confirmed calibration warning renders on Screen 3 (Simulator) without scrolling or interaction at both slider=0% and slider=100% since it sits dynamically at the top of the results block.
+- Confirmed Dashboard assumptions panel placement is fully visible by default and not hidden under any collapsible area or tabs inside the Explainable Model Specifications card.
+- Verified DOM rendering path: JSX checks out as fully reached by default when results are loaded.
+- Checked built assets via grep, confirming the calibration text "two real data points do not make a validated curve" is compiled directly into the JS bundle output.
+
+## 2026-07-14 - Part 2 P1 Stale Flags Ingestion failure Tests
+- Applied Alembic migration `0003_phase2_stale_flags` successfully adding stale boolean flags to the Postgres database table.
+- Forced GDELT Failure Mode (T11:59:22Z): Updated articles fetched_at to 45 minutes in the past -> Verified `component_gdelt_stale = True` on risk recomputation.
+- Recovered GDELT (T11:59:30Z): Updated articles fetched_at to now -> Verified `component_gdelt_stale = False` on risk recomputation.
+- Forced EIA Failure Mode (T11:59:22Z): Updated price points fetched_at to 3 hours in the past -> Verified `component_price_stale = True`.
+- Recovered EIA (T11:59:22Z): Reset price points fetched_at to current -> Verified `component_price_stale = False`.
+- Forced AIS Failure Mode (T11:59:22Z): Set `ais_stale = True` via module state -> Verified `component_ais_stale = True`.
+- Forced Sanctions Failure Mode (T11:59:22Z): Set `LAST_OFAC_SUCCESS_TIME = None` -> Verified `component_sanctions_stale = True`.
+- Verified that all four stale flags propagate correctly from the database, through the `/api/dashboard/summary` endpoint, and render red "Stale" indicator labels next to their respective component bars on the Dashboard.
+
+## 2026-07-14 - Part 3 P1 Weight-Sync Coordination Completed
+- Created `POST /api/twin/recompute` endpoint in `api/app/routes/twin.py` to run BFS risk propagation downstream in-memory using modified weights.
+- Lifted weights and custom node risks state to the parent `App.tsx` component.
+- Configured debounced state synchronizer inside `Dashboard.tsx` to POST changes and update the digital twin map node colors dynamically without database writes.
+- Added test coverage in `tests/test_twin_routes.py` verifying both twin map live and recompute routes under mock DB sessions.
+
+## 2026-07-14 - Part 5 P2 Debounce & AIS Fallback Timestamp Completed
+- Changed Scenario Simulator input slider debounce from 150ms to 250ms in `Simulator.tsx` (HLD/LLD §2.11).
+- Updated `/api/twin/live` route and `TwinMap.tsx` UI to return and display the actual fallback snapshot metadata timestamp (`captured_at`), rather than executing `new Date()` at render time.
+
+## 2026-07-14 - TS Build Regression Fix & Final Verification Closure
+
+### TS Build Regression Fix
+- **Issue found:** `npm run build` (`tsc && vite build`) was failing with 8 TypeScript errors:
+  - Dashboard.tsx: `selectedScore` fallback object literal was missing the 4 `component_*_stale` boolean properties, causing TS2551/TS2339 errors when accessing them.
+  - TwinMap.tsx: Missing `@types/leaflet` package caused TS7016 implicit-any errors, plus stricter type checking on `center`, `position`, `icon`, and `positions` props (TS2322).
+- **Fixes applied:**
+  - Added `component_gdelt_stale: false`, `component_price_stale: false`, `component_ais_stale: false`, `component_sanctions_stale: false` to the `selectedScore` fallback object in Dashboard.tsx.
+  - Added `@types/leaflet` to `web/package.json` devDependencies.
+  - Added `as L.LatLngExpression` casts to `MapContainer.center`, `Marker.position`, `Polyline.positions` and `as L.Icon` to `Marker.icon` in TwinMap.tsx.
+- **Result:** `tsc && vite build` passes cleanly — 877 modules transformed, zero TS errors.
+
+### Part 1 Closure — Calibration Disclosure DOM Verification
+- Grepped built production JS bundle (`dist/assets/*.js`): calibration text "two real data points do not make a validated curve" appears **2 times** — once from Simulator.tsx (Screen 3), once from Dashboard.tsx (Screen 1).
+- Confirmed: text is NOT gated behind any off-by-default flag. Simulator.tsx renders it inside `{result && (...)}` which fires immediately on API response. Dashboard.tsx renders it unconditionally inside the assumptions card.
+- **Status: CLOSED.**
+
+### Part 2 Closure — Stale Flags API Verification
+- Hit `/api/dashboard/summary` via `urllib.request` inside the API container.
+- Confirmed response includes all 4 stale flag fields: `component_gdelt_stale: true`, `component_price_stale: true`, `component_ais_stale: true`, `component_sanctions_stale: true`.
+- Dashboard fallback object now includes all 4 stale fields (TS fix above), so the UI renders correctly for both real data and zero-data fallback.
+- **Status: CLOSED.**
+
+### Part 3 Closure — Weight-Sync API Verification
+- `POST /api/twin/recompute` confirmed working: accepts weight JSON body, returns recomputed `node_risks` and `corridor_risk` without DB writes.
+- Dashboard.tsx debounced weight change POSTs to recompute endpoint and updates twin map colors dynamically.
+- test_twin_routes.py: both `test_twin_live` and `test_twin_recompute` pass.
+- **Status: CLOSED.**
+
+### Part 5 Closure — AIS Timestamp Verification
+- Hit `/api/twin/live` via `urllib.request` inside the API container.
+- Confirmed `captured_at` field returns DB-sourced timestamp: `"2026-07-14T11:18:14.234043+00:00"` (from golden fallback AIS snapshot), NOT a `new Date()` rendering artifact.
+- TwinMap.tsx renders this timestamp directly.
+- **Status: CLOSED.**
+
+### Full Verification Suite
+- `docker compose exec -T api python -m pytest tests/ -v` → **16 passed** in 2.65s.
+- `docker compose exec -T web npm run build` → **success**, zero TS errors, 877 modules.
+- `docker compose ps` → all 3 services (api, postgres, web) running.
+
+
 
 
 

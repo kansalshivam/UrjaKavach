@@ -21,7 +21,7 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import AisSnapshot, PricePoint, RiskScore
+from app.db.models import AisSnapshot, PricePoint, RiskScore, GdeltArticle
 from app.scoring.gdelt_signals import compute_gdelt_volume_zscore
 
 logger = logging.getLogger(__name__)
@@ -197,8 +197,28 @@ async def compute_and_store_risk_score(
     corridor: str,
     sanctions_count: int = 0,
     weights: dict[str, float] | None = None,
+    ais_stale: bool = False,
+    sanctions_stale: bool = False,
 ) -> RiskScore:
     """Full pipeline: gather signals, compute score, store to risk_scores table."""
+
+    # GDELT staleness check (older than 25 minutes)
+    latest_gdelt = await session.scalar(
+        select(func.max(GdeltArticle.fetched_at))
+        .where(GdeltArticle.corridor == corridor)
+    )
+    now = datetime.now(timezone.utc)
+    gdelt_stale = False
+    if latest_gdelt is None or (now - latest_gdelt).total_seconds() > 25 * 60:
+        gdelt_stale = True
+
+    # EIA staleness check (older than 120 minutes)
+    latest_price = await session.scalar(
+        select(func.max(PricePoint.fetched_at))
+    )
+    price_stale = False
+    if latest_price is None or (now - latest_price).total_seconds() > 120 * 60:
+        price_stale = True
 
     # Gather all signal components
     gdelt_zscore = await compute_gdelt_volume_zscore(session, corridor)
@@ -222,13 +242,17 @@ async def compute_and_store_risk_score(
         component_ais_deviation=components["ais_deviation"],
         component_sanctions_flag=components["sanctions_flag"],
         weights_used=weights or DEFAULT_WEIGHTS,
+        component_gdelt_stale=gdelt_stale,
+        component_price_stale=price_stale,
+        component_ais_stale=ais_stale,
+        component_sanctions_stale=sanctions_stale,
     )
     session.add(row)
     await session.commit()
     await session.refresh(row)
 
     logger.info(
-        "Risk score stored: corridor=%s, score=%.1f, components=%s",
-        corridor, score, components,
+        "Risk score stored: corridor=%s, score=%.1f, components=%s, stale_flags=(GDELT=%s, Price=%s, AIS=%s, Sanctions=%s)",
+        corridor, score, components, gdelt_stale, price_stale, ais_stale, sanctions_stale,
     )
     return row

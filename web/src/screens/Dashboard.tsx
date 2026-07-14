@@ -20,6 +20,10 @@ interface RiskScoreData {
   component_ais_deviation: number;
   component_sanctions_flag: number;
   weights_used: { [key: string]: number };
+  component_gdelt_stale?: boolean;
+  component_price_stale?: boolean;
+  component_ais_stale?: boolean;
+  component_sanctions_stale?: boolean;
 }
 
 interface HistoryItem {
@@ -44,19 +48,48 @@ interface DashboardSummary {
   weights_used: { [key: string]: number };
 }
 
-export function Dashboard() {
+interface DashboardProps {
+  weights: {
+    gdelt_volume: number;
+    price_volatility: number;
+    ais_deviation: number;
+    sanctions_flag: number;
+  };
+  setWeights: React.Dispatch<React.SetStateAction<{
+    gdelt_volume: number;
+    price_volatility: number;
+    ais_deviation: number;
+    sanctions_flag: number;
+  }>>;
+  setCustomNodeRisks: (risks: Record<string, number> | null) => void;
+}
+
+export function Dashboard({ weights, setWeights, setCustomNodeRisks }: DashboardProps) {
   const [data, setData] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCorridor, setSelectedCorridor] = useState<string>("hormuz");
 
-  // Local state for editable weights (Assumptions Panel §5)
-  const [weights, setWeights] = useState({
-    gdelt_volume: 0.35,
-    price_volatility: 0.25,
-    ais_deviation: 0.30,
-    sanctions_flag: 0.10,
-  });
+  // Recompute node risks on weight changes (Part 3 Fix)
+  useEffect(() => {
+    const triggerRecompute = setTimeout(() => {
+      fetch("/api/twin/recompute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(weights),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Recompute failed");
+          return res.json();
+        })
+        .then((data) => {
+          setCustomNodeRisks(data.node_risks);
+        })
+        .catch((err) => console.error("Recompute node risks error:", err));
+    }, 250); // Debounce to avoid API hammering
+
+    return () => clearTimeout(triggerRecompute);
+  }, [weights]);
 
   // Fetch dashboard summary data
   useEffect(() => {
@@ -136,6 +169,10 @@ export function Dashboard() {
     component_price_volatility: 0,
     component_ais_deviation: 0,
     component_sanctions_flag: 0,
+    component_gdelt_stale: false,
+    component_price_stale: false,
+    component_ais_stale: false,
+    component_sanctions_stale: false,
   };
 
   // Helper to dynamically calculate score based on active weights
@@ -237,24 +274,28 @@ export function Dashboard() {
                 value={selectedScore.component_gdelt_volume}
                 weight={weights.gdelt_volume}
                 color="#38bdf8"
+                stale={selectedScore.component_gdelt_stale}
               />
               <ComponentBar
                 label="Brent Oil Price Volatility"
                 value={selectedScore.component_price_volatility}
                 weight={weights.price_volatility}
                 color="#f59e0b"
+                stale={selectedScore.component_price_stale}
               />
               <ComponentBar
                 label="AIS Shipping Deviations"
                 value={selectedScore.component_ais_deviation}
                 weight={weights.ais_deviation}
                 color="#0ea5e9"
+                stale={selectedScore.component_ais_stale}
               />
               <ComponentBar
                 label="OFAC Sanctions Events"
                 value={selectedScore.component_sanctions_flag}
                 weight={weights.sanctions_flag}
                 color="#ec4899"
+                stale={selectedScore.component_sanctions_stale}
               />
             </div>
           </div>
@@ -336,6 +377,22 @@ export function Dashboard() {
           {/* Assumptions weights panel & Out-of-Scope lists (Phase 10) */}
           <div className="detail-card">
             <h3>Explainable Model Specifications</h3>
+
+            {/* Calibration Warning block */}
+            <div
+              style={{
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.15)",
+                borderRadius: "6px",
+                padding: "10px",
+                fontSize: "0.76rem",
+                color: "#f59e0b",
+                lineHeight: "1.4",
+                marginTop: "10px",
+              }}
+            >
+              ⚠️ <strong>Calibration Notice:</strong> Scenario simulations use a two-point linear interpolation based on historical benchmarks. Note that two real data points do not make a validated curve.
+            </div>
             
             {/* Interactive sliders for weights */}
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px", borderBottom: "1px solid #21262d", paddingBottom: "16px" }}>
@@ -419,17 +476,21 @@ function ComponentBar({
   value,
   weight,
   color,
+  stale,
 }: {
   label: string;
   value: number;
   weight: number;
   color: string;
+  stale?: boolean;
 }) {
   const percentContribution = value * weight * 100;
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.82rem", marginBottom: "4px" }}>
-        <span style={{ color: "#c9d1d9" }}>{label}</span>
+        <span style={{ color: stale ? "#ef4444" : "#c9d1d9" }}>
+          {label} {stale && <span style={{ color: "#ef4444", fontSize: "0.75rem", background: "rgba(239, 68, 68, 0.1)", padding: "1px 5px", borderRadius: "3px", marginLeft: "6px" }}>Stale</span>}
+        </span>
         <span style={{ color: "#8b949e" }}>
           Signal: {value.toFixed(2)} | Contribution: +{percentContribution.toFixed(1)}%
         </span>

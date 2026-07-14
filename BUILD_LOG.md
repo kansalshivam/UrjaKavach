@@ -96,3 +96,12 @@
 - Retried GDELT using a clean URL-encoded GET request with `User-Agent`; response still HTTP 429 Too Many Requests.
 - `SELECT count(*) FROM gdelt_articles` remains 0.
 - Phase 2 remains incomplete because the GDELT verification requirement (5 real article titles) has not passed.
+
+## 2026-07-14 - GDELT Cooldown Patch and Phase-Gate Decision
+- User supplied a concrete GDELT diagnosis: generic/custom User-Agent may trigger bot/rate-limit behavior; GDELT blocks may persist around 15 minutes after burst/debug calls; shared/sandbox IPs may be treated harshly.
+- Implemented browser-style User-Agent in `api/app/ingestion/gdelt.py`.
+- Implemented `GdeltRateLimitedError` and one real cooldown on HTTP 429: honor `Retry-After` if present, otherwise wait 15 minutes.
+- Scheduler now logs 429 as a warning/degraded external-source state and returns to let the next scheduled tick retry, instead of looping or hammering.
+- `python -m py_compile api\app\ingestion\gdelt.py api\app\scheduler.py`: passed.
+- One manual GDELT client test with browser UA entered the new 15-minute cooldown path, confirming GDELT still returned 429 from this environment. The manual test was stopped to avoid waiting in-turn; no further manual GDELT hammering should be done.
+- Human decision: proceed to Phase 3 while GDELT heals in the background on scheduled ticks. This is recorded as a human-approved phase-gate exception/degraded-state handling, not a source substitution. Phase 2 remains not fully verified until 5 GDELT titles are captured.

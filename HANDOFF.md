@@ -10,7 +10,7 @@ Urja Kavach is governed by four local specification files read in full on 2026-0
 The binding operating contract is `UrjaKavach_Agent_Execution_Rules.md`. Work must proceed one phase at a time using only the 12 phases in Execution Plan section 9. Architecture, tier order, schema, data sources, and handoff maintenance are locked by the four files above. The `Energy_Supply_Chain_Resilience_FINAL_ALIGNED_DOSSIER.md` file is present in the repo as ground-truth data for node seeding and scenario calibration.
 
 ## Current Phase
-Phase 2: GDELT + EIA ingestion, in progress and blocked on live-source verification.
+Phase 3: AISstream.io live overlay. Phase 2 remains in degraded verification state for GDELT, with EIA verified and GDELT retrying on scheduled ticks.
 
 Phase 2 done-condition: scheduled jobs pulling GDELT DOC 2.0 and EIA data on fixed intervals, writing raw signal rows.
 
@@ -38,8 +38,8 @@ Blockers:
 | Phase | Name | Status | Notes |
 |---|---|---|---|
 | 1 | Foundation | complete | Docker/API/web/db verified; 37 Dossier Part 3 nodes seeded. |
-| 2 | GDELT + EIA ingestion | in progress | Infrastructure complete; live verification blocked by GDELT 429 and missing EIA key. |
-| 3 | AISstream.io live overlay | not started | Must not start until Phase 2 done-condition and verification pass. |
+| 2 | GDELT + EIA ingestion | degraded verification | EIA verified and persisted; GDELT patched for browser UA + 15-minute cooldown but still 429 from this environment. |
+| 3 | AISstream.io live overlay | next | Human-approved move while GDELT heals in background; AISstream key configured locally. |
 | 4 | Risk scoring engine | not started | Blocked until explicit human confirmation of corrected 4-term risk formula before Phase 4 starts. |
 | 5 | Digital Twin Map | not started | Leaflet/react-leaflet only. |
 | 6 | Command Dashboard | not started | Must watch one live refresh cycle before done. |
@@ -51,7 +51,7 @@ Blockers:
 | 12 | Deliverables packaging | not started | Deck, demo video, docs finalized. |
 
 ## Tier Status
-Tier 1: Phase 1 complete; Phase 2 active and blocked on live verification.
+Tier 1: Phase 1 complete; Phase 2 EIA complete and GDELT degraded; Phase 3 is next by human-approved exception while GDELT heals on scheduled ticks.
 
 Tier 2: not started and not eligible to start until Tier 1 is fully real and verified.
 
@@ -66,7 +66,7 @@ Tier 3: never build, stub, or claim.
 - Added GDELT intra-poll sleep of 6 seconds as defensive rate-limit handling consistent with Architecture Plan guidance.
 
 ### 5B - Escalations / Human Confirmations
-Resolved Phase 2 schema escalation: user said `continue` after the prior response explicitly said Phase 2 required approval to add `gdelt_articles` and `price_points`; implemented those staging tables.
+Resolved Phase 2 schema escalation: user said `continue` after the prior response explicitly said Phase 2 required approval to add `gdelt_articles` and `price_points`; implemented those staging tables. Resolved GDELT degraded-state phase-gate decision: user instructed to continue and move next after explaining browser-UA/15-minute cooldown diagnosis; proceed to Phase 3 while GDELT retries on scheduled ticks.
 
 Pending before Phase 4: explicit human confirmation is required for the corrected 4-term risk-scoring formula from HLD/LLD section 2.5 and Execution Plan section 5 correction. No confirmation has occurred yet.
 
@@ -125,7 +125,7 @@ Repository tracks `origin/main` at `https://github.com/kansalshivam/UrjaKavach.g
 - GDELT retry after `Start-Sleep -Seconds 65`: HTTP 429 Too Many Requests.
 
 ## Live-Data Verification Log
-GDELT DOC 2.0: attempted on 2026-07-14 for `"Strait of Hormuz"`; source returned documented rate-limit response multiple times, including after a 65-second cooldown. Treat as documented source risk firing, not app bug. No real article titles captured yet.
+GDELT DOC 2.0: attempted on 2026-07-14 for `"Strait of Hormuz"`; source returned HTTP 429 multiple times. Browser-style User-Agent and 15-minute cooldown handling are implemented. Manual test entered cooldown, confirming current environment/IP still blocked. No real article titles captured yet.
 
 EIA v2: verified on 2026-07-14. Five Brent `RBRTE` rows were fetched and persisted to `price_points`: 2026-07-06 69.56, 2026-07-03 68.68, 2026-07-02 68.53, 2026-07-01 69.24, 2026-06-30 70.46 $/BBL.
 
@@ -146,6 +146,7 @@ LLM narrative provider chain: Gemini and Groq keys configured locally, providers
 - Phase 2 cannot be marked done until real GDELT and EIA rows are observed and logged.
 
 ## Immediate Next Action
-Add `EIA_API_KEY` to local `.env`, wait for GDELT 429 to clear, then trigger/observe Phase 2 ingestion and log 5 real GDELT article titles plus 5 real EIA Brent data points. Do not start Phase 3 until Phase 2 verification passes.
+Start Phase 3: implement AISstream.io WebSocket client, 5-minute snapshot aggregation, and FLAG_RISK_KNOWN_ISSUE handling. Keep GDELT on scheduled cooldown retries and do not manually hammer DOC 2.0.
+
 
 

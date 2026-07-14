@@ -7,7 +7,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from app.db.session import SessionLocal
 from app.ingestion.eia import EiaConfigurationError, fetch_brent_spot_price
-from app.ingestion.gdelt import fetch_gdelt_articles
+from app.ingestion.gdelt import GdeltRateLimitedError, fetch_gdelt_articles
 from app.ingestion.repository import store_gdelt_articles, store_price_points
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,9 @@ async def run_gdelt_poll() -> None:
     for corridor, query in CORRIDOR_QUERIES:
         try:
             articles = await fetch_gdelt_articles(query=query, maxrecords=25)
+        except GdeltRateLimitedError as exc:
+            logger.warning("GDELT query %s rate limited after cooldown of %s seconds", query, exc.retry_after_seconds)
+            return
         except Exception:
             logger.exception("GDELT poll failed for query %s", query)
             continue

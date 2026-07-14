@@ -73,3 +73,10 @@
 - GDELT live verification retried after a 65-second cooldown; source still returned HTTP 429 Too Many Requests with the documented rate-limit message.
 - EIA live verification remains blocked because local `.env` does not contain `EIA_API_KEY`.
 - Phase 2 implementation infrastructure is in place, but Phase 2 is not verified-done because 5 live GDELT titles and 5 live EIA data points have not been captured.
+
+## 2026-07-14 - Local API Key Configuration Update
+- User provided AISstream, Gemini, and Groq API keys in chat and explicitly asked to place them in local `.env`.
+- Updated ignored local `.env` with `AISSTREAM_API_KEY`, `GEMINI_API_KEY`, and `GROQ_API_KEY`.
+- Did not print or commit secret values.
+- Verified key presence only: AISstream/Gemini/Groq configured; `EIA_API_KEY` still missing.
+- Phase 2 remains blocked on EIA key generation and GDELT 429 clearing.

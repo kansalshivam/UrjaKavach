@@ -86,7 +86,7 @@ Required by spec:
 Additional local convenience variable:
 - `POSTGRES_PORT`, default `5432`, local `.env` currently `5433` because another container owns host port `5432`.
 
-Current blocker: local `.env` has no `EIA_API_KEY`, so EIA live verification cannot run yet.
+Current key state: local `.env` has AISstream, Gemini, and Groq keys configured. `EIA_API_KEY` is still missing, so EIA live verification cannot run yet.
 
 ## Schema State
 Phase 1 schema implemented and migrated:
@@ -128,13 +128,13 @@ Repository tracks `origin/main` at `https://github.com/kansalshivam/UrjaKavach.g
 ## Live-Data Verification Log
 GDELT DOC 2.0: attempted on 2026-07-14 for `"Strait of Hormuz"`; source returned documented rate-limit response multiple times, including after a 65-second cooldown. Treat as documented source risk firing, not app bug. No real article titles captured yet.
 
-EIA v2: unverified in this environment because `EIA_API_KEY` is not configured.
+EIA v2: unverified in this environment because `EIA_API_KEY` is not configured yet.
 
-AISstream.io: unverified in this environment. Known documented risk: `aisstream/aisstream#15`, opened 2026-03-13, may accept subscription but deliver zero messages.
+AISstream.io: key configured locally, feed unverified because Phase 3 has not started. Known documented risk: `aisstream/aisstream#15`, opened 2026-03-13, may accept subscription but deliver zero messages.
 
 OFAC SDN list: unverified in this environment.
 
-LLM narrative provider chain: Gemini and Groq unverified in this environment.
+LLM narrative provider chain: Gemini and Groq keys configured locally, providers unverified because Phase 8 has not started.
 
 ## Known Bugs / Incomplete Work / TODOs
 - Need configure `EIA_API_KEY` before EIA live verification.
@@ -149,3 +149,4 @@ LLM narrative provider chain: Gemini and Groq unverified in this environment.
 
 ## Immediate Next Action
 Add `EIA_API_KEY` to local `.env`, wait for GDELT 429 to clear, then trigger/observe Phase 2 ingestion and log 5 real GDELT article titles plus 5 real EIA Brent data points. Do not start Phase 3 until Phase 2 verification passes.
+

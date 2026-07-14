@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-14T23:55:00+05:30 by Antigravity
+Last updated: 2026-07-15T00:05:00+05:30 by Antigravity (Antigravity coding assistant)
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -113,13 +113,16 @@ UrjaKavach/
 - `api/tests/conftest.py`, `api/tests/test_twin_routes.py` — twin route tests with mock DB and recompute validation check
 - `web/src/screens/App.tsx` — lifted weights state for Dashboard↔TwinMap sync
 - `web/src/screens/Simulator.tsx` — debounce 250ms
+- `web/src/screens/Dashboard.tsx` — Removed `.tsx` from imports to resolve TypeScript compile errors.
+- `web/src/screens/TwinMap.tsx` — Removed `.tsx` from imports to resolve TypeScript compile errors.
 - `BUILD_LOG.md` — Parts 1–5 post-completion verification logged
 - `HANDOFF.md` — this update
 
 ## 10. Commands Run This Session And Their Results
-- `docker compose ps` → all 3 services up (api :8000, postgres :5433, web :5173)
-- `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 1.46s (includes new invalid weights route validation test)
-- `docker compose exec -T web npm run build` → **success**, zero TypeScript errors
+- `docker compose build web` → Web service image built successfully with import fixes.
+- `docker compose up -d web` → Web container recreated successfully.
+- `docker compose exec -T web npm run build` → Production build succeeded with zero TypeScript errors.
+- `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 0.93s.
 
 ## 11. Live-Data Verification Log (specific to this project's four external sources)
 - **GDELT**: ✅ VERIFIED 2026-07-14. 25 real articles persisted. Stale-flag recovery tested in BUILD_LOG Part 2.

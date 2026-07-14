@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { SpriteIcon, RefineryIcon, PortIcon, PipelineIcon } from "../components/icons/Iconsax.tsx";
+import { SpriteIcon, RefineryIcon, PortIcon, PipelineIcon } from "../components/icons/Iconsax";
 
 interface NodeData {
   id: string;

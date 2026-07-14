@@ -9,9 +9,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { CursorCard } from "../components/cards/CursorCard.tsx";
-import { Checkbox } from "../components/animate/Checkbox.tsx";
-import { SettingsIcon, RiskIcon } from "../components/icons/Iconsax.tsx";
+import { CursorCard } from "../components/cards/CursorCard";
+import { Checkbox } from "../components/animate/Checkbox";
+import { SettingsIcon, RiskIcon } from "../components/icons/Iconsax";
 
 interface RiskScoreData {
   id: number;

@@ -2,8 +2,9 @@ import { useState } from "react";
 import { TwinMap } from "./TwinMap";
 import { Dashboard } from "./Dashboard";
 import { Simulator } from "./Simulator";
+import { Narrative } from "./Narrative";
 
-type Tab = "dashboard" | "map" | "simulator";
+type Tab = "dashboard" | "map" | "simulator" | "narrative";
 
 export function App() {
   const [activeTab, setActiveTab] = useState<Tab>("map"); // Default to map for Phase 5
@@ -33,6 +34,12 @@ export function App() {
           >
             Scenario Simulator
           </button>
+          <button
+            className={`tab-btn ${activeTab === "narrative" ? "active" : ""}`}
+            onClick={() => setActiveTab("narrative")}
+          >
+            Risk Narrative
+          </button>
         </nav>
       </header>
 
@@ -40,8 +47,10 @@ export function App() {
         {activeTab === "map" && <TwinMap />}
         {activeTab === "dashboard" && <Dashboard />}
         {activeTab === "simulator" && <Simulator />}
+        {activeTab === "narrative" && <Narrative />}
       </main>
     </div>
   );
 }
+
 

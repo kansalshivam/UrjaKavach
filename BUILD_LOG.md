@@ -172,6 +172,17 @@
 - Wired `Simulator` screen in `web/src/screens/App.tsx` routing.
 - Re-executed `npm run build` in web container, compiling successfully with zero bundler or typescript errors.
 
+## 2026-07-14 - Phase 8 LLM Risk Narrative Completed
+- Created `api/app/llm/narrative.py` implementing the fallback narrative generation chain (Gemini -> Groq -> Dynamic Template Fallback).
+- Added unit tests in `api/tests/test_narrative.py` verifying template formatting and key-absence fallback behavior.
+- Implemented `GET /api/narrative` endpoint in `api/app/routes/narrative.py` and registered it in `api/app/main.py`.
+- Rebuilt API container and confirmed all 14 tests passed successfully.
+- Tested `/api/narrative` response: verified it successfully generates a fallback narrative with active raw metrics when keys are absent.
+- Created `web/src/screens/Narrative.tsx` with a markdown rendering briefing container and "Regenerate Briefing" action control.
+- Wired `Narrative` screen in `web/src/screens/App.tsx` routing.
+- Re-executed `npm run build` in web container, compiling successfully with zero errors.
+
+
 
 
 

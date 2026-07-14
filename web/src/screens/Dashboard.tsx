@@ -50,6 +50,14 @@ export function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCorridor, setSelectedCorridor] = useState<string>("hormuz");
 
+  // Local state for editable weights (Assumptions Panel §5)
+  const [weights, setWeights] = useState({
+    gdelt_volume: 0.35,
+    price_volatility: 0.25,
+    ais_deviation: 0.30,
+    sanctions_flag: 0.10,
+  });
+
   // Fetch dashboard summary data
   useEffect(() => {
     const fetchData = () => {
@@ -60,6 +68,15 @@ export function Dashboard() {
         })
         .then((summary) => {
           setData(summary);
+          // Set initial weights from DB if present
+          if (summary.weights_used) {
+            setWeights({
+              gdelt_volume: summary.weights_used.gdelt_volume ?? 0.35,
+              price_volatility: summary.weights_used.price_volatility ?? 0.25,
+              ais_deviation: summary.weights_used.ais_deviation ?? 0.30,
+              sanctions_flag: summary.weights_used.sanctions_flag ?? 0.10,
+            });
+          }
           setLoading(false);
         })
         .catch((err) => {
@@ -121,6 +138,18 @@ export function Dashboard() {
     component_sanctions_flag: 0,
   };
 
+  // Helper to dynamically calculate score based on active weights
+  const calculateDynamicScore = (scoreData: any) => {
+    const rawVal =
+      weights.gdelt_volume * (scoreData.component_gdelt_volume || 0) +
+      weights.price_volatility * (scoreData.component_price_volatility || 0) +
+      weights.ais_deviation * (scoreData.component_ais_deviation || 0) +
+      weights.sanctions_flag * (scoreData.component_sanctions_flag || 0);
+    return Math.min(100.0, Math.max(0.0, rawVal * 100));
+  };
+
+  const dynamicSelectedScore = calculateDynamicScore(selectedScore);
+
   // Format history data for Chart (group by timestamp)
   const timestamps = Array.from(new Set(data.history.map((h) => h.computed_at))).sort();
   const chartData = timestamps.map((ts) => {
@@ -135,6 +164,10 @@ export function Dashboard() {
     return item;
   });
 
+  const weightsSum = parseFloat(
+    (weights.gdelt_volume + weights.price_volatility + weights.ais_deviation + weights.sanctions_flag).toFixed(2)
+  );
+
   return (
     <div className="dashboard-view" style={{ padding: "24px", height: "100%", overflowY: "auto" }}>
       <div style={{ display: "flex", justifyContent: "between", alignItems: "center", marginBottom: "20px" }}>
@@ -148,7 +181,8 @@ export function Dashboard() {
       <div className="grid-layout" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", marginBottom: "24px" }}>
         {data.risk_scores.map((scoreData) => {
           const isActive = scoreData.corridor === selectedCorridor;
-          const color = getRiskColor(scoreData.score);
+          const dynamicScore = calculateDynamicScore(scoreData);
+          const color = getRiskColor(dynamicScore);
           return (
             <div
               key={scoreData.corridor}
@@ -179,7 +213,7 @@ export function Dashboard() {
               </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
                 <strong style={{ fontSize: "2rem", color: "#f1f5f9" }}>
-                  {scoreData.score.toFixed(1)}
+                  {dynamicScore.toFixed(1)}
                 </strong>
                 <span style={{ fontSize: "0.8rem", color: "#8b949e" }}>/ 100</span>
               </div>
@@ -201,25 +235,25 @@ export function Dashboard() {
               <ComponentBar
                 label="GDELT News Volume"
                 value={selectedScore.component_gdelt_volume}
-                weight={data.weights_used.gdelt_volume}
+                weight={weights.gdelt_volume}
                 color="#38bdf8"
               />
               <ComponentBar
                 label="Brent Oil Price Volatility"
                 value={selectedScore.component_price_volatility}
-                weight={data.weights_used.price_volatility}
+                weight={weights.price_volatility}
                 color="#f59e0b"
               />
               <ComponentBar
                 label="AIS Shipping Deviations"
                 value={selectedScore.component_ais_deviation}
-                weight={data.weights_used.ais_deviation}
+                weight={weights.ais_deviation}
                 color="#0ea5e9"
               />
               <ComponentBar
                 label="OFAC Sanctions Events"
                 value={selectedScore.component_sanctions_flag}
-                weight={data.weights_used.sanctions_flag}
+                weight={weights.sanctions_flag}
                 color="#ec4899"
               />
             </div>
@@ -227,7 +261,7 @@ export function Dashboard() {
 
           {/* Historical Trend Chart */}
           <div className="detail-card" style={{ height: "300px" }}>
-            <h3>Geopolitical Risk Trends</h3>
+            <h3>Geopolitical Risk Trends (Baseline)</h3>
             <div style={{ width: "100%", height: "90%", marginTop: "12px" }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
@@ -245,7 +279,7 @@ export function Dashboard() {
                   <Line
                     type="monotone"
                     dataKey={getCorridorLabel(selectedCorridor)}
-                    stroke={getRiskColor(selectedScore.score)}
+                    stroke={getRiskColor(dynamicSelectedScore)}
                     strokeWidth={2.5}
                     activeDot={{ r: 6 }}
                   />
@@ -258,7 +292,7 @@ export function Dashboard() {
         {/* RIGHT COLUMN: GDELT News Feed & Assumptions Panel */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {/* GDELT Signal feed */}
-          <div className="detail-card" style={{ display: "flex", flexDirection: "column", height: "450px" }}>
+          <div className="detail-card" style={{ display: "flex", flexDirection: "column", height: "300px" }}>
             <h3>Geopolitical Signal Feed</h3>
             <div style={{ overflowY: "auto", flex: 1, marginTop: "12px" }}>
               {data.recent_articles.length > 0 ? (
@@ -287,7 +321,7 @@ export function Dashboard() {
                         </span>
                         <span>{getCorridorLabel(art.corridor)}</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 500, lineLine: "1.4" }}>
+                      <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 500, lineHeight: "1.4" }}>
                         {art.title}
                       </p>
                     </a>
@@ -299,20 +333,83 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Assumptions weights panel */}
+          {/* Assumptions weights panel & Out-of-Scope lists (Phase 10) */}
           <div className="detail-card">
             <h3>Explainable Model Specifications</h3>
-            <div style={{ fontSize: "0.85rem", color: "#8b949e", lineHeight: "1.5", marginTop: "8px" }}>
-              <p style={{ margin: "0 0 10px" }}>
-                Urja Kavach computes corridor risk using a transparent, explainable 4-term formula summing to 100%:
-              </p>
-              <div style={{ background: "#0d1117", padding: "10px", borderRadius: "6px", border: "1px solid #21262d", fontFamily: "monospace", fontSize: "0.78rem" }}>
-                Risk = (0.35 * GDELT) + (0.25 * Brent Price) + (0.30 * AIS Deviation) + (0.10 * Sanctions)
+            
+            {/* Interactive sliders for weights */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px", borderBottom: "1px solid #21262d", paddingBottom: "16px" }}>
+              <span style={{ fontSize: "0.8rem", color: "#f1f5f9", fontWeight: 600 }}>Adjust Weight Constants:</span>
+              
+              <SliderInput
+                label="GDELT News Volume"
+                val={weights.gdelt_volume}
+                onChange={(v) => setWeights({ ...weights, gdelt_volume: v })}
+              />
+              <SliderInput
+                label="Brent Oil Price Volatility"
+                val={weights.price_volatility}
+                onChange={(v) => setWeights({ ...weights, price_volatility: v })}
+              />
+              <SliderInput
+                label="AIS Shipping Deviations"
+                val={weights.ais_deviation}
+                onChange={(v) => setWeights({ ...weights, ais_deviation: v })}
+              />
+              <SliderInput
+                label="OFAC Sanctions"
+                val={weights.sanctions_flag}
+                onChange={(v) => setWeights({ ...weights, sanctions_flag: v })}
+              />
+
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginTop: "4px" }}>
+                <span>Sum of Weights:</span>
+                <strong style={{ color: weightsSum === 1.0 ? "#10b981" : "#ef4444" }}>
+                  {weightsSum.toFixed(2)} {weightsSum !== 1.0 && "⚠️ (Must equal 1.00)"}
+                </strong>
               </div>
+            </div>
+
+            {/* Out of Scope parameters */}
+            <div style={{ marginTop: "12px" }}>
+              <span style={{ fontSize: "0.8rem", color: "#8b949e", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Explicitly Out of Scope
+              </span>
+              <ul style={{ margin: "6px 0 0", paddingLeft: "16px", fontSize: "0.78rem", color: "#8b949e", lineHeight: "1.4" }}>
+                <li>Historical pattern matching (pre-2026 baseline logic error)</li>
+                <li>Advanced routing optimization layer</li>
+                <li>Strategic Petroleum Reserve (SPR) procurement execution layer</li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+interface SliderProps {
+  label: string;
+  val: number;
+  onChange: (v: number) => void;
+}
+
+function SliderInput({ label, val, onChange }: SliderProps) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "#8b949e" }}>
+        <span>{label}</span>
+        <strong>{val.toFixed(2)}</strong>
+      </div>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.05"
+        value={val}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        style={{ width: "100%", accentColor: "#38bdf8", cursor: "pointer" }}
+      />
     </div>
   );
 }

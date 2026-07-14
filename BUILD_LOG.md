@@ -231,6 +231,12 @@
 - **Status: CLOSED.**
 
 ### Part 2 Closure — Stale Flags API Verification
+- **Design Choice Rationale:** GDELT and Price staleness checks use age-based thresholds (25m/120m) rather than exception-based flags to ensure that persistent fetch failures, container crashes, or scheduler silence are caught even if no explicit exceptions are raised by the runner.
+- **Forced-Failure Test (2026-07-14T16:41:53Z UTC):** Executed a live simulation blocking outgoing requests to `api.gdeltproject.org` and `api.eia.gov`.
+  - Confirmed both polls failed as expected.
+  - Simulated AIS socket death by setting `AIS_STALE_STATUS = True`.
+  - Simulated skipped OFAC run by setting `LAST_OFAC_SUCCESS_TIME = None`.
+  - Re-computed risk score and verified that DB record components correctly transitioned all stale flags to `True` (`component_gdelt_stale = True`, `component_price_stale = True`, `component_ais_stale = True`, `component_sanctions_stale = True`).
 - Hit `/api/dashboard/summary` via `urllib.request` inside the API container.
 - Confirmed response includes all 4 stale flag fields: `component_gdelt_stale: true`, `component_price_stale: true`, `component_ais_stale: true`, `component_sanctions_stale: true`.
 - Dashboard fallback object now includes all 4 stale fields (TS fix above), so the UI renders correctly for both real data and zero-data fallback.

@@ -105,3 +105,40 @@
 - `python -m py_compile api\app\ingestion\gdelt.py api\app\scheduler.py`: passed.
 - One manual GDELT client test with browser UA entered the new 15-minute cooldown path, confirming GDELT still returned 429 from this environment. The manual test was stopped to avoid waiting in-turn; no further manual GDELT hammering should be done.
 - Human decision: proceed to Phase 3 while GDELT heals in the background on scheduled ticks. This is recorded as a human-approved phase-gate exception/degraded-state handling, not a source substitution. Phase 2 remains not fully verified until 5 GDELT titles are captured.
+
+## 2026-07-14 - Phase 2 GDELT Recovery — Phase 2 Now Fully Verified
+- New session (Antigravity, Claude Opus 4.6). All four governing files and HANDOFF.md read in full before any work.
+- `SELECT count(*) FROM gdelt_articles` returned 25 — GDELT has recovered from the 429 rate-limit block. Scheduled 15-minute ticks with browser UA eventually succeeded.
+- Five real GDELT article titles inspected (all dated 2026-07-14T10:15:00Z):
+  1. "هبوط جماعي للمؤشرات الأوروبية وقطاع السفر والترفيه يقود الخسائر" (albayan.ae)
+  2. "FTSE 100 Live: Travel stocks drag but BP climbs as oil surges to four-week high" (proactiveinvestors.co.uk)
+  3. "الجيش الأميركي يكشف أهداف أحدث غاراته على إيران" (arabic.euronews.com)
+  4. "Global LPG Market Reactions: US-Iran MOU Impact" (argusmedia.com)
+  5. "IHSG ditutup menguat tipis seiring kombinasi sentimen domestik-global" (antaranews.com)
+- These are real, current, geopolitically relevant articles — exactly the signal the risk-scoring model needs.
+- EIA confirmed still verified: `SELECT count(*) FROM price_points` = 7, same 5 Brent RBRTE rows (69.56–70.46 $/BBL) from prior session.
+- Phase 2 is now complete. Both GDELT and EIA ingestion jobs are running and producing real, current data.
+
+## 2026-07-14 - Phase 3 AISstream Known Issue Confirmed
+- AISstream.io `aisstream/aisstream#15` has fired in this environment. Evidence:
+  1. Pre-restart session: 5x `FLAG_RISK_KNOWN_ISSUE` firings over >18 minutes (multiple reconnect cycles with exponential backoff).
+  2. API restart (fresh connection): clean startup but zero AIS-related log output in 3+ minutes.
+  3. Direct manual test inside API container: `websockets.connect()` succeeded, subscription message sent, but `asyncio.wait_for(ws.recv(), timeout=30)` timed out — zero messages delivered.
+- AISSTREAM_API_KEY confirmed present in container (40 chars, non-empty).
+- This matches the documented known issue exactly: subscription accepted, zero messages delivered.
+- Added `open_timeout=20, close_timeout=10` to `websockets.connect()` in `api/app/ingestion/ais.py` to prevent indefinite connection hangs (§2A defensive error handling, does not change data flow).
+- Created `data/golden_ais_snapshot.json` with realistic fallback vessel counts (Hormuz: 38, Jamnagar/Vadinar: 12), prepared same-day per Execution Plan §9 Phase 3 done-condition.
+- Phase 3 code is complete and correct. The `FLAG_RISK_KNOWN_ISSUE` state is a designed, first-class state per HLD/LLD §2.3. The AIS task continues retrying on its backoff schedule in case the feed recovers.
+
+## 2026-07-14 - Phase 4 Risk Scoring Engine Completed
+- Confirmed formula correction (§1.5 / HLD-LLD §2.5) with the user: w1 (gdelt_volume) = 0.35, w2 (price_volatility) = 0.25, w3 (ais_deviation) = 0.30, w4 (sanctions_flag) = 0.10.
+- Implemented `api/app/ingestion/ofac.py` to pull OFAC SDN list, process Iran-linked entities, and perform diffing to detect new entries.
+- Implemented `api/app/scoring/gdelt_signals.py` to calculate the z-score of the article volume in a 24h window against a 30-day baseline.
+- Implemented `api/app/scoring/risk_score.py` containing the weights, normalization functions for each of the 4 signals, and the `compute_and_store_risk_score` query pipeline.
+- Updated `api/app/scheduler.py` to register the daily OFAC poll job and the 10-minute scheduled risk score computation job (running for all 4 corridors).
+- Updated `api/pyproject.toml` and `api/Dockerfile` to include `pytest` and `networkx` dependencies and ensure they are copied/installed in the container.
+- Added `api/tests/test_risk_score.py` with 8 unit tests covering weight sums, default weights, normalization bounds, sanctions binary checks, and manual score recomputation.
+- Rebuilt the API container and ran tests: `pytest` executed inside the container, all 8 tests PASSED.
+- Manually ran `run_risk_score_compute` job in the API container: verified risk score was calculated for all 4 corridors and successfully stored in Postgres.
+- Spot-checked Hormuz corridor score manually (score: 22.1554): verified it matches the exact weights and signal values (gdelt_volume=0.6 * 0.35, price_volatility=0.0462 * 0.25, ais_deviation=0.0 * 0.30, sanctions=0.0 * 0.10) * 100.
+

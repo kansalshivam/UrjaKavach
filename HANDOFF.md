@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-15T00:05:00+05:30 by Antigravity (Antigravity coding assistant)
+Last updated: 2026-07-15T00:15:00+05:30 by Antigravity (Antigravity coding assistant)
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -115,11 +115,17 @@ UrjaKavach/
 - `web/src/screens/Simulator.tsx` — debounce 250ms
 - `web/src/screens/Dashboard.tsx` — Removed `.tsx` from imports to resolve TypeScript compile errors.
 - `web/src/screens/TwinMap.tsx` — Removed `.tsx` from imports to resolve TypeScript compile errors.
+- `web/src/components/backgrounds/InteractiveGrid.tsx` — NEW: Animata-inspired interactive cursor-reactive background grid.
+- `web/src/components/gallery/CircularGallery.tsx` — NEW: React Bits-inspired 3D circular timeline carousel gallery.
+- `web/src/components/motion/ScrollProgress.tsx` — NEW: Motion Primitives-inspired scroll progress indicator bar.
+- `web/src/components/media/HoverVideoPlayer.tsx` — NEW: Cult UI-inspired hover video/media preview element.
+- `web/src/components/timeline/TimelineSync.tsx` — NEW: anime.js synchronized timeline event scrubber.
+- `web/src/screens/Landing.tsx` — Integrated InteractiveGrid background, CircularGallery, TimelineSync scrubber, ScrollProgress, and HoverVideoPlayer on Landing page.
 - `BUILD_LOG.md` — Parts 1–5 post-completion verification logged
 - `HANDOFF.md` — this update
 
 ## 10. Commands Run This Session And Their Results
-- `docker compose build web` → Web service image built successfully with import fixes.
+- `docker compose build web` → Web service image built successfully with premium UI components and animejs package.
 - `docker compose up -d web` → Web container recreated successfully.
 - `docker compose exec -T web npm run build` → Production build succeeded with zero TypeScript errors.
 - `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 0.93s.

@@ -1,182 +1,66 @@
-{
+﻿{
   "nodes": [
-    {
-      "id": "corridor_hormuz",
-      "node_type": "pipeline_segment",
-      "name": "Strait of Hormuz Corridor",
-      "lat": 26.5667,
-      "lon": 56.25,
-      "capacity_value": null,
-      "capacity_unit": null,
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "port_jamnagar_vadinar",
-      "node_type": "port",
-      "name": "Jamnagar / Vadinar Crude Port Cluster",
-      "lat": 22.47,
-      "lon": 69.68,
-      "capacity_value": null,
-      "capacity_unit": null,
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "port_mumbai",
-      "node_type": "port",
-      "name": "Mumbai Port",
-      "lat": 18.95,
-      "lon": 72.84,
-      "capacity_value": null,
-      "capacity_unit": null,
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "port_mangalore",
-      "node_type": "port",
-      "name": "New Mangalore Port",
-      "lat": 12.93,
-      "lon": 74.82,
-      "capacity_value": null,
-      "capacity_unit": null,
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "port_paradip",
-      "node_type": "port",
-      "name": "Paradip Port",
-      "lat": 20.27,
-      "lon": 86.67,
-      "capacity_value": null,
-      "capacity_unit": null,
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "spr_visakhapatnam",
-      "node_type": "spr",
-      "name": "ISPRL Visakhapatnam SPR",
-      "lat": 17.69,
-      "lon": 83.22,
-      "capacity_value": 1.33,
-      "capacity_unit": "MMT",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "spr_mangalore",
-      "node_type": "spr",
-      "name": "ISPRL Mangalore SPR",
-      "lat": 12.91,
-      "lon": 74.86,
-      "capacity_value": 1.5,
-      "capacity_unit": "MMT",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "spr_padur",
-      "node_type": "spr",
-      "name": "ISPRL Padur SPR",
-      "lat": 13.08,
-      "lon": 74.78,
-      "capacity_value": 2.5,
-      "capacity_unit": "MMT",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "refinery_jamnagar",
-      "node_type": "refinery",
-      "name": "Jamnagar Refinery Complex",
-      "lat": 22.35,
-      "lon": 69.66,
-      "capacity_value": null,
-      "capacity_unit": "MMT/year",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "refinery_vadinar",
-      "node_type": "refinery",
-      "name": "Vadinar Refinery",
-      "lat": 22.42,
-      "lon": 69.71,
-      "capacity_value": null,
-      "capacity_unit": "MMT/year",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "refinery_mumbai",
-      "node_type": "refinery",
-      "name": "Mumbai Refinery Cluster",
-      "lat": 19.02,
-      "lon": 72.9,
-      "capacity_value": null,
-      "capacity_unit": "MMT/year",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    },
-    {
-      "id": "refinery_paradip",
-      "node_type": "refinery",
-      "name": "Paradip Refinery",
-      "lat": 20.31,
-      "lon": 86.61,
-      "capacity_value": null,
-      "capacity_unit": "MMT/year",
-      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
-    }
+    {"id":"spr_visakhapatnam","node_type":"spr","name":"ISPRL Visakhapatnam SPR","lat":17.69,"lon":83.22,"capacity_value":1.33,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; capacity verified in Part 0."},
+    {"id":"spr_mangaluru","node_type":"spr","name":"ISPRL Mangaluru SPR","lat":12.91,"lon":74.86,"capacity_value":1.5,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; capacity verified in Part 0."},
+    {"id":"spr_padur","node_type":"spr","name":"ISPRL Padur SPR","lat":13.08,"lon":74.78,"capacity_value":2.5,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; capacity verified in Part 0."},
+    {"id":"spr_chandikhole_planned","node_type":"spr","name":"Planned Chandikhole SPR","lat":20.74,"lon":86.10,"capacity_value":null,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; planned Phase II addition, not operational."},
+    {"id":"spr_padur_expansion_planned","node_type":"spr","name":"Planned Padur SPR Expansion","lat":13.08,"lon":74.78,"capacity_value":null,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; planned Phase II expansion, not operational."},
+
+    {"id":"refinery_iocl_panipat","node_type":"refinery","name":"IOCL Panipat Refinery","lat":29.39,"lon":76.97,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_mathura","node_type":"refinery","name":"IOCL Mathura Refinery","lat":27.49,"lon":77.68,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_koyali","node_type":"refinery","name":"IOCL Koyali Refinery","lat":22.39,"lon":73.12,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_barauni","node_type":"refinery","name":"IOCL Barauni Refinery","lat":25.44,"lon":86.13,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_haldia","node_type":"refinery","name":"IOCL Haldia Refinery","lat":22.03,"lon":88.06,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_guwahati","node_type":"refinery","name":"IOCL Guwahati Refinery","lat":26.17,"lon":91.66,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_digboi","node_type":"refinery","name":"IOCL Digboi Refinery","lat":27.39,"lon":95.62,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_iocl_bongaigaon","node_type":"refinery","name":"IOCL Bongaigaon Refinery","lat":26.47,"lon":90.56,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_reliance_jamnagar","node_type":"refinery","name":"Reliance Jamnagar Refinery Complex","lat":22.35,"lon":69.66,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; single largest refining complex by capacity."},
+    {"id":"refinery_bpcl_mumbai","node_type":"refinery","name":"BPCL Mumbai Refinery","lat":19.02,"lon":72.90,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_bpcl_kochi","node_type":"refinery","name":"BPCL Kochi Refinery","lat":9.96,"lon":76.36,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_bpcl_bina","node_type":"refinery","name":"BPCL Bina Refinery","lat":24.17,"lon":78.20,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_hpcl_mumbai","node_type":"refinery","name":"HPCL Mumbai Refinery","lat":19.01,"lon":72.89,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_hpcl_visakhapatnam","node_type":"refinery","name":"HPCL Visakhapatnam Refinery","lat":17.69,"lon":83.24,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_nayara_vadinar","node_type":"refinery","name":"Nayara Energy Vadinar Refinery","lat":22.42,"lon":69.71,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_cpcl_manali","node_type":"refinery","name":"CPCL Manali Refinery","lat":13.16,"lon":80.27,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+    {"id":"refinery_mrpl_mangalore","node_type":"refinery","name":"MRPL Mangalore Refinery","lat":12.98,"lon":74.87,"capacity_value":null,"capacity_unit":"MMT/year","source_note":"FINAL_ALIGNED_DOSSIER Part 3.2; capacity to be sourced from PPAC/latest annual reports."},
+
+    {"id":"port_jamnagar_sikka","node_type":"port","name":"Jamnagar / Sikka Crude Port","lat":22.43,"lon":69.84,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_vadinar","node_type":"port","name":"Vadinar Port","lat":22.48,"lon":69.69,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_paradip","node_type":"port","name":"Paradip Port","lat":20.27,"lon":86.67,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_visakhapatnam","node_type":"port","name":"Visakhapatnam Port","lat":17.69,"lon":83.29,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_kochi","node_type":"port","name":"Kochi Port","lat":9.97,"lon":76.26,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_mumbai_jnpt","node_type":"port","name":"Mumbai / JNPT Port Cluster","lat":18.95,"lon":72.95,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_chennai_ennore","node_type":"port","name":"Chennai / Ennore Port Cluster","lat":13.20,"lon":80.32,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_new_mangalore","node_type":"port","name":"New Mangalore Port","lat":12.93,"lon":74.82,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+    {"id":"port_haldia","node_type":"port","name":"Haldia Port","lat":22.03,"lon":88.08,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; major crude-receiving port."},
+
+    {"id":"pipeline_salaya_mathura","node_type":"pipeline_segment","name":"Salaya-Mathura Crude Pipeline","lat":24.37,"lon":75.88,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
+    {"id":"pipeline_kandla_bhatinda","node_type":"pipeline_segment","name":"Kandla-Bhatinda Pipeline","lat":27.30,"lon":73.75,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
+    {"id":"pipeline_vizag_vijayawada","node_type":"pipeline_segment","name":"Vizag-Vijayawada Pipeline","lat":16.55,"lon":81.40,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
+    {"id":"pipeline_mumbai_manmad_delhi","node_type":"pipeline_segment","name":"Mumbai-Manmad-Delhi Product Pipeline","lat":21.50,"lon":75.70,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
+    {"id":"pipeline_hbj_gas","node_type":"pipeline_segment","name":"Hazira-Bijaipur-Jagdishpur Gas Pipeline","lat":23.45,"lon":76.90,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
+
+    {"id":"corridor_hormuz","node_type":"pipeline_segment","name":"Strait of Hormuz Shipping Corridor","lat":26.57,"lon":56.25,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Parts 1, 3, and 4.1; AIS bounding-box corridor for Tier 1."}
   ],
   "edges": [
-    {
-      "id": "edge_hormuz_jamnagar_vadinar",
-      "from_node_id": "corridor_hormuz",
-      "to_node_id": "port_jamnagar_vadinar",
-      "edge_type": "shipping_corridor",
-      "capacity_value": null,
-      "source_note": "Execution Plan Tier 1 Hormuz-to-India corridor; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    },
-    {
-      "id": "edge_jamnagar_port_refinery",
-      "from_node_id": "port_jamnagar_vadinar",
-      "to_node_id": "refinery_jamnagar",
-      "edge_type": "pipeline",
-      "capacity_value": null,
-      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    },
-    {
-      "id": "edge_vadinar_port_refinery",
-      "from_node_id": "port_jamnagar_vadinar",
-      "to_node_id": "refinery_vadinar",
-      "edge_type": "pipeline",
-      "capacity_value": null,
-      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    },
-    {
-      "id": "edge_mangalore_port_spr",
-      "from_node_id": "port_mangalore",
-      "to_node_id": "spr_mangalore",
-      "edge_type": "pipeline",
-      "capacity_value": null,
-      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    },
-    {
-      "id": "edge_mangalore_port_padur",
-      "from_node_id": "port_mangalore",
-      "to_node_id": "spr_padur",
-      "edge_type": "pipeline",
-      "capacity_value": null,
-      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    },
-    {
-      "id": "edge_paradip_port_refinery",
-      "from_node_id": "port_paradip",
-      "to_node_id": "refinery_paradip",
-      "edge_type": "pipeline",
-      "capacity_value": null,
-      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    },
-    {
-      "id": "edge_mumbai_port_refinery",
-      "from_node_id": "port_mumbai",
-      "to_node_id": "refinery_mumbai",
-      "edge_type": "pipeline",
-      "capacity_value": null,
-      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
-    }
+    {"id":"edge_hormuz_jamnagar_sikka","from_node_id":"corridor_hormuz","to_node_id":"port_jamnagar_sikka","edge_type":"shipping_corridor","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; west-coast Gulf-route exposure."},
+    {"id":"edge_hormuz_vadinar","from_node_id":"corridor_hormuz","to_node_id":"port_vadinar","edge_type":"shipping_corridor","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; west-coast Gulf-route exposure."},
+    {"id":"edge_hormuz_new_mangalore","from_node_id":"corridor_hormuz","to_node_id":"port_new_mangalore","edge_type":"shipping_corridor","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; west-coast Gulf-route exposure."},
+    {"id":"edge_jamnagar_sikka_reliance","from_node_id":"port_jamnagar_sikka","to_node_id":"refinery_reliance_jamnagar","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_vadinar_nayara","from_node_id":"port_vadinar","to_node_id":"refinery_nayara_vadinar","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_new_mangalore_mrpl","from_node_id":"port_new_mangalore","to_node_id":"refinery_mrpl_mangalore","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_new_mangalore_spr_mangaluru","from_node_id":"port_new_mangalore","to_node_id":"spr_mangaluru","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.1-3.3."},
+    {"id":"edge_new_mangalore_spr_padur","from_node_id":"port_new_mangalore","to_node_id":"spr_padur","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.1-3.3."},
+    {"id":"edge_visakhapatnam_hpcl","from_node_id":"port_visakhapatnam","to_node_id":"refinery_hpcl_visakhapatnam","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_visakhapatnam_spr","from_node_id":"port_visakhapatnam","to_node_id":"spr_visakhapatnam","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.1-3.3."},
+    {"id":"edge_paradip_pipeline","from_node_id":"port_paradip","to_node_id":"pipeline_vizag_vijayawada","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3-3.4."},
+    {"id":"edge_kochi_bpcl","from_node_id":"port_kochi","to_node_id":"refinery_bpcl_kochi","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_mumbai_bpcl","from_node_id":"port_mumbai_jnpt","to_node_id":"refinery_bpcl_mumbai","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_mumbai_hpcl","from_node_id":"port_mumbai_jnpt","to_node_id":"refinery_hpcl_mumbai","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_chennai_cpcl","from_node_id":"port_chennai_ennore","to_node_id":"refinery_cpcl_manali","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_haldia_iocl","from_node_id":"port_haldia","to_node_id":"refinery_iocl_haldia","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
+    {"id":"edge_salaya_mathura_refinery","from_node_id":"pipeline_salaya_mathura","to_node_id":"refinery_iocl_mathura","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."},
+    {"id":"edge_kandla_bhatinda_panipat","from_node_id":"pipeline_kandla_bhatinda","to_node_id":"refinery_iocl_panipat","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."},
+    {"id":"edge_mumbai_pipeline_hpcl","from_node_id":"pipeline_mumbai_manmad_delhi","to_node_id":"refinery_hpcl_mumbai","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."}
   ]
 }

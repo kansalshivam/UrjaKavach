@@ -14,7 +14,7 @@ async def seed_foundation_data(session: AsyncSession) -> None:
     if node_exists:
         return
 
-    payload = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    payload = json.loads(SEED_PATH.read_text(encoding="utf-8-sig"))
     session.add_all(Node(**node) for node in payload["nodes"])
     await session.flush()
     session.add_all(Edge(**edge) for edge in payload["edges"])

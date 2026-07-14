@@ -35,3 +35,22 @@
 - `docker compose exec -T postgres psql -U urjakavach -d urjakavach -c "SELECT count(*) FROM nodes;"`: returned 12.
 - `GET /api/twin/nodes`: returned 12 node objects and 7 edge objects from the seed.
 - Phase 1 operational checks pass. The only unresolved verification caveat is that FINAL_ALIGNED_DOSSIER section 3 is absent from this workspace, so the required external node-count comparison remains unavailable.
+
+## 2026-07-14 - Phase 2 Started: GDELT Rate Limit Fired
+- Started Phase 2 after Phase 1 commits were pushed to `origin/main`.
+- First live GDELT DOC 2.0 probe for `"Strait of Hormuz"` returned GDELT's documented rate-limit message: `Please limit requests to one every 5 seconds...`.
+- This matches the Architecture Plan's documented GDELT soft ceiling and is treated as a documented external-source risk firing, not an application bug.
+- Immediate response: log the event, avoid rapid retries, and implement GDELT client defaults with conservative timeout and scheduler cadence.
+- Phase 2 schema blocker identified: HLD/LLD describes `gdelt_articles` and `price_points` staging tables, but Execution Plan section 6 locked schema does not include them. Per Agent Execution Rules sections 2B and 4, adding these tables requires explicit human confirmation before migration work.
+
+## 2026-07-14 - Phase 1 Dossier Verification Completed
+- User provided `C:\Users\shiva\Downloads\Energy_Supply_Chain_Resilience_FINAL_ALIGNED_DOSSIER.md`, the missing source document for the Phase 1 node-count caveat.
+- Copied the dossier into the repository as `Energy_Supply_Chain_Resilience_FINAL_ALIGNED_DOSSIER.md` so the seed-data source is durable.
+- Rebuilt `data/india_energy_nodes.json` from Dossier Part 3: operational and planned SPR nodes, listed refinery locations, listed major crude ports, named pipeline examples, and the Tier-1 Hormuz shipping corridor.
+- Updated seed loader to read `utf-8-sig` because PowerShell-authored JSON included a UTF-8 BOM that caused `json.loads` to fail in the API container.
+- Reset local Postgres volume with `docker compose down -v`, rebuilt with `docker compose up --build -d`, and confirmed startup succeeded.
+- `SELECT count(*) FROM nodes` returned 37: 5 SPR, 17 refinery, 9 port, 6 pipeline/corridor nodes.
+- `SELECT count(*) FROM edges` returned 19.
+- `GET /health` returned `status=ok`.
+- `GET /api/twin/nodes` returned 37 nodes.
+- Phase 1 is now complete against the available Dossier Part 3 source. Note: Dossier Part 3 is a categorical node list, not a single explicit numeric count; the implemented count is the direct enumeration of the named nodes in that section.

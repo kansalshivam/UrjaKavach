@@ -9,6 +9,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { CursorCard } from "../components/cards/CursorCard.tsx";
+import { Checkbox } from "../components/animate/Checkbox.tsx";
+import { SettingsIcon, RiskIcon } from "../components/icons/Iconsax.tsx";
 
 interface RiskScoreData {
   id: number;
@@ -69,6 +72,7 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCorridor, setSelectedCorridor] = useState<string>("hormuz");
+  const [outOfScopeStates, setOutOfScopeStates] = useState({ pattern: true, routing: false, spr: false });
 
   // Recompute node risks on weight changes (Part 3 Fix)
   useEffect(() => {
@@ -220,17 +224,14 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
           const isActive = scoreData.corridor === selectedCorridor;
           const dynamicScore = calculateDynamicScore(scoreData);
           const color = getRiskColor(dynamicScore);
+          const glowColor = color === "#ef4444" ? "rgba(239, 68, 68, 0.12)" : color === "#f59e0b" ? "rgba(245, 158, 11, 0.12)" : "rgba(16, 185, 129, 0.12)";
           return (
-            <div
+            <CursorCard
               key={scoreData.corridor}
-              className={`status-card cursor-pointer transition ${isActive ? "active-glow" : ""}`}
+              glowColor={glowColor}
               style={{
-                cursor: "pointer",
-                border: isActive ? `1px solid ${color}` : "1px solid #21262d",
+                border: isActive ? `1.5px solid ${color}` : "1px solid #21262d",
                 boxShadow: isActive ? `0 0 12px ${color}22` : "none",
-                background: "#161b22",
-                borderRadius: "8px",
-                padding: "16px",
               }}
               onClick={() => setSelectedCorridor(scoreData.corridor)}
             >
@@ -257,7 +258,7 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
               <div style={{ marginTop: "12px", fontSize: "0.78rem", color: "#8b949e" }}>
                 Signals: GDELT, Price, AIS, OFAC
               </div>
-            </div>
+            </CursorCard>
           );
         })}
       </div>
@@ -428,15 +429,30 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
             </div>
 
             {/* Out of Scope parameters */}
-            <div style={{ marginTop: "12px" }}>
-              <span style={{ fontSize: "0.8rem", color: "#8b949e", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            <div style={{ marginTop: "14px", borderTop: "1px solid #21262d", paddingTop: "14px" }}>
+              <span style={{ fontSize: "0.8rem", color: "#8b949e", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "8px" }}>
                 Explicitly Out of Scope
               </span>
-              <ul style={{ margin: "6px 0 0", paddingLeft: "16px", fontSize: "0.78rem", color: "#8b949e", lineHeight: "1.4" }}>
-                <li>Historical pattern matching (pre-2026 baseline logic error)</li>
-                <li>Advanced routing optimization layer</li>
-                <li>Strategic Petroleum Reserve (SPR) procurement execution layer</li>
-              </ul>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "6px" }}>
+                <Checkbox
+                  id="checkbox-pattern"
+                  checked={outOfScopeStates.pattern}
+                  onCheckedChange={(checked) => setOutOfScopeStates({ ...outOfScopeStates, pattern: checked })}
+                  label="Historical pattern matching (pre-2026 baseline logic error)"
+                />
+                <Checkbox
+                  id="checkbox-routing"
+                  checked={outOfScopeStates.routing}
+                  onCheckedChange={(checked) => setOutOfScopeStates({ ...outOfScopeStates, routing: checked })}
+                  label="Advanced routing optimization layer"
+                />
+                <Checkbox
+                  id="checkbox-spr"
+                  checked={outOfScopeStates.spr}
+                  onCheckedChange={(checked) => setOutOfScopeStates({ ...outOfScopeStates, spr: checked })}
+                  label="Strategic Petroleum Reserve (SPR) procurement execution layer"
+                />
+              </div>
             </div>
           </div>
         </div>

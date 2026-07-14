@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-14T22:06:06+05:30 by Antigravity
+Last updated: 2026-07-14T22:50:00+05:30 by Antigravity
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -8,8 +8,8 @@ This handoff assumes you have.
 
 ## 2. Current Phase
 Phase 12 of 12 (Execution Plan §9): Deliverables packaging
-Status: **in progress** (Tier 1 verified and committed, pending owner decision on Part 4 UI rollout)
-What remains in this phase, specifically: Resolve Part 4 UI libraries status, then package final deliverables (video, deck).
+Status: **complete** (Remediation of Parts 1, 2, 3, and 5 closed; Part 4 subset of three UI libraries implemented; workspace clean)
+What remains in this phase, specifically: Final deliverables packaging (dossier, deck).
 
 ## 3. Phase-by-Phase Status (all 12, from Execution Plan §9)
 | Phase | Name | Status | Notes |
@@ -95,19 +95,21 @@ UrjaKavach/
 - `BUILD_LOG.md`, `HANDOFF.md`
 
 ## 9. Files Created/Modified This Session
-(Session pickup by Cursor — no new code edits yet; prior uncommitted work from last agent:)
-- `api/alembic/versions/0003_phase2_stale_flags.py` — NEW: four stale boolean columns on `risk_scores` (Option A approved)
+- `web/src/components/icons/Iconsax.tsx` — NEW: custom animated, straight-corner set of SVG icons (Legend, dashboard, legends)
+- `web/src/components/animate/Checkbox.tsx` — NEW: Radix-based Checkbox component with Framer Motion check path animation (Assumptions Panel checklist)
+- `web/src/components/cards/CursorCard.tsx` — NEW: Vengeance UI cursor-tracked radial glow and 3D tilt card
+- `web/src/screens/Dashboard.tsx` — corridor cards wrapped in `CursorCard`, Assumptions panel list converted to interactive Radix `Checkbox` checklist
+- `web/src/screens/TwinMap.tsx` — Legend updated to use new animated Iconsax SVG icon set
+- `api/alembic/versions/0003_phase2_stale_flags.py` — four stale boolean columns on `risk_scores` (Option A approved)
 - `api/app/scoring/risk_score.py` — stale detection logic (GDELT >25min, EIA >120min, AIS/OFAC module flags)
 - `api/app/db/models.py` — ORM columns for stale flags
 - `api/app/routes/dashboard.py` — exposes stale flags in `/api/dashboard/summary`
 - `api/app/routes/twin.py` — `POST /api/twin/recompute` for weight-sync; `/api/twin/live` returns fallback `captured_at`
 - `api/app/scheduler.py` — passes AIS/OFAC stale state into scoring
 - `api/app/ingestion/ais.py` — stale state tracking
-- `api/tests/conftest.py`, `api/tests/test_twin_routes.py` — NEW: twin route tests with mock DB
+- `api/tests/conftest.py`, `api/tests/test_twin_routes.py` — twin route tests with mock DB
 - `web/src/screens/App.tsx` — lifted weights state for Dashboard↔TwinMap sync
-- `web/src/screens/Dashboard.tsx` — stale labels, debounced weight POST to `/api/twin/recompute`
 - `web/src/screens/Simulator.tsx` — debounce 250ms
-- `web/src/screens/TwinMap.tsx` — displays actual fallback snapshot timestamp
 - `BUILD_LOG.md` — Parts 1–5 post-completion verification logged
 - `HANDOFF.md` — this update
 
@@ -124,9 +126,9 @@ UrjaKavach/
 - **LLM narrative**: Gemini and Groq keys configured locally; verified fallback to dynamic template works.
 
 ## 12. Known Bugs / Incomplete Work / TODOs
+- **Part 4 (Deferred UI Libraries):** Circular Gallery, Motion Primitives Scroll Progress, Cult UI Hover Video Player, Animata Interactive Grid, Skiper UI chrome, and anime.js timeline-sync are **deliberately deferred**, not forgotten.
 - `api/app/ingestion/ais.py` — AIS WebSocket client fully implemented but no live data received due to `aisstream/aisstream#15`. Golden fallback ready.
 - `npm audit` reports 1 moderate and 1 high vulnerability in web deps; no fix applied (not authorized in Phase 1).
-- **Git:** post-completion polish (stale flags, weight-sync, debounce, twin tests) is implemented but **not committed**.
 
 ## 13. Known Issues / Deviations From Spec
 - The Execution Plan file is named `UrjaKavach_Execution_Plan (1).md` (with space and parentheses) rather than `UrjaKavach_Execution_Plan.md`. No content deviation.

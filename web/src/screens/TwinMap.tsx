@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { SpriteIcon, RefineryIcon, PortIcon, PipelineIcon } from "../components/icons/Iconsax.tsx";
 
 interface NodeData {
   id: string;
@@ -221,20 +222,20 @@ export function TwinMap({ customNodeRisks }: TwinMapProps) {
         {/* Map Legend */}
         <div className="legend-card">
           <h3>Network Legend</h3>
-          <div className="legend-item">
-            <span className="dot spr" />
+          <div className="legend-item" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <SpriteIcon size={16} color="#38bdf8" />
             <span>SPR (Strategic Petroleum Reserve)</span>
           </div>
-          <div className="legend-item">
-            <span className="dot refinery" />
+          <div className="legend-item" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <RefineryIcon size={16} color="#a855f7" />
             <span>Refinery</span>
           </div>
-          <div className="legend-item">
-            <span className="dot port" />
+          <div className="legend-item" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <PortIcon size={16} color="#10b981" />
             <span>Crude Import Port</span>
           </div>
-          <div className="legend-item">
-            <span className="dot pipeline" />
+          <div className="legend-item" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <PipelineIcon size={16} color="#8b949e" />
             <span>Pipeline Node / Shipping Corridor</span>
           </div>
         </div>

@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import GdeltArticle, PricePoint
+from app.db.models import AisSnapshot, GdeltArticle, PricePoint
 from app.ingestion.eia import EiaPricePoint
 from app.ingestion.gdelt import GdeltArticle as FetchedGdeltArticle
 
@@ -70,3 +70,20 @@ async def store_price_points(session: AsyncSession, source: str, points: list[Ei
     result = await session.execute(statement)
     await session.commit()
     return result.rowcount or 0
+
+
+async def store_ais_snapshot(
+    session: AsyncSession,
+    bounding_box: str,
+    vessel_count: int,
+    raw_payload_path: str | None,
+) -> AisSnapshot:
+    snapshot = AisSnapshot(
+        bounding_box=bounding_box,
+        vessel_count=vessel_count,
+        raw_payload_path=raw_payload_path,
+    )
+    session.add(snapshot)
+    await session.commit()
+    await session.refresh(snapshot)
+    return snapshot

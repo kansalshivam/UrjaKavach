@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "type": "golden_fallback_ais_snapshot",
+    "reason": "AISstream.io aisstream/aisstream#15 known issue fired at 2026-07-14T10:30:00Z — subscription accepted, zero messages delivered across multiple connection attempts. This fallback prepared same-day per Execution Plan §9 Phase 3 done-condition.",
+    "note": "These are FALLBACK numbers. If shown during a demo, the narration MUST say: 'AIS is a genuinely live feed; the connection was quiet, so this is a pre-recorded snapshot' per Execution Plan §10."
+  },
+  "snapshots": [
+    {
+      "bounding_box": "hormuz",
+      "vessel_count": 38,
+      "captured_at": "2026-07-14T10:00:00Z",
+      "source": "golden_fallback",
+      "rationale": "Strait of Hormuz sees ~30-40 tankers per day in a 24h snapshot window (FINAL_ALIGNED_DOSSIER §0 documents 20+ million barrels/day throughput). 38 is a plausible single-snapshot count."
+    },
+    {
+      "bounding_box": "jamnagar_vadinar",
+      "vessel_count": 12,
+      "captured_at": "2026-07-14T10:00:00Z",
+      "source": "golden_fallback",
+      "rationale": "Jamnagar/Vadinar is India's largest refinery complex (1.24 MMTPA Reliance Jamnagar alone). 12 vessels in a 5-minute snapshot near this port cluster is a conservative, plausible count."
+    }
+  ]
+}

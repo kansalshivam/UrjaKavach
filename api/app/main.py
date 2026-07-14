@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+import asyncio
 
 from fastapi import FastAPI
 
 from app.db.session import SessionLocal
+from app.ingestion.ais import run_ais_stream
 from app.routes import dashboard, twin
 from app.scheduler import build_scheduler
 from app.seed import seed_foundation_data
@@ -15,9 +17,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         await seed_foundation_data(session)
     scheduler = build_scheduler()
     scheduler.start()
+    ais_task = asyncio.create_task(run_ais_stream(SessionLocal))
     try:
         yield
     finally:
+        ais_task.cancel()
         scheduler.shutdown(wait=False)
 
 

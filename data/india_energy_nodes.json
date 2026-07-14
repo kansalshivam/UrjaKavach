@@ -1,0 +1,182 @@
+{
+  "nodes": [
+    {
+      "id": "corridor_hormuz",
+      "node_type": "pipeline_segment",
+      "name": "Strait of Hormuz Corridor",
+      "lat": 26.5667,
+      "lon": 56.25,
+      "capacity_value": null,
+      "capacity_unit": null,
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "port_jamnagar_vadinar",
+      "node_type": "port",
+      "name": "Jamnagar / Vadinar Crude Port Cluster",
+      "lat": 22.47,
+      "lon": 69.68,
+      "capacity_value": null,
+      "capacity_unit": null,
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "port_mumbai",
+      "node_type": "port",
+      "name": "Mumbai Port",
+      "lat": 18.95,
+      "lon": 72.84,
+      "capacity_value": null,
+      "capacity_unit": null,
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "port_mangalore",
+      "node_type": "port",
+      "name": "New Mangalore Port",
+      "lat": 12.93,
+      "lon": 74.82,
+      "capacity_value": null,
+      "capacity_unit": null,
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "port_paradip",
+      "node_type": "port",
+      "name": "Paradip Port",
+      "lat": 20.27,
+      "lon": 86.67,
+      "capacity_value": null,
+      "capacity_unit": null,
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "spr_visakhapatnam",
+      "node_type": "spr",
+      "name": "ISPRL Visakhapatnam SPR",
+      "lat": 17.69,
+      "lon": 83.22,
+      "capacity_value": 1.33,
+      "capacity_unit": "MMT",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "spr_mangalore",
+      "node_type": "spr",
+      "name": "ISPRL Mangalore SPR",
+      "lat": 12.91,
+      "lon": 74.86,
+      "capacity_value": 1.5,
+      "capacity_unit": "MMT",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "spr_padur",
+      "node_type": "spr",
+      "name": "ISPRL Padur SPR",
+      "lat": 13.08,
+      "lon": 74.78,
+      "capacity_value": 2.5,
+      "capacity_unit": "MMT",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "refinery_jamnagar",
+      "node_type": "refinery",
+      "name": "Jamnagar Refinery Complex",
+      "lat": 22.35,
+      "lon": 69.66,
+      "capacity_value": null,
+      "capacity_unit": "MMT/year",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "refinery_vadinar",
+      "node_type": "refinery",
+      "name": "Vadinar Refinery",
+      "lat": 22.42,
+      "lon": 69.71,
+      "capacity_value": null,
+      "capacity_unit": "MMT/year",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "refinery_mumbai",
+      "node_type": "refinery",
+      "name": "Mumbai Refinery Cluster",
+      "lat": 19.02,
+      "lon": 72.9,
+      "capacity_value": null,
+      "capacity_unit": "MMT/year",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    },
+    {
+      "id": "refinery_paradip",
+      "node_type": "refinery",
+      "name": "Paradip Refinery",
+      "lat": 20.31,
+      "lon": 86.61,
+      "capacity_value": null,
+      "capacity_unit": "MMT/year",
+      "source_note": "FINAL_ALIGNED_DOSSIER section 3 referenced by Execution Plan; local dossier file not present in workspace."
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_hormuz_jamnagar_vadinar",
+      "from_node_id": "corridor_hormuz",
+      "to_node_id": "port_jamnagar_vadinar",
+      "edge_type": "shipping_corridor",
+      "capacity_value": null,
+      "source_note": "Execution Plan Tier 1 Hormuz-to-India corridor; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    },
+    {
+      "id": "edge_jamnagar_port_refinery",
+      "from_node_id": "port_jamnagar_vadinar",
+      "to_node_id": "refinery_jamnagar",
+      "edge_type": "pipeline",
+      "capacity_value": null,
+      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    },
+    {
+      "id": "edge_vadinar_port_refinery",
+      "from_node_id": "port_jamnagar_vadinar",
+      "to_node_id": "refinery_vadinar",
+      "edge_type": "pipeline",
+      "capacity_value": null,
+      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    },
+    {
+      "id": "edge_mangalore_port_spr",
+      "from_node_id": "port_mangalore",
+      "to_node_id": "spr_mangalore",
+      "edge_type": "pipeline",
+      "capacity_value": null,
+      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    },
+    {
+      "id": "edge_mangalore_port_padur",
+      "from_node_id": "port_mangalore",
+      "to_node_id": "spr_padur",
+      "edge_type": "pipeline",
+      "capacity_value": null,
+      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    },
+    {
+      "id": "edge_paradip_port_refinery",
+      "from_node_id": "port_paradip",
+      "to_node_id": "refinery_paradip",
+      "edge_type": "pipeline",
+      "capacity_value": null,
+      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    },
+    {
+      "id": "edge_mumbai_port_refinery",
+      "from_node_id": "port_mumbai",
+      "to_node_id": "refinery_mumbai",
+      "edge_type": "pipeline",
+      "capacity_value": null,
+      "source_note": "Execution Plan static node graph seed; verify against FINAL_ALIGNED_DOSSIER section 3 when available."
+    }
+  ]
+}

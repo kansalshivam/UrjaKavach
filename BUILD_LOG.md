@@ -54,3 +54,22 @@
 - `GET /health` returned `status=ok`.
 - `GET /api/twin/nodes` returned 37 nodes.
 - Phase 1 is now complete against the available Dossier Part 3 source. Note: Dossier Part 3 is a categorical node list, not a single explicit numeric count; the implemented count is the direct enumeration of the named nodes in that section.
+
+## 2026-07-14 - Phase 2 Persistence Implemented
+- User said `continue`; treated as explicit approval to resolve the Phase 2 schema escalation for HLD/LLD-required staging tables.
+- Added Alembic migration `0002_phase2_ingestion_staging` creating `gdelt_articles` and `price_points`.
+- Added SQLAlchemy models for `GdeltArticle` and `PricePoint`.
+- Added ingestion repository helpers using PostgreSQL upserts/deduplication.
+- Wired FastAPI lifespan to start/shutdown an in-process APScheduler, matching the Architecture Plan.
+- Scheduler jobs now poll GDELT every 15 minutes and EIA hourly; jobs write to staging tables when source calls succeed.
+- Added conservative 6-second pause between GDELT corridor queries inside one poll to respect GDELT's documented limit.
+- `python -m py_compile ...`: passed for updated Phase 2 Python files.
+- `docker compose up --build -d`: succeeded.
+- Alembic upgraded to `0002_phase2_ingestion_staging`.
+- `GET /health`: returned `status=ok`.
+- `SELECT version_num FROM alembic_version`: returned `0002_phase2_ingestion_staging`.
+- `SELECT count(*) FROM gdelt_articles`: 0.
+- `SELECT count(*) FROM price_points`: 0.
+- GDELT live verification retried after a 65-second cooldown; source still returned HTTP 429 Too Many Requests with the documented rate-limit message.
+- EIA live verification remains blocked because local `.env` does not contain `EIA_API_KEY`.
+- Phase 2 implementation infrastructure is in place, but Phase 2 is not verified-done because 5 live GDELT titles and 5 live EIA data points have not been captured.

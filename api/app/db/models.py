@@ -1,6 +1,6 @@
 ﻿from datetime import datetime
 
-from sqlalchemy import DateTime, Double, ForeignKey, Integer, Text, func
+from sqlalchemy import DateTime, Double, ForeignKey, Integer, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -59,6 +59,35 @@ class RiskScore(Base):
     component_ais_deviation: Mapped[float | None] = mapped_column(Double)
     component_sanctions_flag: Mapped[float | None] = mapped_column(Double)
     weights_used: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+
+class GdeltArticle(Base):
+    __tablename__ = "gdelt_articles"
+    __table_args__ = (UniqueConstraint("url", name="uq_gdelt_articles_url"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    corridor: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    query: Mapped[str] = mapped_column(Text, nullable=False)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    url: Mapped[str] = mapped_column(Text, nullable=False)
+    seendate: Mapped[str | None] = mapped_column(Text)
+    domain: Mapped[str | None] = mapped_column(Text)
+    language: Mapped[str | None] = mapped_column(Text)
+    source_country: Mapped[str | None] = mapped_column(Text)
+
+
+class PricePoint(Base):
+    __tablename__ = "price_points"
+    __table_args__ = (UniqueConstraint("series", "period", name="uq_price_points_series_period"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    source: Mapped[str] = mapped_column(Text, nullable=False)
+    series: Mapped[str] = mapped_column(Text, nullable=False)
+    period: Mapped[str] = mapped_column(Text, nullable=False)
+    value: Mapped[float | None] = mapped_column(Double)
+    units: Mapped[str | None] = mapped_column(Text)
 
 
 class AisSnapshot(Base):

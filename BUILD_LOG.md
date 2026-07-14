@@ -273,3 +273,18 @@
   - *Result:* The official `iconsax` npm package implements a native HTML Custom Element (`<iconsax-icon>`) that resolves and fetches 10+ MB of JSON icon asset categories dynamically at runtime (via `fetch(new URL('./data/category.json', import.meta.url))`). In our Vite + TypeScript configuration, this causes blocking constraints: (a) absence of TypeScript declarations (`.d.ts`) causes import errors, (b) React JSX parser throws element type mismatches since it's unregistered in `JSX.IntrinsicElements`, and (c) Vite does not bundle/copy the dynamic chunked JSON files at compile time, leading to runtime 404s.
   - *Fallback Sourcing:* Built a custom React-native equivalent set ([Iconsax.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/icons/Iconsax.tsx)) containing clean straight-corner geometric SVG paths with CSS-transition micro-animations to satisfy zero-compile-error, network-independent requirements.
 - **Status: CLOSED (Custom equivalents honestly labeled).**
+
+## 2026-07-14 - Post-Audit Remediation (P0/P1/P2 fixes)
+- **OFAC Sanctions Ingestion Blocked (P0):**
+  - *Fix:* Updated `OFAC_SDN_URL` to `https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV` in `ofac.py`, added a browser-style `User-Agent` header, and configured `follow_redirects=True` inside `httpx.AsyncClient.get`.
+  - *Verification:* Ran live container execution task and successfully fetched and parsed **1,577 Iran sanctions entry IDs** with no 403 Forbidden issues.
+- **Weight Validation Bypass in /api/twin/recompute (P1):**
+  - *Fix:* Integrated a `@model_validator(mode="after")` check in `RecomputeWeightsRequest` (`twin.py`) to assert `abs(total_weights - 1.0) < 1e-6`.
+  - *Verification:* Added unit test `test_twin_recompute_invalid_weights` in `test_twin_routes.py` asserting that invalid weight payloads (e.g. summing to 2.0) are rejected with a `422 Unprocessable Entity` status.
+- **Missing Single-Column Table Indices (P2):**
+  - *Fix:* Declared all composite indices explicitly inside model class `__table_args__` in `models.py` (preventing Alembic auto-drops), and generated migration `0004_single_column_indices.py` on the host using `script.py.mako`.
+  - *Verification:* Upgraded head (`alembic upgrade head`) successfully; ran `\d gdelt_articles` and `\d risk_scores` inside the Postgres container, confirming both the single-column and composite indices exist.
+- **Full Verification Suite:**
+  - `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 1.46s (all routes, scoring, and weights verified).
+  - `docker compose exec -T web npm run build` → **success**, zero TS errors, 877 modules.
+

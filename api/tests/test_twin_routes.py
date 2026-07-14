@@ -65,3 +65,18 @@ async def test_twin_recompute():
     data = response.json()
     assert "node_risks" in data
     assert "corridor_risk" in data
+
+
+@pytest.mark.anyio
+async def test_twin_recompute_invalid_weights():
+    payload = {
+        "gdelt_volume": 0.5,
+        "price_volatility": 0.5,
+        "ais_deviation": 0.5,
+        "sanctions_flag": 0.5
+    }
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post("/api/twin/recompute", json=payload)
+    assert response.status_code == 422
+    assert "value_error" in response.text
+

@@ -20,7 +20,12 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-OFAC_SDN_URL = "https://sanctionslist.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV"
+OFAC_SDN_URL = "https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV"
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/126.0.0.0 Safari/537.36"
+)
 OFAC_CACHE_DIR = Path("/tmp/urja_kavach_ofac")
 IRAN_PROGRAM_KEYWORDS = {"IRAN", "IRAN-HR", "IRAN-TRA", "IRAN-EO13846"}
 
@@ -50,8 +55,9 @@ def _extract_iran_entry_ids(csv_text: str) -> set[str]:
 
 async def fetch_ofac_sdn() -> str:
     """Download the current OFAC SDN CSV."""
+    headers = {"User-Agent": USER_AGENT}
     async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.get(OFAC_SDN_URL)
+        resp = await client.get(OFAC_SDN_URL, headers=headers, follow_redirects=True)
         resp.raise_for_status()
     return resp.text
 

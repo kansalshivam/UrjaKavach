@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-14T22:50:00+05:30 by Antigravity
+Last updated: 2026-07-14T23:55:00+05:30 by Antigravity
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -17,7 +17,7 @@ What remains in this phase, specifically: Final deliverables packaging (dossier,
 | 1 | Foundation | complete | Docker/API/web/db verified; 37 Dossier Part 3 nodes, 19 edges seeded. `SELECT count(*) FROM nodes` = 37. |
 | 2 | GDELT + EIA ingestion | **complete** | GDELT recovered from 429; 25 real articles persisted. EIA: 5 real Brent RBRTE prices persisted. Both verified. |
 | 3 | AISstream.io live overlay | **complete (known-issue documented)** | Code complete. `FLAG_RISK_KNOWN_ISSUE` fired; golden fallback prepared; connection timeout added. AIS task runs in background. |
-| 4 | Risk scoring engine | **complete** | Corrected 4-term formula implemented and verified. Daily OFAC CSV diffing, GDELT z-scores, and price/AIS deviation scoring run on schedule. pytest suite passed. |
+| 4 | Risk scoring engine | **complete** | Corrected 4-term formula implemented and verified. Daily OFAC CSV diffing fixed and verified live (1577 records parsed), GDELT z-scores, and price/AIS deviation scoring run on schedule. pytest suite passed. |
 | 5 | Digital Twin Map | **complete** | React Leaflet map displaying 37 seeded nodes, edges, hover details, and live AIS count overlays. Coordinates spot-checked and verified. |
 | 6 | Command Dashboard | **complete** | Dashboard endpoint implemented. React screen displaying risk cards, Recharts trend graph, and news feeds fully functional. Stale indicators on component bars. |
 | 7 | Scenario Simulator | **complete** | Calibrated linear volume shortfall and SPR cover depletion math verified. POST `/api/scenario/run` and slider screen working. Debounce set to 250ms (HLD §2.11). |
@@ -101,13 +101,16 @@ UrjaKavach/
 - `web/src/screens/Dashboard.tsx` — corridor cards wrapped in `CursorCard`, Assumptions panel list converted to interactive Radix `Checkbox` checklist
 - `web/src/screens/TwinMap.tsx` — Legend updated to use new animated Iconsax SVG icon set
 - `api/alembic/versions/0003_phase2_stale_flags.py` — four stale boolean columns on `risk_scores` (Option A approved)
+- `api/alembic/versions/0004_single_column_indices.py` — NEW: Alembic migration adding missing single-column table indexes (P2 fix)
+- `api/alembic/script.py.mako` — NEW: Alembic revision template file to support container autogeneration
 - `api/app/scoring/risk_score.py` — stale detection logic (GDELT >25min, EIA >120min, AIS/OFAC module flags)
-- `api/app/db/models.py` — ORM columns for stale flags
+- `api/app/db/models.py` — ORM columns for stale flags and composite index mapping
 - `api/app/routes/dashboard.py` — exposes stale flags in `/api/dashboard/summary`
-- `api/app/routes/twin.py` — `POST /api/twin/recompute` for weight-sync; `/api/twin/live` returns fallback `captured_at`
+- `api/app/routes/twin.py` — `POST /api/twin/recompute` for weight-sync with @model_validator check; `/api/twin/live` returns fallback `captured_at`
 - `api/app/scheduler.py` — passes AIS/OFAC stale state into scoring
 - `api/app/ingestion/ais.py` — stale state tracking
-- `api/tests/conftest.py`, `api/tests/test_twin_routes.py` — twin route tests with mock DB
+- `api/app/ingestion/ofac.py` — Updated SDN URL, User-Agent, and redirects (P0 live connection fix)
+- `api/tests/conftest.py`, `api/tests/test_twin_routes.py` — twin route tests with mock DB and recompute validation check
 - `web/src/screens/App.tsx` — lifted weights state for Dashboard↔TwinMap sync
 - `web/src/screens/Simulator.tsx` — debounce 250ms
 - `BUILD_LOG.md` — Parts 1–5 post-completion verification logged
@@ -115,7 +118,7 @@ UrjaKavach/
 
 ## 10. Commands Run This Session And Their Results
 - `docker compose ps` → all 3 services up (api :8000, postgres :5433, web :5173)
-- `docker compose exec -T api python -m pytest tests/ -v` → **16 passed** in 2.88s (includes twin_routes tests)
+- `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 1.46s (includes new invalid weights route validation test)
 - `docker compose exec -T web npm run build` → **success**, zero TypeScript errors
 
 ## 11. Live-Data Verification Log (specific to this project's four external sources)

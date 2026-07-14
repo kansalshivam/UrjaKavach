@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Double, ForeignKey, Integer, Text, UniqueConstraint, func, Boolean
+from sqlalchemy import DateTime, Double, ForeignKey, Integer, Text, UniqueConstraint, Index, func, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -49,6 +49,7 @@ class Edge(Base):
 
 class RiskScore(Base):
     __tablename__ = "risk_scores"
+    __table_args__ = (Index("ix_risk_scores_corridor_computed_at", "corridor", "computed_at"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     corridor: Mapped[str] = mapped_column(Text, nullable=False, index=True)
@@ -67,7 +68,10 @@ class RiskScore(Base):
 
 class GdeltArticle(Base):
     __tablename__ = "gdelt_articles"
-    __table_args__ = (UniqueConstraint("url", name="uq_gdelt_articles_url"),)
+    __table_args__ = (
+        UniqueConstraint("url", name="uq_gdelt_articles_url"),
+        Index("ix_gdelt_articles_corridor_fetched_at", "corridor", "fetched_at"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     corridor: Mapped[str] = mapped_column(Text, nullable=False, index=True)
@@ -83,7 +87,10 @@ class GdeltArticle(Base):
 
 class PricePoint(Base):
     __tablename__ = "price_points"
-    __table_args__ = (UniqueConstraint("series", "period", name="uq_price_points_series_period"),)
+    __table_args__ = (
+        UniqueConstraint("series", "period", name="uq_price_points_series_period"),
+        Index("ix_price_points_series_period", "series", "period"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
@@ -96,6 +103,7 @@ class PricePoint(Base):
 
 class AisSnapshot(Base):
     __tablename__ = "ais_snapshots"
+    __table_args__ = (Index("ix_ais_snapshots_bounding_box_captured_at", "bounding_box", "captured_at"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     captured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
@@ -115,6 +123,7 @@ class Scenario(Base):
 
 class ScenarioRun(Base):
     __tablename__ = "scenario_runs"
+    __table_args__ = (Index("ix_scenario_runs_scenario_id_run_at", "scenario_id", "run_at"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     scenario_id: Mapped[str] = mapped_column(Text, ForeignKey("scenarios.id"), nullable=False, index=True)

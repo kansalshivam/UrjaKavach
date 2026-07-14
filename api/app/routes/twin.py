@@ -99,13 +99,25 @@ async def twin_live(session: AsyncSession = Depends(get_session)) -> dict:
     }
 
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 class RecomputeWeightsRequest(BaseModel):
     gdelt_volume: float = Field(..., ge=0.0, le=1.0)
     price_volatility: float = Field(..., ge=0.0, le=1.0)
     ais_deviation: float = Field(..., ge=0.0, le=1.0)
     sanctions_flag: float = Field(..., ge=0.0, le=1.0)
+
+    @model_validator(mode="after")
+    def validate_weights_sum(self) -> "RecomputeWeightsRequest":
+        total = (
+            self.gdelt_volume +
+            self.price_volatility +
+            self.ais_deviation +
+            self.sanctions_flag
+        )
+        if abs(total - 1.0) >= 1e-6:
+            raise ValueError(f"Weights must sum to exactly 1.0 (got {total:.6f})")
+        return self
 
 
 @router.post("/recompute")

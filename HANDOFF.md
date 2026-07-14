@@ -8,8 +8,8 @@ This handoff assumes you have.
 
 ## 2. Current Phase
 Phase 12 of 12 (Execution Plan §9): Deliverables packaging
-Status: **complete** (Tier 1 verified); post-completion polish (stale flags, weight-sync, debounce, AIS timestamp) implemented and logged in BUILD_LOG.md but **not yet committed to git**
-What remains in this phase, specifically: Commit the uncommitted working-tree changes if the owner wants them packaged; optionally record demo video / finalize deck per Execution Plan §8 checklist.
+Status: **complete** (Tier 1 verified and committed to git)
+What remains in this phase, specifically: Optionally record demo video / finalize deck per Execution Plan §8 checklist.
 
 ## 3. Phase-by-Phase Status (all 12, from Execution Plan §9)
 | Phase | Name | Status | Notes |

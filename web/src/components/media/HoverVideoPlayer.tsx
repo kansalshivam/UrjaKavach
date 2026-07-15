@@ -13,6 +13,7 @@ export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata
 
   return (
     <div
+      data-testid="hover-video-player"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{

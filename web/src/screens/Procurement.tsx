@@ -86,9 +86,9 @@ export function Procurement() {
           }}
         >
           <strong style={{ color: "#f59e0b", display: "block", marginBottom: "4px" }}>
-            2026 Crisis Benchmark Alignment
+            2026 Crisis Benchmark Alignment (Dossier Line 49)
           </strong>
-          During the worst weeks of the 2026 disruption, India's refiners pivoted to non-Hormuz sourcing, raising its import share from <strong>~55% to ~70%</strong> within weeks by drawing heavily from West Africa, the Americas, and Russia.
+          During the worst weeks of the 2026 disruption, India's refiners pivoted to alternative sourcing routes, successfully raising the non-Hormuz sourcing share of imports from <strong>~55% to ~70%</strong> within weeks by drawing heavily from West Africa, the Americas, and Russia.
         </div>
 
         <div

@@ -12,6 +12,7 @@ import {
 import { CursorCard } from "../components/cards/CursorCard";
 import { Checkbox } from "../components/animate/Checkbox";
 import { SettingsIcon, RiskIcon } from "../components/icons/Iconsax";
+import { HoverVideoPlayer } from "../components/media/HoverVideoPlayer";
 
 interface RiskScoreData {
   id: number;
@@ -340,33 +341,29 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
               {data.recent_articles.length > 0 ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {data.recent_articles.map((art) => (
-                    <a
+                    <div
                       key={art.id}
-                      href={art.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="feed-item"
                       style={{
-                        display: "block",
-                        padding: "10px",
-                        background: "#0d1117",
-                        border: "1px solid #21262d",
-                        borderRadius: "6px",
-                        textDecoration: "none",
-                        color: "#c9d1d9",
-                        transition: "border 0.2s",
+                        height: "120px",
+                        position: "relative",
+                        marginBottom: "6px",
                       }}
                     >
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "#8b949e", marginBottom: "4px" }}>
-                        <span style={{ textTransform: "uppercase", color: "#38bdf8", fontWeight: 600 }}>
-                          {art.domain}
-                        </span>
-                        <span>{getCorridorLabel(art.corridor)}</span>
-                      </div>
-                      <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 500, lineHeight: "1.4" }}>
-                        {art.title}
-                      </p>
-                    </a>
+                      <HoverVideoPlayer
+                        thumbnailUrl="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80"
+                        overlayText={`Intel Report: ${art.domain}`}
+                        metadata={
+                          <div style={{ padding: "4px 8px" }}>
+                            <p style={{ margin: "0 0 4px", fontWeight: 600, fontSize: "0.85rem", color: "#f8fafc", lineHeight: "1.3" }}>
+                              {art.title}
+                            </p>
+                            <span style={{ fontSize: "0.7rem", color: "#38bdf8", textTransform: "uppercase", fontWeight: 700 }}>
+                              {getCorridorLabel(art.corridor)}
+                            </span>
+                          </div>
+                        }
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (

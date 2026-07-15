@@ -64,25 +64,25 @@ export function Landing({ onLogin }: LandingProps) {
         style={{ 
           position: "relative",
           zIndex: 10,
-          maxWidth: "1100px", 
+          maxWidth: "1360px", 
           width: "100%", 
           display: "grid", 
-          gridTemplateColumns: "1.2fr 0.8fr", 
-          gap: "50px", 
+          gridTemplateColumns: "1.25fr 0.75fr", 
+          gap: "80px", 
           alignItems: "center" 
         }}
       >
         
         {/* LEFT COLUMN: Framing, 3D Circular Gallery & Sync Scrubber */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
           <div>
-            <span style={{ fontSize: "0.75rem", background: "rgba(56, 189, 248, 0.1)", color: "#38bdf8", padding: "4px 10px", borderRadius: "9999px", fontWeight: 600, border: "1px solid rgba(56, 189, 248, 0.2)" }}>
+            <span style={{ fontSize: "0.85rem", background: "rgba(56, 189, 248, 0.1)", color: "#38bdf8", padding: "6px 12px", borderRadius: "9999px", fontWeight: 600, border: "1px solid rgba(56, 189, 248, 0.2)" }}>
               Ministry Control-Room View — Prototype
             </span>
-            <h1 style={{ fontSize: "2.75rem", fontWeight: 800, color: "#f1f5f9", margin: "16px 0 8px", letterSpacing: "-0.02em" }}>
+            <h1 style={{ fontSize: "3.75rem", fontWeight: 900, color: "#f8fafc", margin: "20px 0 12px", letterSpacing: "-0.03em", lineHeight: "1.1" }}>
               Urja Kavach
             </h1>
-            <p style={{ fontSize: "1rem", color: "#94a3b8", margin: 0, lineHeight: "1.6" }}>
+            <p style={{ fontSize: "1.2rem", color: "#cbd5e1", margin: 0, lineHeight: "1.6", maxWidth: "680px" }}>
               AI-Driven Energy Supply Chain Resilience Operations console for import-dependent economies.
             </p>
           </div>

@@ -56,6 +56,43 @@ const mockTwinLive = {
   ais_data: {}
 };
 
+const mockDashboardSummary = {
+  risk_scores: [
+    {
+      id: 1,
+      corridor: "hormuz",
+      computed_at: "2026-07-15T12:00:00Z",
+      score: 45.0,
+      component_gdelt_volume: 0.40,
+      component_price_volatility: 0.30,
+      component_ais_deviation: 0.50,
+      component_sanctions_flag: 0.10,
+      weights_used: {
+        gdelt_volume: 0.35,
+        price_volatility: 0.25,
+        ais_deviation: 0.30,
+        sanctions_flag: 0.10,
+      },
+      component_gdelt_stale: false,
+      component_price_stale: false,
+      component_ais_stale: false,
+      component_sanctions_stale: false,
+    }
+  ],
+  history: [],
+  recent_articles: [
+    {
+      id: 1,
+      corridor: "hormuz",
+      query: "Hormuz Strait crude",
+      title: "Middle East Tensions Surge as Tanker Deviates near Strait of Hormuz",
+      url: "https://www.reuters.com/business/energy/tanker-hormuz-disruption-2026",
+      seendate: "20260714T100000Z",
+      domain: "reuters.com",
+    }
+  ]
+};
+
 describe("UI/UX Libraries Active Invariant Verification Test", () => {
   beforeEach(() => {
     mockFetch.mockReset();
@@ -65,6 +102,9 @@ describe("UI/UX Libraries Active Invariant Verification Test", () => {
       }
       if (url.includes("/api/twin/live")) {
         return { ok: true, json: async () => mockTwinLive };
+      }
+      if (url.includes("/api/dashboard/summary")) {
+        return { ok: true, json: async () => mockDashboardSummary };
       }
       return { ok: false, status: 404 };
     });
@@ -141,5 +181,17 @@ describe("UI/UX Libraries Active Invariant Verification Test", () => {
 
     expect(mapTab.querySelector(".iconsax-icon")).toBeDefined();
     expect(simulatorTab.querySelector(".iconsax-icon")).toBeDefined();
+
+    // 9. Switch to Dashboard Tab and verify CursorCard, Checkbox, and GDELT HoverVideoPlayer
+    const dashboardTabBtn = screen.getByRole("button", { name: /Command Dashboard/i });
+    fireEvent.click(dashboardTabBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Operations Room")).toBeDefined();
+    });
+
+    // Verify GDELT Feed has HoverVideoPlayer components
+    const dashboardPlayers = screen.getAllByTestId("hover-video-player");
+    expect(dashboardPlayers.length).toBeGreaterThan(0);
   });
 });

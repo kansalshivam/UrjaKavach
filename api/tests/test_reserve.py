@@ -15,12 +15,12 @@ async def test_reserve_calculation_isprl_only():
     
     assert response.status_code == 200
     data = response.json()
-    assert data["isprl_available_barrels"] == 25004096.0
-    assert data["omc_available_barrels"] == 283800000.0
-    assert data["total_available_barrels"] == 25004096.0
+    assert data["isprl_available_barrels"] == 24716760.0
+    assert data["omc_available_barrels"] == 322500000.0
+    assert data["total_available_barrels"] == 24716760.0
     assert data["raw_shortfall_barrels_day"] == 1320000.0
     assert data["mitigated_shortfall_barrels_day"] == 660000.0
-    assert data["days_cover_remaining"] == 37.9
+    assert data["days_cover_remaining"] == 37.4
     assert len(data["caverns"]) == 3
     assert data["caverns"][0]["name"] == "Visakhapatnam"
 
@@ -37,6 +37,6 @@ async def test_reserve_calculation_both_buffers():
     
     assert response.status_code == 200
     data = response.json()
-    assert data["total_available_barrels"] == 25004096.0 + 283800000.0
+    assert data["total_available_barrels"] == 24716760.0 + 322500000.0
     assert data["mitigated_shortfall_barrels_day"] == 1320000.0
-    assert data["days_cover_remaining"] == round((25004096.0 + 283800000.0) / 1320000.0, 1)
+    assert data["days_cover_remaining"] == round((24716760.0 + 322500000.0) / 1320000.0, 1)

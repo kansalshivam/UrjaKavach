@@ -28,36 +28,42 @@ class ReserveCalculationResponse(BaseModel):
 
 @router.post("/calculate", response_model=ReserveCalculationResponse)
 def calculate_reserve_drawdown(req: ReserveCalculationRequest):
-    # Real Ground-Truth Data from Dossier:
-    # 1 MMT ~ 7.33 million barrels of crude oil.
+    # Real Ground-Truth Data from Dossier Part 0:
     # Total consumption ~ 5.0 million barrels / day.
     # Imports ~ 88% of consumption = 4.4 million barrels / day.
+    # Conversion rate: 1 MMT ~ 7.33 million barrels.
+    # IEA target: 90 days cover.
     bar_per_mmt = 7.33
+    total_consumption_bpd = 5000000.0
     total_imports_bpd = 4400000.0
 
-    # Caverns stock (March 2026 RTI disclosure: 64% average fill level)
+    # Dossier Part 0 (Line 21): Actual stock stood at ~3.372 MMT (approx 63.26% of 5.33 MMT capacity).
+    # Reconciled to sum up to exactly 3.372 MMT across caverns:
     caverns = [
-        CavernStatus(name="Visakhapatnam", capacity_mmt=1.33, fill_pct=64.0, current_stock_mmt=1.33 * 0.64),
-        CavernStatus(name="Mangaluru", capacity_mmt=1.50, fill_pct=64.0, current_stock_mmt=1.50 * 0.64),
-        CavernStatus(name="Padur", capacity_mmt=2.50, fill_pct=64.0, current_stock_mmt=2.50 * 0.64)
+        CavernStatus(name="Visakhapatnam", capacity_mmt=1.33, fill_pct=63.26, current_stock_mmt=0.8414),
+        CavernStatus(name="Mangaluru", capacity_mmt=1.50, fill_pct=63.26, current_stock_mmt=0.9490),
+        CavernStatus(name="Padur", capacity_mmt=2.50, fill_pct=63.26, current_stock_mmt=1.5816)
     ]
 
-    total_isprl_stock_mmt = sum(c.current_stock_mmt for c in caverns)
-    isprl_available_barrels = total_isprl_stock_mmt * bar_per_mmt * 1000000.0
+    total_isprl_stock_mmt = 3.372
+    isprl_available_barrels = total_isprl_stock_mmt * bar_per_mmt * 1000000.0  # Exactly 24,716,760 barrels
 
-    # OMC Commercial Buffer (64.5 days cover)
-    omc_available_barrels = 64.5 * total_imports_bpd
+    # OMC Commercial Buffer (64.5 days of national consumption cover, Dossier Line 21)
+    # Measured against total consumption (5.0M bpd): 64.5 * 5.0M = 322.5M barrels.
+    omc_available_barrels = 64.5 * total_consumption_bpd
 
-    # Shortfall calculations
+    # Shortfall calculations (shortfall is calculated against import requirement of 4.4M bpd)
     raw_shortfall_bpd = total_imports_bpd * (req.shortfall_pct / 100.0)
 
-    # Procurement Diversification mitigation (non-Hormuz share increase from 55% to 70% = 15% reduction in import shortfall risk)
+    # HEURISTIC MODELING ASSUMPTION: 
+    # We model the 15% non-Hormuz sourcing share increase (from 55% to 70%) as a direct 15% volume mitigation 
+    # of total imports (4.4M bpd * 0.15 = 660,000 bpd offset).
     mitigated_shortfall_bpd = raw_shortfall_bpd
     if req.use_diversification:
         mitigation_bpd = total_imports_bpd * 0.15
         mitigated_shortfall_bpd = max(0.0, raw_shortfall_bpd - mitigation_bpd)
 
-    # Reserves pool
+    # Reserves pool selection
     total_avail_barrels = 0.0
     if req.use_isprl:
         total_avail_barrels += isprl_available_barrels
@@ -68,7 +74,7 @@ def calculate_reserve_drawdown(req: ReserveCalculationRequest):
     if mitigated_shortfall_bpd > 0:
         days_cover = total_avail_barrels / mitigated_shortfall_bpd
     else:
-        days_cover = 365.0  # Cap display at 1 year / stable state
+        days_cover = 365.0  # Cap display at 365
 
     return ReserveCalculationResponse(
         isprl_available_barrels=round(isprl_available_barrels, 1),

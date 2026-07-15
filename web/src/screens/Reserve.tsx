@@ -137,6 +137,24 @@ export function Reserve() {
               label="Apply Sourcing Diversification"
             />
           </div>
+
+          <div
+            style={{
+              borderLeft: "4px solid #64748b",
+              background: "rgba(100, 116, 139, 0.05)",
+              padding: "12px 16px",
+              borderRadius: "0 8px 8px 0",
+              fontSize: "0.8rem",
+              color: "#94a3b8",
+              lineHeight: "1.4",
+              marginTop: "12px",
+            }}
+          >
+            <strong style={{ color: "#94a3b8", display: "block", marginBottom: "2px" }}>
+              Illustrative Heuristic Model Disclosure
+            </strong>
+            The 15.0% sourcing diversification mitigation is modeled as an illustrative 1:1 volume offset against daily import shortfall. OMC buffers are computed against the 5.0M bpd national consumption base to align with the IEA 74-day cover. Cavern capacities (Mangaluru: 1.5 MMT, Padur: 2.5 MMT, Visakhapatnam: 1.33 MMT) are adjusted to match the 3.372 MMT March 2026 RTI stock (~63.26% fill level).
+          </div>
         </div>
 
         {/* Results Panel */}

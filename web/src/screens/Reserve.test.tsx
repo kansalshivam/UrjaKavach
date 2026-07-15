@@ -8,32 +8,32 @@ const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 const mockDataFirstCall = {
-  isprl_available_barrels: 25004096.0,
-  omc_available_barrels: 283800000.0,
-  total_available_barrels: 25004096.0,
+  isprl_available_barrels: 24716760.0,
+  omc_available_barrels: 322500000.0,
+  total_available_barrels: 24716760.0,
   raw_shortfall_barrels_day: 1320000.0,
   mitigated_shortfall_barrels_day: 660000.0,
-  days_cover_remaining: 37.9,
+  days_cover_remaining: 37.4,
   iea_benchmark_days: 90.0,
   caverns: [
-    { name: "Visakhapatnam", capacity_mmt: 1.33, fill_pct: 64.0, current_stock_mmt: 0.8512 },
-    { name: "Mangaluru", capacity_mmt: 1.5, fill_pct: 64.0, current_stock_mmt: 0.96 },
-    { name: "Padur", capacity_mmt: 2.5, fill_pct: 64.0, current_stock_mmt: 1.6 }
+    { name: "Visakhapatnam", capacity_mmt: 1.33, fill_pct: 63.26, current_stock_mmt: 0.8414 },
+    { name: "Mangaluru", capacity_mmt: 1.5, fill_pct: 63.26, current_stock_mmt: 0.9490 },
+    { name: "Padur", capacity_mmt: 2.5, fill_pct: 63.26, current_stock_mmt: 1.5816 }
   ]
 };
 
 const mockDataSecondCall = {
-  isprl_available_barrels: 25004096.0,
-  omc_available_barrels: 283800000.0,
-  total_available_barrels: 25004096.0,
+  isprl_available_barrels: 24716760.0,
+  omc_available_barrels: 322500000.0,
+  total_available_barrels: 24716760.0,
   raw_shortfall_barrels_day: 2200000.0,
   mitigated_shortfall_barrels_day: 1540000.0,
-  days_cover_remaining: 16.2,
+  days_cover_remaining: 16.0,
   iea_benchmark_days: 90.0,
   caverns: [
-    { name: "Visakhapatnam", capacity_mmt: 1.33, fill_pct: 64.0, current_stock_mmt: 0.8512 },
-    { name: "Mangaluru", capacity_mmt: 1.5, fill_pct: 64.0, current_stock_mmt: 0.96 },
-    { name: "Padur", capacity_mmt: 2.5, fill_pct: 64.0, current_stock_mmt: 1.6 }
+    { name: "Visakhapatnam", capacity_mmt: 1.33, fill_pct: 63.26, current_stock_mmt: 0.8414 },
+    { name: "Mangaluru", capacity_mmt: 1.5, fill_pct: 63.26, current_stock_mmt: 0.9490 },
+    { name: "Padur", capacity_mmt: 2.5, fill_pct: 63.26, current_stock_mmt: 1.5816 }
   ]
 };
 
@@ -51,15 +51,15 @@ describe("Reserve Component DOM Render Test", () => {
       });
   });
 
-  it("renders planner controls, details table, and updates cover days from 37.9 to 16.2 on slider changes", async () => {
+  it("renders planner controls, details table, and updates cover days from 37.4 to 16.0 on slider changes", async () => {
     render(<Reserve />);
 
     // 1. Verify Initial Mount & API fetch
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
     expect(screen.getByText("Strategic Reserve Drawdown Planner")).toBeDefined();
     
-    // 2. Verify DOM renders the initial 37.9 Days metrics card
-    expect(screen.getByText("37.9 Days")).toBeDefined();
+    // 2. Verify DOM renders the initial 37.4 Days metrics card
+    expect(screen.getByText("37.4 Days")).toBeDefined();
     expect(screen.getByText("0.66M bpd")).toBeDefined();
 
     // 3. Verify Caverns table renders correctly with real data
@@ -81,10 +81,10 @@ describe("Reserve Component DOM Render Test", () => {
     expect(slider.value).toBe("50");
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
 
-    // 7. Verify DOM renders the updated 16.2 Days cover dynamically
+    // 7. Verify DOM renders the updated 16.0 Days cover dynamically
     await waitFor(() => {
-      expect(screen.getByText("16.2 Days")).toBeDefined();
+      expect(screen.getByText("16.0 Days")).toBeDefined();
     });
-    expect(screen.queryByText("37.9 Days")).toBeNull();
+    expect(screen.queryByText("37.4 Days")).toBeNull();
   });
 });

@@ -312,7 +312,9 @@
   - *Sourcing Attempt:* Searched for `skiper-ui` package in npm registry.
   - *Result:* Failed. `skiper-ui` is not a registered npm package (npm search returns no matches). It is a copy-paste styled Tailwind CSS components site.
   - *Substitute:* Built styled Tailwind CSS navigation bar / chrome in `App.tsx` and custom buttons, labeled.
-- **Bundle Metrics and Optimization Note:**
-  - *Metric:* The bundle size jumped from 877 modules to 1,243 modules, compiling to 872.49 KB JS (259.31 KB gzip) due to the addition of `animejs` and components support dependencies. 
-  - *Implication:* Stored as a checkable baseline warning in case the judge reviews page load metrics in browser DevTools.
+- **Cumulative Bundle Size Trend:**
+  - *Baseline (Zero-state):* 877 modules
+  - *UI Sourcing & animejs (Tier 1 completed):* 1,243 modules (872.49 KB JS, 259.31 KB gzip)
+  - *Sourcing Recommender (Tier 2 started):* 1,244 modules (884.24 KB JS, 263.00 KB gzip)
+  - *Implication:* Cumulative trend logged to monitor potential performance degradation.
 

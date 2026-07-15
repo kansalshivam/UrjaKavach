@@ -234,9 +234,9 @@ export function SourceLibrary() {
           }}
         >
           <div style={{ borderBottom: "1px solid #1e293b", paddingBottom: "12px" }}>
-            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>Source-Verified Q&A Client</h2>
+            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>Reference Model Q&A Client</h2>
             <p style={{ fontSize: "0.75rem", color: "#64748b", margin: "4px 0 0" }}>
-              Query the library to extract facts supported by dated government statements.
+              Query the specifications corpus to extract parameters and modeling references.
             </p>
           </div>
 

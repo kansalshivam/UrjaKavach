@@ -1,50 +1,47 @@
-// HONEST LABEL: Custom equivalent of Motion Primitives Scroll Progress. Developed utilizing native react scroll event listeners and state tracking since Motion Primitives is a copy-paste component without a CLI-installable registry entry.
-import React, { useEffect, useState } from "react";
+// REAL INTEGRATION: Motion Primitives Scroll Progress component.
+// Installed via npx motion-primitives add scroll-progress.
+// Adapted to use motion/react and standard inline CSS instead of external cn utilities.
+import React, { RefObject } from "react";
+import { motion, SpringOptions, useScroll, useSpring } from "motion/react";
 
-interface ScrollProgressProps {
-  targetRef?: React.RefObject<HTMLElement>;
-}
+export type ScrollProgressProps = {
+  springOptions?: SpringOptions;
+  containerRef?: RefObject<HTMLElement>;
+};
 
-export function ScrollProgress({ targetRef }: ScrollProgressProps) {
-  const [progress, setProgress] = useState(0);
+const DEFAULT_SPRING_OPTIONS: SpringOptions = {
+  stiffness: 200,
+  damping: 50,
+  restDelta: 0.001,
+};
 
-  useEffect(() => {
-    const handleScroll = () => {
-      let currentScroll = 0;
-      let totalScroll = 1;
+export function ScrollProgress({
+  springOptions,
+  containerRef,
+}: ScrollProgressProps) {
+  const { scrollYProgress } = useScroll({
+    container: containerRef,
+    layoutEffect: Boolean(containerRef?.current),
+  });
 
-      if (targetRef && targetRef.current) {
-        currentScroll = targetRef.current.scrollTop;
-        totalScroll = targetRef.current.scrollHeight - targetRef.current.clientHeight;
-      } else {
-        currentScroll = window.scrollY;
-        totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      }
-
-      const percentage = totalScroll > 0 ? (currentScroll / totalScroll) * 100 : 0;
-      setProgress(percentage);
-    };
-
-    const element = targetRef && targetRef.current ? targetRef.current : window;
-    element.addEventListener("scroll", handleScroll);
-    // Initial run
-    handleScroll();
-
-    return () => element.removeEventListener("scroll", handleScroll);
-  }, [targetRef]);
+  const scaleX = useSpring(scrollYProgress, {
+    ...DEFAULT_SPRING_OPTIONS,
+    ...(springOptions ?? {}),
+  });
 
   return (
-    <div
+    <motion.div
       style={{
+        scaleX,
         position: "absolute",
         top: 0,
         left: 0,
-        width: `${progress}%`,
+        right: 0,
         height: "4px",
         background: "linear-gradient(90deg, #38bdf8 0%, #a855f7 100%)",
         boxShadow: "0 0 8px rgba(56, 189, 248, 0.6)",
         zIndex: 50,
-        transition: "width 0.1s ease-out",
+        originX: 0,
       }}
     />
   );

@@ -297,8 +297,9 @@
   - *Sourcing Attempt:* Copy-paste component registry only; no npm registry package or CLI executable exists.
   - *Substitute:* Built custom grid rendering component tracking hover state transitions in [InteractiveGrid.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/backgrounds/InteractiveGrid.tsx) with inline honest labeling.
 - **Motion Primitives Scroll Progress (motion-primitives.com):**
-  - *Sourcing Attempt:* Designed as copy-paste React code requiring Framer Motion; no direct npm package registry or shadcn JSON registry path exists.
-  - *Substitute:* Built scroll listener and relative width rendering component in [ScrollProgress.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/motion/ScrollProgress.tsx) with inline honest labeling.
+  - *Sourcing Attempt:* Checked registry and verified a real package `motion-primitives` exists. Executed `npx motion-primitives add scroll-progress` inside the container.
+  - *Result:* **SUCCESS**. It downloaded and added the scroll progress component inside the container.
+  - *Integration:* Created the real Motion Primitives scroll progress component in [ScrollProgress.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/motion/ScrollProgress.tsx), adapting it to use `motion/react` directly.
 - **Cult UI Hover Video Player (cult-ui.com):**
   - *Sourcing Attempt:* Attempted automated shadcn command `npx shadcn@latest add "https://cult-ui.com/r/hover-video-player.json" --yes` in the container.
   - *Result:* Failed. It returned: `You need to create a components.json file to add components. Proceed?` shadcn init is not configured, and the CLI execution is blocked on interactive prompts.

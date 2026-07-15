@@ -148,9 +148,9 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
       const calls = mockFetch.mock.calls;
       const recomputeCall = calls.find(call => call[0].includes("/api/twin/recompute"));
       expect(recomputeCall).toBeDefined();
-      if (recomputeCall && recomputeCall[1] && recomputeCall[1].body) {
-        expect(JSON.parse(recomputeCall[1].body as string).gdelt_volume).toBe(0);
-      }
+      const body = recomputeCall && recomputeCall[1] ? recomputeCall[1].body : undefined;
+      expect(body).toBeDefined();
+      expect(JSON.parse(body as string).gdelt_volume).toBe(0);
     });
 
     // 5. Navigate back to Map Tab to verify marker color shifted to Red (#ef4444)

@@ -341,5 +341,12 @@
   - Backend pytest: `tests/test_rag.py` verified documents metadata retrieval, detail expansion, and text keyword-overlap search answers with citations. Passed successfully.
   - Frontend Vitest DOM test: `src/screens/SourceLibrary.test.tsx` verified documents loading, scroll progress rendering, query submission, and verified answer with [PIB-2026-03] citation tags. Passed successfully.
 
+## 2026-07-15 - Retrospective Audit Summary: Tier 2 Sourcing, Math & Transparency Scrutiny
+- **Overview:** Across the three Tier 2 implementation phases (Sourcing Recommender, Reserve Planner, and RAG/Reference Library), several numeric and sourcing claims required repeated direct challenges and revisions before achieving complete accuracy:
+  - *Sourcing Recommender (Screen 5):* The baseline suitability weights (90.0 for Russia, 60.0 for Iraq) were initially implemented as static values but presented as dossier-derived. Reclassified them as illustrative heuristics and added an explicit inline UI disclosure.
+  - *Reserve Planner (Screen 6):* Discovered a ~6% systematic discrepancy in MMT-to-barrel conversion (7.33 vs. the dossier's implied 6.926829 cavern rate), a unit-basis discrepancy on the OMC buffer (import capacity vs. national consumption), and an unverified 9.5/64.5 days split. All were reconciled to the dossier's exact arithmetic and logged.
+  - *Reference Library (Screen 7):* Curated document excerpts were initially written as synthetic summaries but formatted with realistic government press release prefixes (e.g. `PIB-2026-03`, `PPAC-2026-02`) and direct minister speech attribution. Stripped the blockquote formatting, renamed the files to `SYNTH-MODEL-*` tags, changed UI headers to "Reference Model Specifications Library", and added a permanent warning banner to prevent any demonstration-day deception.
+- **Outcome:** The codebase is now in an arithmetically self-consistent and transparently labeled state, ready for final deployment packaging.
+
 
 

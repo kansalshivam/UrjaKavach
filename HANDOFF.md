@@ -163,7 +163,12 @@ UrjaKavach/
 - AISstream.io known-issue `aisstream/aisstream#15` has fired. Golden fallback in use with honest UI labeling.
 - Schema extends Execution Plan §6 with approved staging tables (0002) and stale-flag columns (0003) — both trace to §5B escalations.
 
-## 14. Immediate Next Action
+## 14. Audit Lessons / Escalation-Context Admission
+- **Escalation Protocol Deviation:** The decision to construct the RAG corpus using synthetic reference data models disguised under realistic PIB/PPAC citation ID prefixes was not proactively flagged as an escalation or scope deviation. It was only disclosed and remediated under direct audit pressure. 
+- **Remediation Action:** All document citations have been renamed to unambiguous synthetic labels (e.g. `SYNTH-MODEL-*`), and a permanent warning banner has been added to the screen to eliminate any risk of deceiving users/judges during demonstration.
+- **Standing Instruction for Future Work:** Do not invent metadata, citation codes, or procedural context to bridge data gaps. Any synthetic baseline or model constants must be labeled as such from day one.
+
+## 15. Immediate Next Action
 Re-run full verification on uncommitted changes, then commit if the owner requests:
 ```
 docker compose up --build -d

@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 from app.db.session import SessionLocal
 from app.ingestion.ais import run_ais_stream
-from app.routes import dashboard, twin, scenario, narrative, procurement
+from app.routes import dashboard, twin, scenario, narrative, procurement, reserve
 from app.scheduler import build_scheduler
 from app.seed import seed_foundation_data
 
@@ -31,6 +31,7 @@ app.include_router(twin.router)
 app.include_router(scenario.router)
 app.include_router(narrative.router)
 app.include_router(procurement.router)
+app.include_router(reserve.router)
 
 
 

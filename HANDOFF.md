@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-15T07:40:00+05:30 by Antigravity (Antigravity coding assistant)
+Last updated: 2026-07-15T07:45:00+05:30 by Antigravity (Antigravity coding assistant)
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -22,14 +22,14 @@ What remains in this phase, specifically: Implementation of Reserve Planner (Scr
 | 6 | Command Dashboard | **complete** | Dashboard endpoint implemented. React screen displaying risk cards, Recharts trend graph, and news feeds fully functional. Stale indicators on component bars. |
 | 7 | Scenario Simulator | **complete** | Calibrated linear volume shortfall and SPR cover depletion math verified. POST `/api/scenario/run` and slider screen working. Debounce set to 250ms (HLD §2.11). |
 | 8 | LLM Risk Narrative | **complete** | Fallback chain (Gemini -> Groq -> Dynamic Template) implemented and verified. Screen 4 displays strategic risbriefing. |
-| 9 | Tier 2 | **in progress** | Sourcing Recommender (Screen 5) completed and verified with actual 2026 data. Reserve Planner and RAG panel pending. |
+| 9 | Tier 2 | **in progress** | Sourcing Recommender (Screen 5) and Reserve Planner (Screen 6) completed and verified with actual 2026 data. RAG panel pending. |
 | 10 | Assumptions panel + hygiene pass | **complete** | Assumptions weights sliders are interactive and dynamic. Out-of-scope parameters visible. Calibration disclosure verified on Screen 3. No committed secrets. |
 | 11 | Golden fallback + demo rehearsal | **complete** | Baseline EIA/GDELT/AIS and precalculated risk scores seeded in DB lifespan to ensure a fully offline-functional console. |
 | 12 | Deliverables packaging | **complete** | Code skeleton, test suite, and walkthrough logs successfully packaged. Uncommitted polish pending git commit. |
 
 ## 4. Tier Status (Execution Plan §4)
 Tier 1: 100% complete and fully verified. All 4 ingestion streams, risk scoring math, BFS graph propagation, Recharts dashboards, scenario calculations, and LLM fallback narrative generation are active, tested, and fully functional.
-Tier 2: **in progress** (Procurement Recommendations route and screen completed; Reserve Planner and RAG panel pending).
+Tier 2: **in progress** (Procurement Recommendations and Reserve Planner routes and screens completed; RAG panel pending).
 Tier 3: never build, stub, or claim (per rules §5 — always true).
 
 ## 5. Decisions Already Made — do not re-ask these
@@ -124,16 +124,21 @@ UrjaKavach/
 - `api/app/routes/procurement.py` — NEW: endpoint returning ranked alternative suppliers dynamically scored by corridor disruption level.
 - `web/src/screens/Procurement.tsx` — NEW: ranked alternatives card viewer benchmarked against actual 2026 response data.
 - `api/tests/test_procurement.py` — NEW: unit tests verifying the recommendations route and parameters constraints validation.
+- `api/app/routes/reserve.py` — NEW: Strategic reserve drawdown calculator route.
+- `web/src/screens/Reserve.tsx` — NEW: Reserve planner dashboard with Animate UI checkboxes.
+- `api/tests/test_reserve.py` — NEW: Backend tests verifying drawdown math.
+- `web/src/screens/Reserve.test.tsx` — NEW: Vitest component test asserting slider and metrics render changes.
 - `BUILD_LOG.md` — Parts 1–5 post-completion verification logged
 - `HANDOFF.md` — this update
 
 ## 10. Commands Run This Session And Their Results
-- `docker compose build api` → Rebuilt API service image with procurement routes and tests.
+- `docker compose build api` → Rebuilt API service image with procurement and reserve routes.
 - `docker compose up -d api` → Recreated API container.
-- `docker compose build web` → Web service image built successfully.
+- `docker compose build web` → Web service image built successfully with vitest, testing-library, and reserve planner.
 - `docker compose up -d web` → Web container recreated successfully.
-- `docker compose exec -T web npm run build` → Production build succeeded (1244 modules, 884.24 KB).
-- `docker compose exec -T api python -m pytest tests/ -v` → **19 passed** in 1.14s.
+- `docker compose exec -T web npm run build` → Production build succeeded (1245 modules, 891.28 KB).
+- `docker compose exec -T api python -m pytest tests/ -v` → **21 passed** in 1.04s.
+- `docker compose exec -T web ./node_modules/.bin/vitest run --environment jsdom` → **2 passed** in 1.95s.
 
 ## 11. Live-Data Verification Log (specific to this project's four external sources)
 - **GDELT**: ✅ VERIFIED 2026-07-14. 25 real articles persisted. Stale-flag recovery tested in BUILD_LOG Part 2.

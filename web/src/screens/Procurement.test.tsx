@@ -7,7 +7,7 @@ import { Procurement } from "./Procurement";
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-const mockData = [
+const mockDataFirstCall = [
   {
     rank: 1,
     country: "Russia",
@@ -20,38 +20,61 @@ const mockData = [
   }
 ];
 
+const mockDataSecondCall = [
+  {
+    rank: 1,
+    country: "Russia",
+    grade: "Urals (Medium Sour)",
+    quality_compatibility: "High",
+    transit_days: 18,
+    cost_premium: "-$3.50/bbl (Discounted)",
+    suitability_score: 97.0,
+    actual_2026_role: "Primary non-Hormuz pivot node; import share rose to historic highs due to steep price discounts."
+  }
+];
+
 describe("Procurement Component DOM Render Test", () => {
   beforeEach(() => {
     mockFetch.mockReset();
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => mockData
-    });
+    // Resolve first call with 95% score, second call with 97% score
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockDataFirstCall
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockDataSecondCall
+      });
   });
 
-  it("renders slider and recommendations dynamically", async () => {
+  it("renders slider, handles drag state, and updates score text from 95% to 97% dynamically", async () => {
     render(<Procurement />);
 
-    // Wait for the mock fetch to be called
-    await waitFor(() => expect(mockFetch).toHaveBeenCalled());
-
-    // Assert that the title and benchmark are rendered
+    // 1. Verify Initial Mount & API fetch
+    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
     expect(screen.getByText("Procurement Diversification recommendations")).toBeDefined();
     
-    // Assert that Russia is rendered with its suitability score and 2026 role
+    // 2. Verify DOM renders the initial 95% score card
     expect(screen.getByText("Russia")).toBeDefined();
     expect(screen.getByText("95%")).toBeDefined();
-    expect(screen.queryByText(/Primary non-Hormuz pivot/)).toBeDefined();
 
-    // Find the slider and simulate a change event
+    // 3. Find Slider DOM element & assert default state
     const slider = screen.getByRole("slider") as HTMLInputElement;
     expect(slider.value).toBe("50");
 
-    // Change slider to 30
+    // 4. Simulate User Drag Event (changing value to 30)
     fireEvent.change(slider, { target: { value: "30" } });
     
-    // Verify it updates state and calls fetch again
+    // 5. Verify reactive DOM state updates and triggers secondary fetch
     expect(slider.value).toBe("30");
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
+
+    // 6. Verify DOM renders the updated 97% score dynamically
+    await waitFor(() => {
+      expect(screen.getByText("97%")).toBeDefined();
+    });
+    // Ensure the old 95% element is no longer in the document
+    expect(screen.queryByText("95%")).toBeNull();
   });
 });

@@ -7,6 +7,15 @@ import { Landing } from "./Landing";
 import { Procurement } from "./Procurement";
 import { Reserve } from "./Reserve";
 import { SourceLibrary } from "./SourceLibrary";
+import { 
+  DashboardIcon, 
+  MapIcon, 
+  SimulatorIcon, 
+  BookIcon, 
+  SearchIcon, 
+  SpriteIcon, 
+  LibraryIcon 
+} from "../components/icons/Iconsax";
 
 type Tab = "dashboard" | "map" | "simulator" | "narrative" | "procurement" | "reserve" | "library";
 
@@ -28,52 +37,61 @@ export function App() {
 
   return (
     <div className="app-container">
-      <header className="top-bar">
-        <div className="logo-section">
-          <h1>Urja Kavach Operations Console</h1>
+      <header className="top-bar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 24px", background: "#0b0f19", borderBottom: "1px solid #1e293b" }}>
+        <div className="logo-section" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <h1 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0, background: "linear-gradient(90deg, #38bdf8 0%, #a855f7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            Urja Kavach Operations Console
+          </h1>
         </div>
-        <nav className="nav-tabs">
+        <nav className="nav-tabs" style={{ display: "flex", gap: "8px" }}>
           <button
             className={`tab-btn ${activeTab === "dashboard" ? "active" : ""}`}
             onClick={() => setActiveTab("dashboard")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Command Dashboard
+            <DashboardIcon size={16} /> Command Dashboard
           </button>
           <button
             className={`tab-btn ${activeTab === "map" ? "active" : ""}`}
             onClick={() => setActiveTab("map")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Digital Twin Map
+            <MapIcon size={16} /> Digital Twin Map
           </button>
           <button
             className={`tab-btn ${activeTab === "simulator" ? "active" : ""}`}
             onClick={() => setActiveTab("simulator")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Scenario Simulator
+            <SimulatorIcon size={16} /> Scenario Simulator
           </button>
           <button
             className={`tab-btn ${activeTab === "narrative" ? "active" : ""}`}
             onClick={() => setActiveTab("narrative")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Risk Narrative
+            <BookIcon size={16} /> Risk Narrative
           </button>
           <button
             className={`tab-btn ${activeTab === "procurement" ? "active" : ""}`}
             onClick={() => setActiveTab("procurement")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Sourcing Recommender
+            <SearchIcon size={16} /> Sourcing Recommender
           </button>
           <button
             className={`tab-btn ${activeTab === "reserve" ? "active" : ""}`}
             onClick={() => setActiveTab("reserve")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Reserve Planner
+            <SpriteIcon size={16} /> Reserve Planner
           </button>
           <button
             className={`tab-btn ${activeTab === "library" ? "active" : ""}`}
             onClick={() => setActiveTab("library")}
+            style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", transition: "all 0.2s" }}
           >
-            Reference Model Library
+            <LibraryIcon size={16} /> Reference Model Library
           </button>
         </nav>
       </header>

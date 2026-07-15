@@ -480,6 +480,7 @@ function SliderInput({ label, val, onChange }: SliderProps) {
         max="1"
         step="0.05"
         value={val}
+        aria-label={label}
         onChange={(e) => onChange(parseFloat(e.target.value))}
         style={{ width: "100%", accentColor: "#38bdf8", cursor: "pointer" }}
       />

@@ -96,6 +96,7 @@ export function Simulator() {
             max="100"
             step="5"
             value={sliderValue}
+            aria-label="Corridor Capacity Available"
             onChange={(e) => setSliderValue(parseInt(e.target.value))}
             style={{
               width: "100%",

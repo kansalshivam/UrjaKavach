@@ -107,6 +107,9 @@ export function Procurement() {
             Illustrative Heuristic Model Disclosure
           </strong>
           Suitability scores are calculated using an illustrative heuristic model based on grade compatibility, transit latency, and routing risk coefficients. Base weights (Russia: 90, West Africa: 85, Guyana: 80, US: 75, Iraq: 60) and disruption scaling (non-Hormuz boost: +10.0; Iraq Red Sea penalty: -25.0) represent qualitative optimization modeling of refinery input configurations rather than official static government scores.
+          <div style={{ marginTop: "6px", borderTop: "1px dashed #475569", paddingTop: "6px", fontSize: "0.8rem", color: "#64748b" }}>
+            ⚠️ <strong>Urja Kavach Reference Data Model Disclosure:</strong> This planner operates as a static reference-parameter calculator grounded in the dossier's historical specs and modeling parameters. It does not perform live-updating database queries.
+          </div>
         </div>
       </div>
 

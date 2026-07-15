@@ -136,3 +136,57 @@ export const SettingsIcon: React.FC<IconProps> = ({ size = 20, color = "currentC
     </svg>
   );
 };
+
+export const DashboardIcon: React.FC<IconProps> = ({ size = 20, color = "currentColor", className }) => {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className={`iconsax-icon ${className || ""}`}>
+      <rect x="3" y="3" width="7" height="9" />
+      <rect x="14" y="3" width="7" height="5" />
+      <rect x="14" y="12" width="7" height="9" />
+      <rect x="3" y="16" width="7" height="5" />
+    </svg>
+  );
+};
+
+export const MapIcon: React.FC<IconProps> = ({ size = 20, color = "currentColor", className }) => {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className={`iconsax-icon ${className || ""}`}>
+      <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6zm6-3v15m6-12v15" />
+    </svg>
+  );
+};
+
+export const SimulatorIcon: React.FC<IconProps> = ({ size = 20, color = "currentColor", className }) => {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className={`iconsax-icon ${className || ""}`}>
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <path d="M9 9h6v6H9V9zm0-5V2m6 2V2m-9 18v2m6-2v2M2 9h2m0 6H2m18-6h2m-2 6h2" />
+    </svg>
+  );
+};
+
+export const BookIcon: React.FC<IconProps> = ({ size = 20, color = "currentColor", className }) => {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className={`iconsax-icon ${className || ""}`}>
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20M4 19.5V3.5A2.5 2.5 0 016.5 1h13.5v16H6.5a2.5 2.5 0 00-2.5 2.5z" />
+    </svg>
+  );
+};
+
+export const SearchIcon: React.FC<IconProps> = ({ size = 20, color = "currentColor", className }) => {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className={`iconsax-icon ${className || ""}`}>
+      <circle cx="11" cy="11" r="8" />
+      <path d="M21 21l-4.35-4.35" />
+    </svg>
+  );
+};
+
+export const LibraryIcon: React.FC<IconProps> = ({ size = 20, color = "currentColor", className }) => {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" className={`iconsax-icon ${className || ""}`}>
+      <path d="M4 19.5V15h16v4.5A2.5 2.5 0 0117.5 22H6.5A2.5 2.5 0 014 19.5zM4 15V6.5A2.5 2.5 0 016.5 4h11A2.5 2.5 0 0120 6.5V15M6 10h12M6 6h12" />
+    </svg>
+  );
+};
+

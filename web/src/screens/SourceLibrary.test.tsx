@@ -8,32 +8,32 @@ global.fetch = mockFetch;
 
 const mockDocsList = [
   {
-    id: "PIB-2026-03",
-    title: "Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns",
-    source: "Press Information Bureau (PIB)",
+    id: "SYNTH-MODEL-ISPRL-CAPACITY",
+    title: "Reference Specification: Strategic Petroleum Reserves & Caverns",
+    source: "Urja Kavach Reference Data Model",
     date: "March 12, 2026",
-    summary: "Official statement on ISPRL rock caverns capacity."
+    summary: "Synthetic modeling reference for ISPRL caverns fill levels, capacities, and OMC commercial reserves."
   },
   {
-    id: "PPAC-2026-02",
-    title: "PPAC Basic Statistics: Indian Petroleum & Natural Gas capacity",
-    source: "Petroleum Planning & Analysis Cell (PPAC)",
+    id: "SYNTH-MODEL-REFINERY-DATA",
+    title: "Reference Specification: Refinery Tonnage & Sourcing Composition",
+    source: "Urja Kavach Reference Data Model",
     date: "February 28, 2026",
-    summary: "PPAC report detailing refining capacities."
+    summary: "Synthetic modeling reference for refining nameplate capacities, private-public shares, and Jamnagar throughput."
   }
 ];
 
 const mockDocDetail = {
-  id: "PIB-2026-03",
-  title: "Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns",
-  source: "Press Information Bureau (PIB)",
+  id: "SYNTH-MODEL-ISPRL-CAPACITY",
+  title: "Reference Specification: Strategic Petroleum Reserves & Caverns",
+  source: "Urja Kavach Reference Data Model",
   date: "March 12, 2026",
-  content: "Indian Strategic Petroleum Reserves Limited (ISPRL) maintains 5.33 MMT."
+  content: "Model Reference: The Indian Strategic Petroleum Reserves Limited (ISPRL) capacity is set to 5.33 Million Metric Tonnes (MMT) across three underground rock cavern facilities: Visakhapatnam (1.33 MMT), Mangaluru (1.50 MMT), and Padur (2.50 MMT)."
 };
 
 const mockQueryResponse = {
-  answer: "According to [PIB-2026-03], ISPRL maintains 5.33 MMT of crude oil storage.",
-  retrieved_documents: ["PIB-2026-03"]
+  answer: "Synthesized locally from SYNTH-MODEL-ISPRL-CAPACITY reference data — not sourced from a live document retrieval.",
+  retrieved_documents: ["SYNTH-MODEL-ISPRL-CAPACITY"]
 };
 
 describe("SourceLibrary Component DOM Test", () => {
@@ -60,12 +60,12 @@ describe("SourceLibrary Component DOM Test", () => {
     // 1. Verify Documents List Fetched on Mount
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
     expect(screen.getByText("Reference Model Specifications Library")).toBeDefined();
-    expect(screen.getByText("Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns")).toBeDefined();
-    expect(screen.getByText("PPAC Basic Statistics: Indian Petroleum & Natural Gas capacity")).toBeDefined();
+    expect(screen.getByText("Reference Specification: Strategic Petroleum Reserves & Caverns")).toBeDefined();
+    expect(screen.getByText("Reference Specification: Refinery Tonnage & Sourcing Composition")).toBeDefined();
 
     // 2. Verify First Document detail is auto-loaded
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
-    expect(screen.getByText("Indian Strategic Petroleum Reserves Limited (ISPRL) maintains 5.33 MMT.")).toBeDefined();
+    expect(screen.getByText("Model Reference: The Indian Strategic Petroleum Reserves Limited (ISPRL) capacity is set to 5.33 Million Metric Tonnes (MMT) across three underground rock cavern facilities: Visakhapatnam (1.33 MMT), Mangaluru (1.50 MMT), and Padur (2.50 MMT).")).toBeDefined();
 
     // 3. Find Input and submit query
     const input = screen.getByPlaceholderText("e.g. What is the fill level of the caverns?") as HTMLInputElement;
@@ -76,7 +76,12 @@ describe("SourceLibrary Component DOM Test", () => {
 
     // 4. Verify RAG query executed and displays result with citations
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3));
-    expect(screen.getByText("According to [PIB-2026-03], ISPRL maintains 5.33 MMT of crude oil storage.")).toBeDefined();
-    expect(screen.getAllByText("PIB-2026-03")).toBeDefined();
+    expect(screen.getByText("Synthesized locally from SYNTH-MODEL-ISPRL-CAPACITY reference data — not sourced from a live document retrieval.")).toBeDefined();
+    expect(screen.getAllByText("SYNTH-MODEL-ISPRL-CAPACITY")).toBeDefined();
+
+    // Print DOM snapshot for direct visual/semantic verification
+    console.log("=== RENDERED DOM SNAPSHOT ===");
+    console.log(document.body.innerHTML);
+    console.log("=============================");
   });
 });

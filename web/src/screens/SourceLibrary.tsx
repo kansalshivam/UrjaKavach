@@ -105,18 +105,37 @@ export function SourceLibrary() {
         }}
       >
         <span style={{ fontSize: "0.75rem", background: "rgba(99, 102, 241, 0.1)", color: "#818cf8", padding: "4px 10px", borderRadius: "9999px", fontWeight: 600 }}>
-          RAG Policy & Source Library
+          Synthetic Reference Library
         </span>
         <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "8px 0 4px", color: "#f8fafc" }}>
-          Geopolitical & Commodity Intelligence Center
+          Reference Model Specifications Library
         </h1>
         <p style={{ fontSize: "0.9rem", color: "#94a3b8", margin: 0 }}>
-          Index, query, and verify energy security briefings using our source library of official PIB releases and PPAC bulletins.
+          Explore and query the reference specifications and mathematical modeling parameters governing the Urja Kavach simulator.
         </p>
       </div>
 
+      {/* High-visibility Persistent Disclosure Banner */}
+      <div
+        style={{
+          borderLeft: "4px solid #f59e0b",
+          background: "rgba(245, 158, 11, 0.05)",
+          padding: "16px 20px",
+          borderRadius: "0 8px 8px 0",
+          fontSize: "0.85rem",
+          color: "#d97706",
+          lineHeight: "1.5",
+          border: "1px solid rgba(245, 158, 11, 0.15)",
+        }}
+      >
+        <strong style={{ color: "#f59e0b", display: "block", marginBottom: "4px", fontSize: "0.9rem" }}>
+          ⚠️ Urja Kavach Reference Data Model Disclosure
+        </strong>
+        This library contains synthetic reference specifications and modeling constants constructed solely to ensure internal numeric consistency with the scenario simulator parameters and the project dossier. These are not real-time retrieved or live government publications.
+      </div>
+
       {/* Main Two-column Layout */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", height: "calc(100vh - 280px)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", height: "calc(100vh - 380px)" }}>
         {/* Left Column: Curated Library Panel (Scrollable with ScrollProgress) */}
         <div
           style={{
@@ -133,9 +152,9 @@ export function SourceLibrary() {
           <ScrollProgress containerRef={docContainerRef as any} />
 
           <div style={{ padding: "16px", borderBottom: "1px solid #1e293b" }}>
-            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>Curated Press Excerpts</h2>
+            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>Reference Model Specifications</h2>
             <p style={{ fontSize: "0.75rem", color: "#64748b", margin: "4px 0 0" }}>
-              Scroll through policy papers. Progress tracker is active at the top.
+              Scroll through reference specs. Progress tracker is active at the top.
             </p>
           </div>
 

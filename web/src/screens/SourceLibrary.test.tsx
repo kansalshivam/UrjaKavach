@@ -59,7 +59,7 @@ describe("SourceLibrary Component DOM Test", () => {
 
     // 1. Verify Documents List Fetched on Mount
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
-    expect(screen.getByText("Geopolitical & Commodity Intelligence Center")).toBeDefined();
+    expect(screen.getByText("Reference Model Specifications Library")).toBeDefined();
     expect(screen.getByText("Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns")).toBeDefined();
     expect(screen.getByText("PPAC Basic Statistics: Indian Petroleum & Natural Gas capacity")).toBeDefined();
 

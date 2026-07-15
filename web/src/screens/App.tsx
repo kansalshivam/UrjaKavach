@@ -73,7 +73,7 @@ export function App() {
             className={`tab-btn ${activeTab === "library" ? "active" : ""}`}
             onClick={() => setActiveTab("library")}
           >
-            RAG Source Library
+            Reference Model Library
           </button>
         </nav>
       </header>

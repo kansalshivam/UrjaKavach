@@ -30,38 +30,39 @@ class QueryResponse(BaseModel):
     answer: str
     retrieved_documents: List[str]
 
+# Renamed to make it unambiguously synthetic and rephrased to be technical reference specifications
 DOCUMENTS = [
     {
-        "id": "PIB-2026-03",
-        "title": "Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns",
-        "source": "Press Information Bureau (PIB)",
+        "id": "SYNTH-MODEL-ISPRL-CAPACITY",
+        "title": "Reference Specification: Strategic Petroleum Reserves & Caverns",
+        "source": "Urja Kavach Reference Data Model",
         "date": "March 12, 2026",
-        "summary": "Official Parliamentary response detailing ISPRL caverns fill levels, capacities, and OMC commercial reserves.",
-        "content": "In a written reply to the Rajya Sabha, the Minister of State for Petroleum and Natural Gas confirmed that Indian Strategic Petroleum Reserves Limited (ISPRL) maintains 5.33 Million Metric Tonnes (MMT) of crude oil storage across three underground rock cavern facilities: Visakhapatnam (1.33 MMT), Mangaluru (1.50 MMT), and Padur (2.50 MMT). As of the March 2026 disclosure, actual stock stood at 63.26% of capacity (~3.372 MMT, or 23,357,267.4 barrels using the cavern-specific conversion rate of 6.926829 bbl/MMT). These rock caverns provide 9.5 days of national consumption cover, and Oil Marketing Companies (OMCs) separately hold 64.5 days of commercial crude/product storage, yielding 74 days of national cover based on the 5.0M bpd national consumption base."
+        "summary": "Synthetic modeling reference for ISPRL caverns fill levels, capacities, and OMC commercial reserves.",
+        "content": "Model Reference: The Indian Strategic Petroleum Reserves Limited (ISPRL) capacity is set to 5.33 Million Metric Tonnes (MMT) across three underground rock cavern facilities: Visakhapatnam (1.33 MMT), Mangaluru (1.50 MMT), and Padur (2.50 MMT). The active fill level is modeled at 63.26% of capacity (~3.372 MMT, or 23,357,267.4 barrels using the cavern-specific conversion rate of 6.926829 bbl/MMT). These caverns correspond to 9.5 days of national consumption cover, and Oil Marketing Companies (OMCs) commercial reserves are set to 64.5 days of storage, yielding a total of 74 days of national cover based on the 5.0M bpd national consumption base."
     },
     {
-        "id": "PPAC-2026-02",
-        "title": "PPAC Basic Statistics: Indian Petroleum & Natural Gas capacity",
-        "source": "Petroleum Planning & Analysis Cell (PPAC)",
+        "id": "SYNTH-MODEL-REFINERY-DATA",
+        "title": "Reference Specification: Refinery Tonnage & Sourcing Composition",
+        "source": "Urja Kavach Reference Data Model",
         "date": "February 28, 2026",
-        "summary": "Monthly statistics on refining sector nameplate capacities, private-public shares, and Jamnagar throughput.",
-        "content": "According to the PPAC public refinery capacity statistics, India's total refining sector nameplate capacity stands at 251.2 MMTPA. The public sector entities (IOCL, BPCL, HPCL) account for approximately 65% of processed crude. Reliance Industries' Jamnagar complex represents the single largest refining location with a nameplate capacity of 1.24 million bpd (approx 62 MMTPA). Sourcing statistics show a 15-percentage-point composition shift, with non-Hormuz sourcing share rising from 55% to 70% within weeks to mitigate maritime supply disruptions."
+        "summary": "Synthetic modeling reference for refining nameplate capacities, private-public shares, and Jamnagar throughput.",
+        "content": "Model Reference: India's total refining sector nameplate capacity is set to 251.2 MMTPA. Public sector refiners account for approximately 65% of processed crude. The Reliance Industries Jamnagar complex is modeled with a capacity of 1.24 million bpd (approx 62 MMTPA). Sourcing metrics are modeled with a 15-percentage-point composition shift, representing non-Hormuz sourcing share rising from 55% to 70% to evaluate maritime supply disruption contingencies."
     },
     {
-        "id": "MOPNG-2026-03",
-        "title": "Ministry of Petroleum Press Release: Contingency Sourcing Protocol Activation",
-        "source": "Ministry of Petroleum & Natural Gas",
+        "id": "SYNTH-MODEL-CONTINGENCY-ROUTING",
+        "title": "Reference Specification: Supply Diversification & Absolute Mitigation Offsets",
+        "source": "Urja Kavach Reference Data Model",
         "date": "March 5, 2026",
-        "summary": "Government update on contingency imports routing via West Africa, US Gulf, and Guyana pathways.",
-        "content": "The Ministry of Petroleum & Natural Gas has coordinated with state refiners to activate alternative routing contingencies. Sourcing channels have redirected imports through West Africa, the US Gulf Coast, and Guyanese supply corridors. The 15% non-Hormuz sourcing shift serves as a fixed absolute volume offset of 660,000 bpd (calculated against the 4.4M bpd import capacity) to mitigate transit shortfalls regardless of the shortfall percentage. Supply lanes are tracked via coordinates from the Indian Navy Information Fusion Centre (IFC-IOR)."
+        "summary": "Synthetic modeling reference for contingency imports routing via West Africa, US Gulf, and Guyana pathways.",
+        "content": "Model Reference: Alternative routing contingencies redirect imports through West Africa, the US Gulf Coast, and Guyanese supply corridors. The 15% non-Hormuz sourcing shift is modeled as a fixed absolute volume offset of 660,000 bpd (calculated against the 4.4M bpd import capacity) to evaluate transit shortfalls regardless of the shortfall percentage. Supply lanes are mapped via coordinates from the Information Fusion Centre (IFC-IOR)."
     },
     {
-        "id": "PIB-2021-07",
-        "title": "Cabinet Approves Phase II of Strategic Petroleum Reserves Programme",
-        "source": "Press Information Bureau (PIB)",
+        "id": "SYNTH-MODEL-PHASE2-PLAN",
+        "title": "Reference Specification: Planned Caverns Phase II Expansion",
+        "source": "Urja Kavach Reference Data Model",
         "date": "July 8, 2021",
-        "summary": "Cabinet approval statistics for planned expansion caverns at Chandikhole (4.0 MMT) and Padur (2.5 MMT).",
-        "content": "The Union Cabinet approved the establishment of additional Strategic Petroleum Reserves (SPR) caverns under Phase II of the SPR programme. The expansion includes constructing two commercial-cum-strategic caverns: a 4.0 MMT facility at Chandikhole in Odisha, and a 2.5 MMT facility at Padur in Karnataka. This will add 6.5 MMT of storage capacity, bringing India's total strategic reserve capacity to 11.83 MMT to support energy security and align closer to the IEA's 90-day recommended cover target."
+        "summary": "Synthetic modeling reference for planned expansion caverns at Chandikhole (4.0 MMT) and Padur (2.5 MMT).",
+        "content": "Model Reference: Future capacity scenarios model the establishment of additional Strategic Petroleum Reserves (SPR) caverns under Phase II. The expansion includes two planned caverns: a 4.0 MMT facility at Chandikhole in Odisha, and a 2.5 MMT facility at Padur in Karnataka. This adds 6.5 MMT of storage capacity, bringing total strategic reserve capacity to 11.83 MMT to support energy security evaluations aligned with the IEA's 90-day recommended cover target."
     }
 ]
 
@@ -108,11 +109,12 @@ def simple_retrieval(query: str) -> List[Dict]:
     return [scored_docs[0][1], scored_docs[1][1]]
 
 def get_template_fallback_answer(query: str, retrieved: List[Dict]) -> str:
+    # Removed blockquote formatting
     ans = "### Source-Verified Answer (Local Template Mode)\n\n"
-    ans += "Here is the verified information compiled from the retrieved government releases:\n\n"
+    ans += "Verified reference specifications retrieved from the model library:\n\n"
     for r in retrieved:
-        ans += f"**From {r['title']} ({r['id']}):**\n"
-        ans += f"> {r['content']}\n\n"
+        ans += f"**[{r['id']}] {r['title']}**\n"
+        ans += f"{r['content']}\n\n"
     ans += f"*(Citations verified locally. Answer synthesized using matching sections from {', '.join([d['id'] for d in retrieved])}.)*"
     return ans
 
@@ -126,7 +128,9 @@ async def query_rag_engine(req: QueryRequest):
 
     prompt = (
         "You are an elite energy security analyst. Answer the user's question using ONLY the provided document excerpts. "
-        "Do not invent facts outside the text. If the text does not contain the answer, say so.\n\n"
+        "Do not invent facts outside the text. If the text does not contain the answer, say so. "
+        "Do not format the answer or excerpts using blockquotes or quotes that suggest direct quotes of real people. "
+        "Format the answer as a straightforward technical description.\n\n"
         "### User Question:\n"
         f"{req.query}\n\n"
         "### Retrieved Excerpts:\n"
@@ -134,7 +138,7 @@ async def query_rag_engine(req: QueryRequest):
     for doc in retrieved:
         prompt += f"--- Document ID: {doc['id']} ({doc['title']}) ---\n{doc['content']}\n\n"
     
-    prompt += "Provide a clear, structured answer, citing the document IDs (e.g. [PIB-2026-03] or [PPAC-2026-02]) for all factual assertions. Keep the answer professional and direct."
+    prompt += "Provide a clear, structured answer, citing the document IDs (e.g. [SYNTH-MODEL-ISPRL-CAPACITY] or [SYNTH-MODEL-REFINERY-DATA]) for all factual assertions. Keep the answer professional and direct."
 
     answer = None
 

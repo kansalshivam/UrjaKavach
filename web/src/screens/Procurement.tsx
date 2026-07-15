@@ -90,6 +90,24 @@ export function Procurement() {
           </strong>
           During the worst weeks of the 2026 disruption, India's refiners pivoted to non-Hormuz sourcing, raising its import share from <strong>~55% to ~70%</strong> within weeks by drawing heavily from West Africa, the Americas, and Russia.
         </div>
+
+        <div
+          style={{
+            marginTop: "12px",
+            borderLeft: "4px solid #64748b",
+            background: "rgba(100, 116, 139, 0.05)",
+            padding: "12px 16px",
+            borderRadius: "0 8px 8px 0",
+            fontSize: "0.85rem",
+            color: "#94a3b8",
+            lineHeight: "1.4",
+          }}
+        >
+          <strong style={{ color: "#94a3b8", display: "block", marginBottom: "2px" }}>
+            Illustrative Heuristic Model Disclosure
+          </strong>
+          Suitability scores are calculated using an illustrative heuristic model based on grade compatibility, transit latency, and routing risk coefficients. Base weights (Russia: 90, West Africa: 85, Guyana: 80, US: 75, Iraq: 60) and disruption scaling (non-Hormuz boost: +10.0; Iraq Red Sea penalty: -25.0) represent qualitative optimization modeling of refinery input configurations rather than official static government scores.
+        </div>
       </div>
 
       {loading ? (

@@ -315,6 +315,6 @@
 - **Cumulative Bundle Size Trend:**
   - *Baseline (Zero-state):* 877 modules
   - *UI Sourcing & animejs (Tier 1 completed):* 1,243 modules (872.49 KB JS, 259.31 KB gzip)
-  - *Sourcing Recommender (Tier 2 started):* 1,244 modules (884.24 KB JS, 263.00 KB gzip)
+  - *Sourcing Recommender (Tier 2 started):* 1,244 modules (885.01 KB JS, 263.29 KB gzip)
   - *Implication:* Cumulative trend logged to monitor potential performance degradation.
 

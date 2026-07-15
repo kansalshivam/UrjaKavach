@@ -31,9 +31,9 @@ def calculate_reserve_drawdown(req: ReserveCalculationRequest):
     # Real Ground-Truth Data from Dossier Part 0:
     # Total consumption ~ 5.0 million barrels / day.
     # Imports ~ 88% of consumption = 4.4 million barrels / day.
-    # Conversion rate: 1 MMT ~ 7.33 million barrels.
-    # IEA target: 90 days cover.
-    bar_per_mmt = 7.33
+    # Dossier Line 21 conversion rate: 5.33 MMT = 36.92 million barrels -> bar_per_mmt = 6.926829
+    # This reflects heavier, sourer crudes stored in rock caverns.
+    bar_per_mmt = 6.926829
     total_consumption_bpd = 5000000.0
     total_imports_bpd = 4400000.0
 
@@ -46,7 +46,7 @@ def calculate_reserve_drawdown(req: ReserveCalculationRequest):
     ]
 
     total_isprl_stock_mmt = 3.372
-    isprl_available_barrels = total_isprl_stock_mmt * bar_per_mmt * 1000000.0  # Exactly 24,716,760 barrels
+    isprl_available_barrels = total_isprl_stock_mmt * bar_per_mmt * 1000000.0  # Exactly 23,357,267.4 barrels
 
     # OMC Commercial Buffer (64.5 days of national consumption cover, Dossier Line 21)
     # Measured against total consumption (5.0M bpd): 64.5 * 5.0M = 322.5M barrels.

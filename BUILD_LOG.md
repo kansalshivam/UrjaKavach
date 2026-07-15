@@ -327,9 +327,10 @@
 
 ## 2026-07-15 - Tier 2: Strategic Reserve Planner Screen (Screen 6) Implementation
 - **Sourcing Verification:** Hand-worked calculations verified against March 2026 government RTI disclosure (5.33 MMT caverns capacity, reconciled to 63.26% fill level to sum to exactly 3.372 MMT available stock, OMC 64.5 days buffer measured against total 5.0M bpd consumption base = 322.5 million barrels). Shortfall and mitigation equations scale dynamically. The 660,000 bpd mitigation offset is modeled as a fixed absolute reduction.
+- **Conversion Rate Conflict & Resolution:** Noticed a conflict between the standard industry conversion rate (7.33 barrels/MMT) and the dossier's implied cavern rate (36.92M barrels / 5.33 MMT = 6.926829 barrels/MMT). Chose to align with the dossier's own embedded 6.926829 rate, as it represents the specific heavier sour crude grades stored in the caverns. Recomputed all barrel numbers, tests, and UI displays to match.
 - **Verification Output:** Added `api/tests/test_reserve.py` and `web/src/screens/Reserve.test.tsx`.
   - Backend pytest: `tests/test_reserve.py` passed successfully.
-  - Frontend Vitest DOM test: `src/screens/Reserve.test.tsx` verified sliders drag updates and days cover remaining metrics updating from 37.4 to 16.0.
+  - Frontend Vitest DOM test: `src/screens/Reserve.test.tsx` verified sliders drag updates and days cover remaining metrics updating from 35.4 to 15.2.
 
 
 

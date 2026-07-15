@@ -6,8 +6,9 @@ import { Narrative } from "./Narrative";
 import { Landing } from "./Landing";
 import { Procurement } from "./Procurement";
 import { Reserve } from "./Reserve";
+import { SourceLibrary } from "./SourceLibrary";
 
-type Tab = "dashboard" | "map" | "simulator" | "narrative" | "procurement" | "reserve";
+type Tab = "dashboard" | "map" | "simulator" | "narrative" | "procurement" | "reserve" | "library";
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -68,6 +69,12 @@ export function App() {
           >
             Reserve Planner
           </button>
+          <button
+            className={`tab-btn ${activeTab === "library" ? "active" : ""}`}
+            onClick={() => setActiveTab("library")}
+          >
+            RAG Source Library
+          </button>
         </nav>
       </header>
 
@@ -84,6 +91,7 @@ export function App() {
         {activeTab === "narrative" && <Narrative />}
         {activeTab === "procurement" && <Procurement />}
         {activeTab === "reserve" && <Reserve />}
+        {activeTab === "library" && <SourceLibrary />}
       </main>
     </div>
   );

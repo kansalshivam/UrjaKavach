@@ -317,6 +317,7 @@
   - *UI Sourcing & animejs (Tier 1 completed):* 1,243 modules (872.49 KB JS, 259.31 KB gzip)
   - *Sourcing Recommender (Tier 2 started):* 1,244 modules (885.01 KB JS, 263.29 KB gzip)
   - *Reserve Planner (Tier 2 in progress):* 1,245 modules (892.13 KB JS, 264.75 KB gzip)
+  - *RAG Source Library (Tier 2 completed):* 1,246 modules (898.49 KB JS, 266.01 KB gzip)
   - *Implication:* Cumulative trend logged to monitor potential performance degradation.
 
 ## 2026-07-15 - DOM Verification Retraction & Component testing Remediation
@@ -331,6 +332,12 @@
 - **Verification Output:** Added `api/tests/test_reserve.py` and `web/src/screens/Reserve.test.tsx`.
   - Backend pytest: `tests/test_reserve.py` passed successfully.
   - Frontend Vitest DOM test: `src/screens/Reserve.test.tsx` verified sliders drag updates and days cover remaining metrics updating from 35.4 to 15.2.
+
+## 2026-07-15 - Tier 2: RAG Source Library Screen (Screen 7) Implementation
+- **Sourcing Verification:** Curated 4 government releases (PIB-2026-01, PPAC-2026-02, MOPNG-2026-03, PIB-2026-04) explicitly matching key figures from the dossier: 5.33 MMT caverns capacity, 63.26% fill level (3.372 MMT / 23.35M barrels), 64.5 days OMC buffer (322.5M barrels), and 15% non-Hormuz sourcing shift (660,000 bpd mitigation offset).
+- **Verification Output:** Added `api/tests/test_rag.py` and `web/src/screens/SourceLibrary.test.tsx`.
+  - Backend pytest: `tests/test_rag.py` verified documents metadata retrieval, detail expansion, and text keyword-overlap search answers with citations. Passed successfully.
+  - Frontend Vitest DOM test: `src/screens/SourceLibrary.test.tsx` verified documents loading, scroll progress rendering, query submission, and verified answer with [PIB-2026-01] citation tags. Passed successfully.
 
 
 

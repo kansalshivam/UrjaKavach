@@ -13,6 +13,7 @@ import { CursorCard } from "../components/cards/CursorCard";
 import { Checkbox } from "../components/animate/Checkbox";
 import { SettingsIcon, RiskIcon } from "../components/icons/Iconsax";
 import { HoverVideoPlayer } from "../components/media/HoverVideoPlayer";
+import { AuditLogs } from "../components/audit/AuditLogs";
 
 interface RiskScoreData {
   id: number;
@@ -370,6 +371,11 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
                 <p style={{ fontSize: "0.9rem", color: "#8b949e" }}>No recent geopolitical articles in database.</p>
               )}
             </div>
+          </div>
+
+          {/* Security Audit Trail Panel */}
+          <div style={{ height: "320px", display: "flex", flexDirection: "column" }}>
+            <AuditLogs />
           </div>
 
           {/* Assumptions weights panel & Out-of-Scope lists (Phase 10) */}

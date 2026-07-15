@@ -1,6 +1,19 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from app.main import app
+from app.db.session import get_session
+from unittest.mock import AsyncMock
+
+async def mock_get_session():
+    session = AsyncMock()
+    yield session
+
+@pytest.fixture(autouse=True)
+def override_db():
+    app.dependency_overrides[get_session] = mock_get_session
+    yield
+    app.dependency_overrides.pop(get_session, None)
+
 
 @pytest.mark.anyio
 async def test_reserve_calculation_isprl_only():

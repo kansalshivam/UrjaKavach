@@ -1,6 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import List
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.session import get_session
+from app.routes.audit import log_action
 
 router = APIRouter(prefix="/api/reserve", tags=["reserve"])
 
@@ -27,7 +31,10 @@ class ReserveCalculationResponse(BaseModel):
     caverns: List[CavernStatus]
 
 @router.post("/calculate", response_model=ReserveCalculationResponse)
-def calculate_reserve_drawdown(req: ReserveCalculationRequest):
+async def calculate_reserve_drawdown(
+    req: ReserveCalculationRequest,
+    session: AsyncSession = Depends(get_session)
+):
     # Real Ground-Truth Data from Dossier Part 0:
     # Total consumption ~ 5.0 million barrels / day.
     # Imports ~ 88% of consumption = 4.4 million barrels / day.
@@ -75,6 +82,20 @@ def calculate_reserve_drawdown(req: ReserveCalculationRequest):
         days_cover = total_avail_barrels / mitigated_shortfall_bpd
     else:
         days_cover = 365.0  # Cap display at 365
+
+    await log_action(
+        session=session,
+        action_source="reserve_calculation",
+        action_type="RUN_RESERVE_CALC",
+        payload={
+            "shortfall_pct": req.shortfall_pct,
+            "use_isprl": req.use_isprl,
+            "use_omc": req.use_omc,
+            "use_diversification": req.use_diversification,
+            "days_cover_remaining": round(days_cover, 1)
+        }
+    )
+    await session.commit()
 
     return ReserveCalculationResponse(
         isprl_available_barrels=round(isprl_available_barrels, 1),

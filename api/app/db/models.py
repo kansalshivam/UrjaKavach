@@ -132,3 +132,15 @@ class ScenarioRun(Base):
     projected_import_volume_change_pct: Mapped[float | None] = mapped_column(Double)
     projected_spr_days_cover: Mapped[float | None] = mapped_column(Double)
     narrative_text: Mapped[str | None] = mapped_column(Text)
+
+
+class SecurityAuditLog(Base):
+    __tablename__ = "security_audit_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    operator_id: Mapped[str] = mapped_column(Text, nullable=False, default="IND-2026-OPS", server_default="IND-2026-OPS")
+    action_source: Mapped[str] = mapped_column(Text, nullable=False)
+    action_type: Mapped[str] = mapped_column(Text, nullable=False)
+    payload: Mapped[dict] = mapped_column(JSONB, nullable=False)
+

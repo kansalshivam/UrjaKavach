@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.models import AisSnapshot, Edge, Node, RiskScore
 from app.db.session import get_session
 from app.graph.propagation import build_graph, propagate_risk
+from app.routes.audit import log_action
 
 router = APIRouter(prefix="/api/twin", tags=["twin"])
 
@@ -161,6 +162,20 @@ async def twin_recompute(
     # 3. Propagate risk using recomputed corridor risk
     g = build_graph(nodes_list, edges_list)
     node_risks = propagate_risk(g, corridor_risk, decay=0.6)
+
+    # 4. Log the override action to the database
+    await log_action(
+        session=session,
+        action_source="dashboard_weight_adjustment",
+        action_type="UPDATE_WEIGHTS",
+        payload={
+            "gdelt_volume": req.gdelt_volume,
+            "price_volatility": req.price_volatility,
+            "ais_deviation": req.ais_deviation,
+            "sanctions_flag": req.sanctions_flag
+        }
+    )
+    await session.commit()
 
     return {
         "node_risks": node_risks,

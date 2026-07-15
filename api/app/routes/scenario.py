@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_session
 from app.scoring.scenario import run_scenario
+from app.routes.audit import log_action
 
 router = APIRouter(prefix="/api/scenario", tags=["scenario"])
 
@@ -32,6 +33,19 @@ async def execute_scenario(
         scenario_id=payload.scenario_id,
         capacity_available_pct=payload.capacity_available_pct,
     )
+
+    await log_action(
+        session=session,
+        action_source="scenario_run",
+        action_type="RUN_SIMULATION",
+        payload={
+            "scenario_id": payload.scenario_id,
+            "capacity_available_pct": payload.capacity_available_pct,
+            "projected_import_volume_change_pct": run.projected_import_volume_change_pct,
+            "projected_spr_days_cover": run.projected_spr_days_cover
+        }
+    )
+    await session.commit()
 
     return {
         "id": run.id,

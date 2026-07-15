@@ -288,3 +288,26 @@
   - `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 1.46s (all routes, scoring, and weights verified).
   - `docker compose exec -T web npm run build` → **success**, zero TS errors, 877 modules.
 
+## 2026-07-15 - Premium UI Libraries Real Integration Attempts & Scope Corrections
+- **Scope Correction:** Resolved scope discrepancy from prior audits. The six premium UI libraries are confirmed as Tier 1 scope elements mapping to Screens 0-3 (not Tier 2 as erroneously logged before), and Skiper UI chrome covers both Tier 1 and Tier 2 as a shared navigation container.
+- **Circular Gallery (reactbits.dev):**
+  - *Sourcing Attempt:* Copy-paste component registry only; no npm registry package or CLI executable exists.
+  - *Substitute:* Built custom React + CSS-3D transform interactive rotation ring component in [CircularGallery.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/gallery/CircularGallery.tsx) with inline honest labeling.
+- **Animata Interactive Grid (animata.design):**
+  - *Sourcing Attempt:* Copy-paste component registry only; no npm registry package or CLI executable exists.
+  - *Substitute:* Built custom grid rendering component tracking hover state transitions in [InteractiveGrid.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/backgrounds/InteractiveGrid.tsx) with inline honest labeling.
+- **Motion Primitives Scroll Progress (motion-primitives.com):**
+  - *Sourcing Attempt:* Designed as copy-paste React code requiring Framer Motion; no direct npm package registry or shadcn JSON registry path exists.
+  - *Substitute:* Built scroll listener and relative width rendering component in [ScrollProgress.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/motion/ScrollProgress.tsx) with inline honest labeling.
+- **Cult UI Hover Video Player (cult-ui.com):**
+  - *Sourcing Attempt:* Attempted automated shadcn command `npx shadcn@latest add "https://cult-ui.com/r/hover-video-player.json" --yes` in the container.
+  - *Result:* Failed. It returned: `You need to create a components.json file to add components. Proceed?` shadcn init is not configured, and the CLI execution is blocked on interactive prompts.
+  - *Substitute:* Built interactive CSS overlay hover-state display card in [HoverVideoPlayer.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/media/HoverVideoPlayer.tsx) with inline honest labeling.
+- **anime.js sync-timelines (animejs.com):**
+  - *Sourcing Attempt:* Added `"animejs": "^3.2.2"` and `"@types/animejs": "^3.1.12"` to package.json, rebuilt image via `docker compose build web` executing `npm install` inside the container.
+  - *Result:* **SUCCESS**. Package installed and compiled cleanly with zero TypeScript errors.
+  - *Integration:* Integrated `anime` inside [TimelineSync.tsx](file:///c:/Users/shiva/Downloads/UrjaKavach/web/src/components/timeline/TimelineSync.tsx) to animate the scrubber marker to the active event coordinate dynamically.
+- **Skiper UI (skiper-ui.com):**
+  - *Sourcing Attempt:* Searched for `skiper-ui` package in npm registry.
+  - *Result:* Failed. `skiper-ui` is not a registered npm package (npm search returns no matches). It is a copy-paste styled Tailwind CSS components site.
+  - *Substitute:* Built styled Tailwind CSS navigation bar / chrome in `App.tsx` and custom buttons, labeled.

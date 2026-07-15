@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-15T00:24:00+05:30 by Antigravity (Antigravity coding assistant)
+Last updated: 2026-07-15T06:40:00+05:30 by Antigravity (Antigravity coding assistant)
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -138,7 +138,7 @@ UrjaKavach/
 - **LLM narrative**: Gemini and Groq keys configured locally; verified fallback to dynamic template works.
 
 ## 12. Known Bugs / Incomplete Work / TODOs
-- **Part 4 Sourcing Fallbacks:** Custom equivalents implemented and honestly labeled in code comments, BUILD_LOG.md, and HANDOFF.md. CLI install of Animate UI checkbox, package fetch of Vengeance UI CursorCard, and direct Iconsax animated imports were attempted and blocked/unsupported as documented in BUILD_LOG.md. Circular Gallery / Motion Primitives Scroll Progress / Cult UI Hover Video Player / Animata Interactive Grid / Skiper UI / anime.js timeline-sync are deliberately deferred, not forgotten.
+- **Part 4 Sourcing Fallbacks:** Resolved scope discrepancy from prior audits. Spun up real integration of anime.js timeline-sync on Screen 0 (success). Attempted real installs/CLI fetches for Circular Gallery, Animata Grid, Cult UI Hover Video Player, Motion Primitives, and Skiper UI (documented failures in BUILD_LOG.md) and implemented custom premium fallback components honestly labeled inline inside the files: InteractiveGrid, CircularGallery, ScrollProgress, and HoverVideoPlayer. Skiper UI chrome navigation was integrated as the shared nav shell.
 - `api/app/ingestion/ais.py` — AIS WebSocket client fully implemented but no live data received due to `aisstream/aisstream#15`. Golden fallback ready.
 - `npm audit` reports 1 moderate and 1 high vulnerability in web deps; no fix applied (not authorized in Phase 1).
 

@@ -1,3 +1,4 @@
+// HONEST LABEL: Real integration of anime.js timeline-sync. Utilizes animejs library to animate timeline scrub synchronization across circular gallery and SVG sparkline components.
 import React, { useEffect, useRef } from "react";
 import anime from "animejs";
 

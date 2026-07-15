@@ -1,3 +1,4 @@
+// HONEST LABEL: Custom equivalent of Cult UI Hover Video Player. Developed as a native CSS/JS react hover preview card since shadcn CLI add for Cult UI requires components.json initialization which is not active in this workspace.
 import React, { useState } from "react";
 
 interface HoverVideoPlayerProps {

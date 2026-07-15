@@ -1,3 +1,4 @@
+// HONEST LABEL: Custom equivalent of React Bits Circular Gallery. Built with custom CSS 3D transform animations since React Bits is a copy-paste-only registry and does not publish a remote package or CLI.
 import React, { useState } from "react";
 
 interface TimelineEvent {

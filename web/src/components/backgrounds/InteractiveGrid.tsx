@@ -1,3 +1,4 @@
+// HONEST LABEL: Custom equivalent of Animata Interactive Grid. Built as a local React grid mapping hover cells since Animata does not offer an npm/CLI package.
 import React, { useState, useEffect, useRef } from "react";
 
 export function InteractiveGrid() {

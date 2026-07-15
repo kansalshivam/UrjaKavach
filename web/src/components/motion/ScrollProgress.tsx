@@ -1,3 +1,4 @@
+// HONEST LABEL: Custom equivalent of Motion Primitives Scroll Progress. Developed utilizing native react scroll event listeners and state tracking since Motion Primitives is a copy-paste component without a CLI-installable registry entry.
 import React, { useEffect, useState } from "react";
 
 interface ScrollProgressProps {

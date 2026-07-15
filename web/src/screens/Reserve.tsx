@@ -153,7 +153,7 @@ export function Reserve() {
             <strong style={{ color: "#94a3b8", display: "block", marginBottom: "2px" }}>
               Illustrative Heuristic Model Disclosure
             </strong>
-            The 15.0% sourcing diversification mitigation is modeled as an illustrative 1:1 volume offset against daily import shortfall. OMC buffers are computed against the 5.0M bpd national consumption base to align with the IEA 74-day cover. Cavern capacities (Mangaluru: 1.5 MMT, Padur: 2.5 MMT, Visakhapatnam: 1.33 MMT) are adjusted to match the 3.372 MMT March 2026 RTI stock (~63.26% fill level).
+            The 15.0% sourcing diversification mitigation is modeled as a fixed absolute volume offset (660,000 bpd, representing 15% of the 4.4M bpd baseline import capacity) against the daily import shortfall regardless of the shortfall percentage. OMC buffers are computed against the 5.0M bpd national consumption base to align with the IEA 74-day cover. Cavern capacities (Mangaluru: 1.5 MMT, Padur: 2.5 MMT, Visakhapatnam: 1.33 MMT) are adjusted to match the 3.372 MMT March 2026 RTI stock (~63.26% fill level).
           </div>
         </div>
 

@@ -316,7 +316,7 @@
   - *Baseline (Zero-state):* 877 modules
   - *UI Sourcing & animejs (Tier 1 completed):* 1,243 modules (872.49 KB JS, 259.31 KB gzip)
   - *Sourcing Recommender (Tier 2 started):* 1,244 modules (885.01 KB JS, 263.29 KB gzip)
-  - *Reserve Planner (Tier 2 in progress):* 1,245 modules (892.02 KB JS, 264.70 KB gzip)
+  - *Reserve Planner (Tier 2 in progress):* 1,245 modules (892.13 KB JS, 264.75 KB gzip)
   - *Implication:* Cumulative trend logged to monitor potential performance degradation.
 
 ## 2026-07-15 - DOM Verification Retraction & Component testing Remediation
@@ -326,7 +326,7 @@
   - *Dashboard Cards, Twin Map Markers, Simulator Debounce:* All compile and state routing metrics are validated by unit tests, but their visual rendering verification remains strictly visual-only. There was no fabrication of DOM logs for these; they are noted as visual check verify targets for manual developer verification.
 
 ## 2026-07-15 - Tier 2: Strategic Reserve Planner Screen (Screen 6) Implementation
-- **Sourcing Verification:** Hand-worked calculations verified against March 2026 government RTI disclosure (5.33 MMT caverns capacity, reconciled to 63.26% fill level to sum to exactly 3.372 MMT available stock, OMC 64.5 days buffer measured against total 5.0M bpd consumption base = 322.5 million barrels). Shortfall and mitigation equations scale dynamically.
+- **Sourcing Verification:** Hand-worked calculations verified against March 2026 government RTI disclosure (5.33 MMT caverns capacity, reconciled to 63.26% fill level to sum to exactly 3.372 MMT available stock, OMC 64.5 days buffer measured against total 5.0M bpd consumption base = 322.5 million barrels). Shortfall and mitigation equations scale dynamically. The 660,000 bpd mitigation offset is modeled as a fixed absolute reduction.
 - **Verification Output:** Added `api/tests/test_reserve.py` and `web/src/screens/Reserve.test.tsx`.
   - Backend pytest: `tests/test_reserve.py` passed successfully.
   - Frontend Vitest DOM test: `src/screens/Reserve.test.tsx` verified sliders drag updates and days cover remaining metrics updating from 37.4 to 16.0.

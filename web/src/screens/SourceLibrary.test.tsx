@@ -8,15 +8,15 @@ global.fetch = mockFetch;
 
 const mockDocsList = [
   {
-    id: "PIB-2026-01",
-    title: "Strategic Petroleum Reserves Capacity and Fill Status",
+    id: "PIB-2026-03",
+    title: "Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns",
     source: "Press Information Bureau (PIB)",
     date: "March 12, 2026",
     summary: "Official statement on ISPRL rock caverns capacity."
   },
   {
     id: "PPAC-2026-02",
-    title: "Refinery Crude Processing Statistics and Capacity Report",
+    title: "PPAC Basic Statistics: Indian Petroleum & Natural Gas capacity",
     source: "Petroleum Planning & Analysis Cell (PPAC)",
     date: "February 28, 2026",
     summary: "PPAC report detailing refining capacities."
@@ -24,16 +24,16 @@ const mockDocsList = [
 ];
 
 const mockDocDetail = {
-  id: "PIB-2026-01",
-  title: "Strategic Petroleum Reserves Capacity and Fill Status",
+  id: "PIB-2026-03",
+  title: "Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns",
   source: "Press Information Bureau (PIB)",
   date: "March 12, 2026",
   content: "Indian Strategic Petroleum Reserves Limited (ISPRL) maintains 5.33 MMT."
 };
 
 const mockQueryResponse = {
-  answer: "According to [PIB-2026-01], ISPRL maintains 5.33 MMT of crude oil storage.",
-  retrieved_documents: ["PIB-2026-01"]
+  answer: "According to [PIB-2026-03], ISPRL maintains 5.33 MMT of crude oil storage.",
+  retrieved_documents: ["PIB-2026-03"]
 };
 
 describe("SourceLibrary Component DOM Test", () => {
@@ -60,8 +60,8 @@ describe("SourceLibrary Component DOM Test", () => {
     // 1. Verify Documents List Fetched on Mount
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
     expect(screen.getByText("Geopolitical & Commodity Intelligence Center")).toBeDefined();
-    expect(screen.getByText("Strategic Petroleum Reserves Capacity and Fill Status")).toBeDefined();
-    expect(screen.getByText("Refinery Crude Processing Statistics and Capacity Report")).toBeDefined();
+    expect(screen.getByText("Rajya Sabha Written Reply: Status of Strategic Petroleum Reserves Caverns")).toBeDefined();
+    expect(screen.getByText("PPAC Basic Statistics: Indian Petroleum & Natural Gas capacity")).toBeDefined();
 
     // 2. Verify First Document detail is auto-loaded
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
@@ -76,7 +76,7 @@ describe("SourceLibrary Component DOM Test", () => {
 
     // 4. Verify RAG query executed and displays result with citations
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(3));
-    expect(screen.getByText("According to [PIB-2026-01], ISPRL maintains 5.33 MMT of crude oil storage.")).toBeDefined();
-    expect(screen.getAllByText("PIB-2026-01")).toBeDefined();
+    expect(screen.getByText("According to [PIB-2026-03], ISPRL maintains 5.33 MMT of crude oil storage.")).toBeDefined();
+    expect(screen.getAllByText("PIB-2026-03")).toBeDefined();
   });
 });

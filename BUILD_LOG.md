@@ -334,10 +334,12 @@
   - Frontend Vitest DOM test: `src/screens/Reserve.test.tsx` verified sliders drag updates and days cover remaining metrics updating from 35.4 to 15.2.
 
 ## 2026-07-15 - Tier 2: RAG Source Library Screen (Screen 7) Implementation
-- **Sourcing Verification:** Curated 4 government releases (PIB-2026-01, PPAC-2026-02, MOPNG-2026-03, PIB-2026-04) explicitly matching key figures from the dossier: 5.33 MMT caverns capacity, 63.26% fill level (3.372 MMT / 23.35M barrels), 64.5 days OMC buffer (322.5M barrels), and 15% non-Hormuz sourcing shift (660,000 bpd mitigation offset).
+- **Sourcing Verification:** Curated 4 documents based on actual government publications (Rajya Sabha replies and Union Cabinet press releases, e.g. July 2021 Cabinet SPR Phase II Approval). The document content was written as synthetic summaries to keep the numbers (5.33 MMT capacity, 3.372 MMT / 23.35M barrels stock, 64.5 days OMC buffer = 322.5M barrels, 15% non-Hormuz routing shift = 660,000 bpd mitigation) arithmetically locked with the dossier's parameters.
+- **Jamnagar Unit Correction:** Corrected Jamnagar refining capacity from 1.24 MMTPA (incorrectly copied daily bpd metric to annual) to 1.24 million bpd capacity (approx 62 MMTPA), aligning with dossier line 73.
+- **Phase II Expansion Sourcing:** The Phase II cavern numbers (Chandikhole 4.0 MMT, Padur 2.5 MMT, total 11.83 MMT capacity) were sourced from real-world Cabinet decisions (approved in July 2021) to supplement the dossier's brief mention of the planned nodes.
 - **Verification Output:** Added `api/tests/test_rag.py` and `web/src/screens/SourceLibrary.test.tsx`.
   - Backend pytest: `tests/test_rag.py` verified documents metadata retrieval, detail expansion, and text keyword-overlap search answers with citations. Passed successfully.
-  - Frontend Vitest DOM test: `src/screens/SourceLibrary.test.tsx` verified documents loading, scroll progress rendering, query submission, and verified answer with [PIB-2026-01] citation tags. Passed successfully.
+  - Frontend Vitest DOM test: `src/screens/SourceLibrary.test.tsx` verified documents loading, scroll progress rendering, query submission, and verified answer with [PIB-2026-03] citation tags. Passed successfully.
 
 
 

@@ -273,11 +273,11 @@ export function SourceLibrary() {
                         onClick={() => handleSelectDoc(docId)}
                         style={{
                           fontSize: "0.75rem",
-                          background: "rgba(56, 189, 248, 0.1)",
-                          color: "#38bdf8",
+                          background: "rgba(245, 158, 11, 0.1)",
+                          color: "#f59e0b",
                           padding: "2px 8px",
                           borderRadius: "4px",
-                          border: "1px solid rgba(56, 189, 248, 0.3)",
+                          border: "1px solid rgba(245, 158, 11, 0.3)",
                           cursor: "pointer",
                           fontWeight: 600,
                         }}

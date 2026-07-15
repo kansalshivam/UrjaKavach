@@ -93,7 +93,7 @@ async def compute_sanctions_diff() -> OfacDiffResult:
 
     # Compute diff
     new_entries = current_ids - previous_ids
-    new_iran_count = len(new_entries)
+    new_iran_count = len(new_entries) if previous_count is not None else 0
 
     # Save current snapshot for next diff
     cache_file.write_text("\n".join(sorted(current_ids)), encoding="utf-8")

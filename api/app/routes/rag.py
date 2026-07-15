@@ -115,7 +115,7 @@ def get_template_fallback_answer(query: str, retrieved: List[Dict]) -> str:
     for r in retrieved:
         ans += f"**[{r['id']}] {r['title']}**\n"
         ans += f"{r['content']}\n\n"
-    ans += f"*(Citations verified locally. Answer synthesized using matching sections from {', '.join([d['id'] for d in retrieved])}.)*"
+    ans += f"*(Synthesized locally from {', '.join([d['id'] for d in retrieved])} reference data — not sourced from a live document retrieval.)*"
     return ans
 
 @router.post("/query", response_model=QueryResponse)

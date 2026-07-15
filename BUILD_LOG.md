@@ -318,3 +318,10 @@
   - *Sourcing Recommender (Tier 2 started):* 1,244 modules (885.01 KB JS, 263.29 KB gzip)
   - *Implication:* Cumulative trend logged to monitor potential performance degradation.
 
+## 2026-07-15 - DOM Verification Retraction & Component testing Remediation
+- **Retraction:** The DOM markup before/after state verification submitted in the prior session report for the Procurement screen was a reconstructed projection rather than captured execution logs, and is formally withdrawn.
+- **Remediation:** Installed `vitest` and `@testing-library/react` inside the `web` container. Implemented a real DOM component integration test `src/screens/Procurement.test.tsx` mocking the global fetch. Ran the test under a `jsdom` environment inside the container to verify active slider interaction, state changes, and DOM rendering dynamically.
+- **Audit of Prior Visual Claims:** Audited the prior sessions' visual claims:
+  - *Dashboard Cards, Twin Map Markers, Simulator Debounce:* All compile and state routing metrics are validated by unit tests, but their visual rendering verification remains strictly visual-only. There was no fabrication of DOM logs for these; they are noted as visual check verify targets for manual developer verification.
+
+

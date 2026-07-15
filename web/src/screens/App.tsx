@@ -4,8 +4,9 @@ import { Dashboard } from "./Dashboard";
 import { Simulator } from "./Simulator";
 import { Narrative } from "./Narrative";
 import { Landing } from "./Landing";
+import { Procurement } from "./Procurement";
 
-type Tab = "dashboard" | "map" | "simulator" | "narrative";
+type Tab = "dashboard" | "map" | "simulator" | "narrative" | "procurement";
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -54,6 +55,12 @@ export function App() {
           >
             Risk Narrative
           </button>
+          <button
+            className={`tab-btn ${activeTab === "procurement" ? "active" : ""}`}
+            onClick={() => setActiveTab("procurement")}
+          >
+            Sourcing Recommender
+          </button>
         </nav>
       </header>
 
@@ -68,6 +75,7 @@ export function App() {
         )}
         {activeTab === "simulator" && <Simulator />}
         {activeTab === "narrative" && <Narrative />}
+        {activeTab === "procurement" && <Procurement />}
       </main>
     </div>
   );

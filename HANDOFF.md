@@ -1,5 +1,5 @@
 # Urja Kavach — Project Handoff
-Last updated: 2026-07-15T06:55:00+05:30 by Antigravity (Antigravity coding assistant)
+Last updated: 2026-07-15T07:15:00+05:30 by Antigravity (Antigravity coding assistant)
 
 ## 1. Read This First
 Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md`,
@@ -7,9 +7,9 @@ Before touching this project, read (in order): `UrjaKavach_Execution_Plan (1).md
 This handoff assumes you have.
 
 ## 2. Current Phase
-Phase 12 of 12 (Execution Plan §9): Deliverables packaging
-Status: **complete** (Remediation of Parts 1, 2, 3, and 5 closed; Part 4 custom equivalents honestly implemented and labeled; workspace clean)
-What remains in this phase, specifically: Final deliverables packaging (dossier, deck).
+Phase 9 of 12 (Execution Plan §9): Tier 2
+Status: **in progress** (Procurement Optimization screen completed and verified; Reserve Planner and RAG panel pending)
+What remains in this phase, specifically: Implementation of Reserve Planner (Screen 6) and RAG panel (Screen 7).
 
 ## 3. Phase-by-Phase Status (all 12, from Execution Plan §9)
 | Phase | Name | Status | Notes |
@@ -22,14 +22,14 @@ What remains in this phase, specifically: Final deliverables packaging (dossier,
 | 6 | Command Dashboard | **complete** | Dashboard endpoint implemented. React screen displaying risk cards, Recharts trend graph, and news feeds fully functional. Stale indicators on component bars. |
 | 7 | Scenario Simulator | **complete** | Calibrated linear volume shortfall and SPR cover depletion math verified. POST `/api/scenario/run` and slider screen working. Debounce set to 250ms (HLD §2.11). |
 | 8 | LLM Risk Narrative | **complete** | Fallback chain (Gemini -> Groq -> Dynamic Template) implemented and verified. Screen 4 displays strategic risbriefing. |
-| 9 | Tier 2 | **Not applicable** | Skipped per spec §4 and §9 table since live AIS is using the golden fallback dataset due to external WebSocket issues. |
+| 9 | Tier 2 | **in progress** | Sourcing Recommender (Screen 5) completed and verified with actual 2026 data. Reserve Planner and RAG panel pending. |
 | 10 | Assumptions panel + hygiene pass | **complete** | Assumptions weights sliders are interactive and dynamic. Out-of-scope parameters visible. Calibration disclosure verified on Screen 3. No committed secrets. |
 | 11 | Golden fallback + demo rehearsal | **complete** | Baseline EIA/GDELT/AIS and precalculated risk scores seeded in DB lifespan to ensure a fully offline-functional console. |
 | 12 | Deliverables packaging | **complete** | Code skeleton, test suite, and walkthrough logs successfully packaged. Uncommitted polish pending git commit. |
 
 ## 4. Tier Status (Execution Plan §4)
 Tier 1: 100% complete and fully verified. All 4 ingestion streams, risk scoring math, BFS graph propagation, Recharts dashboards, scenario calculations, and LLM fallback narrative generation are active, tested, and fully functional.
-Tier 2: Skipped per spec §4 and §9 table since live AIS is using the golden fallback dataset.
+Tier 2: **in progress** (Procurement Recommendations route and screen completed; Reserve Planner and RAG panel pending).
 Tier 3: never build, stub, or claim (per rules §5 — always true).
 
 ## 5. Decisions Already Made — do not re-ask these
@@ -121,14 +121,19 @@ UrjaKavach/
 - `web/src/components/media/HoverVideoPlayer.tsx` — NEW: Cult UI-inspired hover video/media preview element.
 - `web/src/components/timeline/TimelineSync.tsx` — NEW: anime.js synchronized timeline event scrubber.
 - `web/src/screens/Landing.tsx` — Integrated InteractiveGrid background, CircularGallery, TimelineSync scrubber, ScrollProgress, and HoverVideoPlayer on Landing page.
+- `api/app/routes/procurement.py` — NEW: endpoint returning ranked alternative suppliers dynamically scored by corridor disruption level.
+- `web/src/screens/Procurement.tsx` — NEW: ranked alternatives card viewer benchmarked against actual 2026 response data.
+- `api/tests/test_procurement.py` — NEW: unit tests verifying the recommendations route and parameters constraints validation.
 - `BUILD_LOG.md` — Parts 1–5 post-completion verification logged
 - `HANDOFF.md` — this update
 
 ## 10. Commands Run This Session And Their Results
-- `docker compose build web` → Web service image built successfully with premium UI components and animejs package.
+- `docker compose build api` → Rebuilt API service image with procurement routes and tests.
+- `docker compose up -d api` → Recreated API container.
+- `docker compose build web` → Web service image built successfully.
 - `docker compose up -d web` → Web container recreated successfully.
-- `docker compose exec -T web npm run build` → Production build succeeded with zero TypeScript errors.
-- `docker compose exec -T api python -m pytest tests/ -v` → **17 passed** in 0.93s.
+- `docker compose exec -T web npm run build` → Production build succeeded (1244 modules, 884.24 KB).
+- `docker compose exec -T api python -m pytest tests/ -v` → **19 passed** in 1.14s.
 
 ## 11. Live-Data Verification Log (specific to this project's four external sources)
 - **GDELT**: ✅ VERIFIED 2026-07-14. 25 real articles persisted. Stale-flag recovery tested in BUILD_LOG Part 2.

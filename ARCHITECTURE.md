@@ -30,8 +30,8 @@ This document records the selected architectural tiers for external data depende
 *   **Reasoning:** Since model availability is dynamic, the application supports two concurrent providers.
 *   **Operational Assumptions:**
     *   Configured models:
-        *   Google Gemini: `gemini-3.1-flash-lite`
-        *   Groq: `openai/gpt-oss-120b` (Narrative) and `openai/gpt-oss-20b` (RAG)
+        *   Google Gemini: `gemini-2.0-flash`
+        *   Groq: `llama-3.3-70b-versatile` (Narrative and RAG)
     *   A daily health script (`app/llm/model_health.py`) queries the live endpoints (`/v1beta/models` and `/v1/models`), verifying configured strings are active. Warnings are fired to `ALERT_WEBHOOK_URL` if models are retired.
 
 ## 2. Stale Signal Exclusion Strategy (Option B)

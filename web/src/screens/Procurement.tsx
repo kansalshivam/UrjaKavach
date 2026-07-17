@@ -1,6 +1,11 @@
-// HONEST LABEL: Custom premium UI screen for Adaptive Procurement Recommendations.
-// Visualizes rule-based ranked alternatives based on dynamic suitability metrics and benchmarks against actual 2026 data.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { CustomSlider } from "@/components/ui/CustomSlider";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { Ship, Info, AlertTriangle, ShieldCheck, Map, Search } from "lucide-react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { cn } from "@/lib/utils";
 
 interface Recommendation {
   rank: number;
@@ -16,7 +21,31 @@ interface Recommendation {
 export function Procurement() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [capacity, setCapacity] = useState(50.0); // Simulated slider state for previewing adjustments
+  const [capacity, setCapacity] = useState(50.0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.from(".proc-header", {
+      y: -20,
+      opacity: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      clearProps: "all"
+    });
+  }, { scope: containerRef });
+
+  useGSAP(() => {
+    if (!loading && recommendations.length > 0) {
+      gsap.from(".proc-card", {
+        x: -20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: "power2.out",
+        clearProps: "all"
+      });
+    }
+  }, [loading, recommendations]);
 
   const fetchRecommendations = async (val: number) => {
     try {
@@ -37,178 +66,175 @@ export function Procurement() {
   }, [capacity]);
 
   return (
-    <div style={{ padding: "24px", color: "#e2e8f0", fontFamily: "system-ui, sans-serif" }}>
+    <div ref={containerRef} className="p-6 md:p-10 max-w-[95%] xl:max-w-[1800px] mx-auto flex flex-col gap-8 w-full">
       {/* Header section with benchmark information */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-          border: "1px solid #334155",
-          borderRadius: "12px",
-          padding: "24px",
-          marginBottom: "24px",
-          boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.3)",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+      <GlassCard className="proc-header p-8" glowColor="blue" animate={false}>
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8 border-b border-slate-800/80 pb-6">
           <div>
-            <span style={{ fontSize: "0.75rem", background: "rgba(56, 189, 248, 0.1)", color: "#38bdf8", padding: "4px 10px", borderRadius: "9999px", fontWeight: 600 }}>
-              Adaptive Sourcing Ranker
-            </span>
-            <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "8px 0 4px", color: "#f8fafc" }}>
-              Procurement Diversification recommendations
+            <h2 className="section-header mb-2 flex items-center gap-2">
+              <Ship className="w-5 h-5" /> Adaptive Sourcing Ranker
+            </h2>
+            <h1 className="text-3xl font-bold text-slate-100 tracking-tight">
+              Procurement Diversification Models
             </h1>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "rgba(0,0,0,0.2)", padding: "10px 16px", borderRadius: "8px", border: "1px solid #334155" }}>
-            <label style={{ fontSize: "0.85rem", color: "#94a3b8" }}>Simulated Corridor Capacity:</label>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={capacity}
-              onChange={(e) => setCapacity(parseFloat(e.target.value))}
-              style={{ accentColor: "#38bdf8", cursor: "pointer" }}
-            />
-            <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#38bdf8", width: "45px", textAlign: "right" }}>
-              {capacity.toFixed(0)}%
-            </span>
-          </div>
-        </div>
-
-        <div
-          style={{
-            borderLeft: "4px solid #f59e0b",
-            background: "rgba(245, 158, 11, 0.05)",
-            padding: "16px",
-            borderRadius: "0 8px 8px 0",
-            fontSize: "0.9rem",
-            lineHeight: "1.5",
-            color: "#cbd5e1",
-          }}
-        >
-          <strong style={{ color: "#f59e0b", display: "block", marginBottom: "4px" }}>
-            2026 Crisis Benchmark Alignment (Dossier Line 49)
-          </strong>
-          During the worst weeks of the 2026 disruption, India's refiners pivoted to alternative sourcing routes, successfully raising the non-Hormuz sourcing share of imports from <strong>~55% to ~70%</strong> within weeks by drawing heavily from West Africa, the Americas, and Russia.
-        </div>
-
-        <div
-          style={{
-            marginTop: "12px",
-            borderLeft: "4px solid #64748b",
-            background: "rgba(100, 116, 139, 0.05)",
-            padding: "12px 16px",
-            borderRadius: "0 8px 8px 0",
-            fontSize: "0.85rem",
-            color: "#94a3b8",
-            lineHeight: "1.4",
-          }}
-        >
-          <strong style={{ color: "#94a3b8", display: "block", marginBottom: "2px" }}>
-            Illustrative Heuristic Model Disclosure
-          </strong>
-          Suitability scores are calculated using an illustrative heuristic model based on grade compatibility, transit latency, and routing risk coefficients. Base weights (Russia: 90, West Africa: 85, Guyana: 80, US: 75, Iraq: 60) and disruption scaling (non-Hormuz boost: +10.0; Iraq Red Sea penalty: -25.0) represent qualitative optimization modeling of refinery input configurations rather than official static government scores.
-          <div style={{ marginTop: "6px", borderTop: "1px dashed #475569", paddingTop: "6px", fontSize: "0.8rem", color: "#64748b" }}>
-            ⚠️ <strong>Urja Kavach Reference Data Model Disclosure:</strong> This planner operates as a static reference-parameter calculator grounded in the dossier's historical specs and modeling parameters. It does not perform live-updating database queries.
-          </div>
-        </div>
-      </div>
-
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>Loading recommendations...</div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {recommendations.map((rec) => (
-            <div
-              key={rec.rank}
-              style={{
-                background: "#0b0f19",
-                border: "1px solid #1e293b",
-                borderRadius: "12px",
-                padding: "20px",
-                display: "grid",
-                gridTemplateColumns: "60px 1fr 180px 180px 120px",
-                alignItems: "center",
-                gap: "20px",
-                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.2)",
-                transition: "all 0.2s ease-in-out",
-              }}
-            >
-              {/* Rank column */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "50%",
-                    background: rec.rank === 1 ? "rgba(16, 185, 129, 0.15)" : "rgba(30, 41, 59, 0.5)",
-                    border: `1px solid ${rec.rank === 1 ? "#10b981" : "#334155"}`,
-                    color: rec.rank === 1 ? "#10b981" : "#f1f5f9",
-                    fontWeight: 700,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  #{rec.rank}
-                </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 min-w-[300px] w-full xl:w-auto shadow-inner">
+            <label className="text-sm font-semibold text-slate-400 whitespace-nowrap">Simulated Corridor Capacity:</label>
+            <div className="flex-1 w-full flex items-center gap-4">
+              <div className="flex-1">
+                <CustomSlider
+                  value={capacity}
+                  onChange={(v) => setCapacity(v)}
+                  min={0} max={100} step={5}
+                  ariaLabel="Hormuz Shortfall (%)"
+                />
               </div>
-
-              {/* Supplier Info */}
-              <div>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 4px", color: "#f1f5f9" }}>
-                  {rec.country}
-                </h3>
-                <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Grade: {rec.grade}</span>
-              </div>
-
-              {/* Details Metrics */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Transit Metrics</span>
-                <span style={{ fontSize: "0.9rem", color: "#cbd5e1" }}>
-                  {rec.transit_days} days | {rec.cost_premium}
-                </span>
-              </div>
-
-              {/* Compatibility */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Quality Compatibility</span>
-                <span
-                  style={{
-                    fontSize: "0.85rem",
-                    fontWeight: 600,
-                    color: rec.quality_compatibility === "High" ? "#10b981" : "#f59e0b",
-                  }}
-                >
-                  {rec.quality_compatibility}
-                </span>
-              </div>
-
-              {/* Suitability Score */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Suitability</span>
-                <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "#38bdf8" }}>
-                  {rec.suitability_score}%
-                </span>
-              </div>
-
-              {/* Actual 2026 role (spans across columns below) */}
-              <div
-                style={{
-                  gridColumn: "2 / -1",
-                  borderTop: "1px solid rgba(255,255,255,0.05)",
-                  paddingTop: "12px",
-                  marginTop: "12px",
-                  fontSize: "0.8rem",
-                  color: "#94a3b8",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong style={{ color: "#38bdf8" }}>2026 Ground Truth:</strong> {rec.actual_2026_role}
+              <div className="text-xl font-bold text-sky-400 w-16 text-right tabular-nums">
+                {capacity.toFixed(0)}%
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl flex gap-4 items-start relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
+            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <strong className="block text-amber-500 font-bold mb-2">
+                2026 Crisis Benchmark Alignment
+              </strong>
+              <p className="text-sm text-amber-100/70 leading-relaxed m-0">
+                During the worst weeks of the 2026 disruption, India's refiners pivoted to alternative sourcing routes, successfully raising the non-Hormuz sourcing share of imports from <strong className="text-amber-200">~55% to ~70%</strong> within weeks by drawing heavily from West Africa, the Americas, and Russia.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/30 border border-slate-700/50 p-5 rounded-xl flex gap-4 items-start relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-slate-500" />
+            <Info className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
+            <div className="flex flex-col gap-3">
+              <strong className="block text-slate-300 font-bold">
+                Illustrative Heuristic Model Disclosure
+              </strong>
+              <p className="text-sm text-slate-400 leading-relaxed m-0">
+                Suitability scores use an illustrative heuristic model based on grade compatibility, transit latency, and routing risk coefficients. Base weights and disruption scaling represent qualitative optimization modeling of refinery input configurations rather than official static government scores.
+              </p>
+              <div className="pt-3 border-t border-slate-700/50 text-xs text-slate-500 flex gap-2 items-start">
+                <ShieldCheck className="w-4 h-4 shrink-0" />
+                <span><strong className="text-slate-400">Reference Data Model:</strong> This planner operates as a static reference-parameter calculator grounded in historical specs.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </GlassCard>
+
+      {loading ? (
+        <div className="py-20 flex flex-col items-center justify-center gap-4 text-sky-400">
+          <Search className="w-8 h-8 animate-pulse" />
+          <p className="font-medium animate-pulse">Calculating optimal procurement matrices...</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {recommendations.map((rec) => (
+            <GlassCard
+              key={rec.rank}
+              className={cn(
+                "proc-card p-6 md:p-8 flex flex-col gap-5 transition-all hover:bg-slate-800/60 relative",
+                rec.rank === 1 ? "border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.1)]" : ""
+              )}
+              glowColor={rec.rank === 1 ? "green" : undefined}
+            >
+              {/* Card inner: stacked layout that works at all viewports */}
+              <div className="flex items-start gap-5 w-full">
+                {/* Rank badge */}
+                <div className="flex-shrink-0">
+                  <div className={cn(
+                    "w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold border-2 shadow-inner",
+                    rec.rank === 1 
+                      ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" 
+                      : "bg-slate-800/80 border-slate-700 text-slate-300"
+                  )}>
+                    #{rec.rank}
+                  </div>
+                </div>
+
+                {/* Main content area */}
+                <div className="flex-1 min-w-0">
+                  {/* Country + Grade */}
+                  <h3 className="text-xl font-bold text-slate-100 mb-1">{rec.country}</h3>
+                  <span className="text-sm font-medium text-slate-400 flex items-center gap-1.5 mb-4">
+                    <Droplets className="w-3.5 h-3.5 text-sky-400" /> Grade: {rec.grade}
+                  </span>
+
+                  {/* Metrics row — uses CSS grid to prevent overlap */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Compatibility</span>
+                      <span className={cn(
+                        "text-sm font-bold px-2.5 py-1 rounded-md inline-flex items-center w-fit",
+                        rec.quality_compatibility === "High" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                      )}>
+                        {rec.quality_compatibility}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Transit & Cost</span>
+                      <div className="text-sm font-medium text-slate-300 flex items-center gap-2 flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <Map className="w-3.5 h-3.5 text-slate-400" /> {rec.transit_days}d
+                        </span>
+                        <span className="text-slate-600">|</span>
+                        <span className={cn(
+                          rec.cost_premium.includes("Premium") ? "text-amber-400" : "text-emerald-400"
+                        )}>{rec.cost_premium}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Suitability</span>
+                      <div className="text-2xl font-black text-sky-400 tracking-tighter drop-shadow-sm flex items-baseline">
+                        <AnimatedCounter value={rec.suitability_score} />
+                        <span className="text-lg text-sky-400/50">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom row: 2026 Ground Truth */}
+              <div className="w-full border-t border-slate-700/50 pt-4">
+                <div className="text-sm text-slate-400 leading-relaxed bg-slate-900/50 p-4 rounded-lg w-full">
+                  <strong className="text-sky-400 font-semibold">2026 Ground Truth: </strong> 
+                  <span className="italic">{rec.actual_2026_role}</span>
+                </div>
+              </div>
+            </GlassCard>
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+// Needed missing icon for this page
+function Droplets(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 2.9 7 2.9s-2.29 3.06-4.58 6.16C1.28 10 7 10 7 16.3Z" />
+      <path d="M12.22 21A4.54 4.54 0 0 0 17 16.5c0-1.28-.62-2.5-1.85-3.5S11 8.5 11 8.5s-2.4 3.4-4.7 6.6c-1.15 1.5-1.08 4.2 1.92 5.9Z" />
+    </svg>
   );
 }

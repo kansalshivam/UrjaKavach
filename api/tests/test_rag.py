@@ -36,3 +36,18 @@ async def test_rag_query_engine():
     assert "SYNTH-MODEL-ISPRL-CAPACITY" in data["retrieved_documents"]
     # Check that it cites the retrieved doc
     assert "SYNTH-MODEL-ISPRL-CAPACITY" in data["answer"]
+
+
+@pytest.mark.anyio
+async def test_rag_query_engine_no_match():
+    payload = {
+        "query": "What is the capital of France?"
+    }
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post("/api/rag/query", json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert "No matching reference specifications" in data["answer"]
+    assert len(data["retrieved_documents"]) == 0
+

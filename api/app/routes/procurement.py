@@ -13,6 +13,8 @@ class SupplierRecommendation(BaseModel):
     cost_premium: str  # e.g., "-$2.5/bbl"
     suitability_score: float  # 0 to 100
     actual_2026_role: str  # Description of what actually happened in 2026
+    is_heuristic: bool = True
+    disclosure: str = "Heuristic score dynamically scaled based on simulated corridor capacity available."
 
 @router.get("/recommendations", response_model=List[SupplierRecommendation])
 def get_recommendations(capacity_available_pct: float = Query(100.0, ge=0.0, le=100.0)):
@@ -98,7 +100,9 @@ def get_recommendations(capacity_available_pct: float = Query(100.0, ge=0.0, le=
             transit_days=alt["transit_days"],
             cost_premium=alt["cost_premium"],
             suitability_score=alt["suitability_score"],
-            actual_2026_role=alt["actual_2026_role"]
+            actual_2026_role=alt["actual_2026_role"],
+            is_heuristic=True,
+            disclosure="Heuristic score dynamically scaled based on simulated corridor capacity available."
         ))
 
     return recommendations

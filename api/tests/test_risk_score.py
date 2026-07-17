@@ -3,6 +3,8 @@
 Targeted at the parts most likely to silently lie: the weights sum and the
 normalization functions.
 """
+import pytest
+from unittest.mock import AsyncMock
 from app.scoring.risk_score import (
     DEFAULT_WEIGHTS,
     SignalBundle,
@@ -127,3 +129,165 @@ def test_manual_score_recomputation():
     ) * 100.0
 
     assert abs(score - expected_score) < 1e-4, f"Expected {expected_score}, got {score}"
+
+
+def test_compute_risk_score_invalid_weights():
+    """Verify that compute_risk_score raises AssertionError if weights do not sum to 1.0."""
+    import pytest
+    signals = SignalBundle(
+        gdelt_article_volume_zscore=0.0,
+        price_3day_pct_change=0.0,
+        ais_count_vs_baseline=1.0,
+        sanctions_new_entries_7d=0,
+    )
+    bad_weights = {
+        "gdelt_volume": 0.5,
+        "price_volatility": 0.1,
+        "ais_deviation": 0.0,
+        "sanctions_flag": 0.0
+    }
+    with pytest.raises(AssertionError):
+        compute_risk_score(signals, bad_weights)
+
+
+def test_degenerate_normalization_inputs():
+    """Verify normalization handles extreme out-of-bound inputs robustly."""
+    from app.scoring.risk_score import normalize
+    
+    # Check clamping to custom bounds
+    assert normalize(-50.0, floor=0.0, ceiling=100.0) == 0.0
+    assert normalize(150.0, floor=0.0, ceiling=100.0) == 100.0
+    
+    # Check extreme z-scores
+    assert normalize_zscore(1000.0) == 1.0
+    assert normalize_zscore(-1000.0) == 0.0
+    
+    # Check extreme price volatility
+    assert normalize_price_volatility(1000.0) == 1.0
+    assert normalize_price_volatility(-1000.0) == 1.0
+    
+    # Check extreme AIS deviations
+    assert normalize_ais_deviation(1000.0) == 0.0
+    assert normalize_ais_deviation(-50.0) == 1.0
+
+
+@pytest.mark.anyio
+async def test_compute_price_volatility_insufficient_data():
+    from app.scoring.risk_score import compute_price_volatility
+    from unittest.mock import MagicMock
+    
+    # Session returns fewer than 2 rows
+    mock_session = MagicMock()
+    mock_session.execute = AsyncMock(return_value=MagicMock(all=MagicMock(return_value=[])))
+    
+    val = await compute_price_volatility(mock_session)
+    assert val == 0.0
+
+
+@pytest.mark.anyio
+async def test_compute_price_volatility_valid():
+    from app.scoring.risk_score import compute_price_volatility
+    from unittest.mock import MagicMock
+    
+    # Session returns newest = 80.0, oldest = 75.0
+    RowMock = MagicMock
+    rows = [
+        RowMock(value=80.0, period="2026-07-15"),
+        RowMock(value=75.0, period="2026-07-12")
+    ]
+    mock_session = MagicMock()
+    mock_session.execute = AsyncMock(return_value=MagicMock(all=MagicMock(return_value=rows)))
+    
+    pct_change = await compute_price_volatility(mock_session)
+    expected_pct = ((80.0 - 75.0) / 75.0) * 100.0
+    assert abs(pct_change - expected_pct) < 1e-6
+
+
+@pytest.mark.anyio
+async def test_compute_ais_deviation_no_data():
+    from app.scoring.risk_score import compute_ais_deviation
+    from unittest.mock import MagicMock
+    
+    # Session returns None for both current and baseline
+    mock_session = MagicMock()
+    mock_session.scalar = AsyncMock(side_effect=[None, None])
+    
+    val = await compute_ais_deviation(mock_session, bounding_box="non_hormuz_americas")
+    assert val is None  # Returns None representing insufficient data
+
+
+@pytest.mark.anyio
+async def test_compute_ais_deviation_valid():
+    from app.scoring.risk_score import compute_ais_deviation
+    from unittest.mock import MagicMock
+    
+    # Session returns current_count=30, baseline_avg=40.0
+    mock_session = MagicMock()
+    mock_session.scalar = AsyncMock(side_effect=[30, 40.0])
+    
+    val = await compute_ais_deviation(mock_session, bounding_box="non_hormuz_americas")
+    assert val == 0.75  # 30 / 40.0
+
+
+@pytest.mark.anyio
+async def test_compute_risk_score_no_baseline():
+    from app.scoring.risk_score import compute_and_store_risk_score
+    from unittest.mock import MagicMock, patch
+    
+    mock_session = MagicMock()
+    # Mock database scalar calls to return None (no GDELT fetches, no Price fetches)
+    mock_session.scalar = AsyncMock(return_value=None)
+    mock_session.execute = AsyncMock()
+    mock_session.commit = AsyncMock()
+    mock_session.refresh = AsyncMock()
+    
+    # Mock dependencies
+    with patch("app.scoring.risk_score.compute_gdelt_volume_zscore", new_callable=AsyncMock, return_value=0.0), \
+         patch("app.scoring.risk_score.compute_price_volatility", new_callable=AsyncMock, return_value=0.0), \
+         patch("app.scoring.risk_score.compute_ais_deviation", new_callable=AsyncMock, return_value=None):
+         
+        row = await compute_and_store_risk_score(mock_session, corridor="non_hormuz_americas")
+        assert row.component_ais_stale is True
+        assert row.component_ais_deviation == 0.0  # contribution is dropped to zero because it is stale/excluded
+
+
+def test_compute_risk_score_stale_exclusion():
+    from app.scoring.risk_score import compute_risk_score, SignalBundle
+
+    signals = SignalBundle(
+        gdelt_article_volume_zscore=1.5,  # maps to normalized z-score: (1.5 + 2) / 5 = 0.70
+        price_3day_pct_change=5.0,        # maps to normalized price volatility: 5 / 10 = 0.50
+        ais_count_vs_baseline=0.0,        # maps to normalized ais deviation: 1.0 - 0.0 = 1.00 (max)
+        sanctions_new_entries_7d=1,       # maps to normalized sanctions flag: 1.0
+    )
+
+    # 1. Normal active calculation
+    score_normal, components_normal = compute_risk_score(signals)
+    # Expected normal:
+    # GDELT: 0.70 * 0.35 = 0.245
+    # Price: 0.50 * 0.25 = 0.125
+    # AIS: 1.00 * 0.30 = 0.300
+    # Sanctions: 1.00 * 0.10 = 0.100
+    # Sum: 0.770 * 100 = 77.0
+    assert abs(score_normal - 77.0) < 1e-4
+    assert components_normal["ais_deviation"] == 1.0
+
+    # 2. AIS and Price stale calculation (Stale signals keep their last known value contribution)
+    score_stale, components_stale = compute_risk_score(
+        signals=signals,
+        price_stale=True,
+        ais_stale=True,
+    )
+    # Expected stale:
+    # GDELT: 0.70 * 0.35 = 0.245
+    # Price: 0.50 * 0.25 = 0.125 (Kept last known value)
+    # AIS: 1.00 * 0.30 = 0.300 (Kept last known value)
+    # Sanctions: 1.00 * 0.10 = 0.100
+    # Sum: 0.770 * 100 = 77.0
+    assert abs(score_stale - 77.0) < 1e-4
+    assert components_stale["ais_deviation"] == 1.0
+    assert components_stale["price_volatility"] == 0.50
+    assert components_stale["gdelt_volume"] == 0.70
+
+
+

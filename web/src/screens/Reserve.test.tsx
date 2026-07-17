@@ -59,8 +59,8 @@ describe("Reserve Component DOM Render Test", () => {
     expect(screen.getByText("Strategic Reserve Drawdown Planner")).toBeDefined();
     
     // 2. Verify DOM renders the initial 35.4 Days metrics card
-    expect(screen.getByText("35.4 Days")).toBeDefined();
-    expect(screen.getByText("0.66M bpd")).toBeDefined();
+    expect(screen.getAllByText(/35\.4/)[0]).toBeDefined();
+    expect(screen.getAllByText(/0\.66/)[0]).toBeDefined();
 
     // 3. Verify Caverns table renders correctly with real data
     expect(screen.getByText("Visakhapatnam")).toBeDefined();
@@ -83,8 +83,8 @@ describe("Reserve Component DOM Render Test", () => {
 
     // 7. Verify DOM renders the updated 15.2 Days cover dynamically
     await waitFor(() => {
-      expect(screen.getByText("15.2 Days")).toBeDefined();
+      expect(screen.getAllByText(/15\.2/)[0]).toBeDefined();
     });
-    expect(screen.queryByText("35.4 Days")).toBeNull();
+    expect(screen.queryAllByText(/35\.4/).length).toBe(0);
   });
 });

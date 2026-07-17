@@ -5,7 +5,9 @@ from app.db.session import get_session
 from unittest.mock import AsyncMock
 
 async def mock_get_session():
+    from unittest.mock import MagicMock
     session = AsyncMock()
+    session.add = MagicMock()
     yield session
 
 @pytest.fixture(autouse=True)

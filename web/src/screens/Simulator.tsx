@@ -1,4 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { CustomSlider } from "@/components/ui/CustomSlider";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { TextGenerateEffect } from "@/components/ui/TextGenerateEffect";
+import { AlertTriangle, Activity, ShieldAlert, Droplets } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 interface SimulationResult {
   id: number;
@@ -15,8 +23,19 @@ export function Simulator() {
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [simulating, setSimulating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Trigger simulation computation whenever the slider changes
+  useGSAP(() => {
+    gsap.from(".sim-fade", {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
+      clearProps: "all"
+    });
+  }, { scope: containerRef });
+
   useEffect(() => {
     setSimulating(true);
     const triggerSim = setTimeout(() => {
@@ -41,186 +60,163 @@ export function Simulator() {
           setError(err.message);
           setSimulating(false);
         });
-    }, 250); // debounce input slider movements (HLD/LLD §2.11)
+    }, 250);
 
     return () => clearTimeout(triggerSim);
   }, [sliderValue]);
 
   const getCapacityColor = (val: number) => {
-    if (val < 30) return "#ef4444"; // high danger
-    if (val < 70) return "#f59e0b"; // warning
-    return "#10b981"; // safe
+    if (val < 30) return "red";
+    if (val < 70) return "amber";
+    return "green";
   };
+  
+  const capacityColor = getCapacityColor(sliderValue);
 
   return (
-    <div className="simulator-view" style={{ padding: "32px", height: "100%", overflowY: "auto" }}>
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-        <div>
-          <h2 className="eyebrow" style={{ color: "#38bdf8", margin: 0 }}>Simulation Engine</h2>
-          <h1 style={{ fontSize: "2rem", margin: "4px 0 20px" }}>Strategic Reserve & Flow Simulator</h1>
-          <p className="lede" style={{ color: "#8b949e", marginBottom: "32px" }}>
-            Model a supply chain crisis along the Strait of Hormuz. Adjust the capacity slider to simulate blockades or shipping route disruptions, observing cascading effects on crude import shortfalls and strategic reserve drawdowns.
-          </p>
-        </div>
-
-        {/* Simulator Controls & Slider */}
-        <div
-          className="detail-card"
-          style={{
-            background: "#161b22",
-            border: "1px solid #21262d",
-            borderRadius: "12px",
-            padding: "24px",
-            marginBottom: "24px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-            <span style={{ fontSize: "1rem", fontWeight: 600, color: "#f1f5f9" }}>
-              Strait of Hormuz Available Capacity
-            </span>
-            <span
-              style={{
-                fontSize: "1.75rem",
-                fontWeight: 800,
-                color: getCapacityColor(sliderValue),
-                textShadow: `0 0 10px ${getCapacityColor(sliderValue)}33`,
-              }}
-            >
-              {sliderValue}%
-            </span>
-          </div>
-
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="5"
-            value={sliderValue}
-            aria-label="Corridor Capacity Available"
-            onChange={(e) => setSliderValue(parseInt(e.target.value))}
-            style={{
-              width: "100%",
-              height: "8px",
-              background: "#21262d",
-              borderRadius: "4px",
-              outline: "none",
-              cursor: "pointer",
-              accentColor: getCapacityColor(sliderValue),
-            }}
-          />
-
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "#8b949e", marginTop: "8px" }}>
-            <span>0% (Full Closure)</span>
-            <span>30% (Worst Historical Closure)</span>
-            <span>100% (Normal Operations)</span>
-          </div>
-        </div>
-
-        {error && (
-          <div className="error-panel" style={{ marginBottom: "24px" }}>
-            <h3>Simulator Error</h3>
-            <p>{error}</p>
-          </div>
-        )}
-
-        {/* Results Panel */}
-        {result && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Calibration Warning block */}
-            <div
-              style={{
-                background: "rgba(245, 158, 11, 0.1)",
-                border: "1px solid rgba(245, 158, 11, 0.2)",
-                borderRadius: "8px",
-                padding: "12px 16px",
-                fontSize: "0.82rem",
-                color: "#f59e0b",
-                lineHeight: "1.4",
-              }}
-            >
-              ⚠️ <strong>Calibration Warning:</strong> This simulation uses a two-point linear interpolation based on historical benchmarks. Note that two real data points do not make a validated curve.
-            </div>
-
-            {/* Metrics grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-              {/* Metric 1: Import decline */}
-              <div
-                className="detail-card"
-                style={{
-                  background: "#161b22",
-                  border: "1px solid #21262d",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div>
-                  <span style={{ fontSize: "0.85rem", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Projected Crude Import Loss
-                  </span>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginTop: "12px" }}>
-                    <strong style={{ fontSize: "2.5rem", color: result.projected_import_volume_change_pct < 0 ? "#ef4444" : "#f1f5f9" }}>
-                      {result.projected_import_volume_change_pct.toFixed(1)}%
-                    </strong>
-                  </div>
-                </div>
-                <div style={{ fontSize: "0.8rem", color: "#8b949e", marginTop: "16px", borderTop: "1px solid #21262d", paddingTop: "12px" }}>
-                  Baseline: 100% supply capacity | Anchor: -23.0% drop at 30% available capacity.
-                </div>
-              </div>
-
-              {/* Metric 2: SPR Days Cover remaining */}
-              <div
-                className="detail-card"
-                style={{
-                  background: "#161b22",
-                  border: "1px solid #21262d",
-                  borderRadius: "12px",
-                  padding: "20px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div>
-                  <span style={{ fontSize: "0.85rem", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Remaining Strategic Reserves Cover
-                  </span>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginTop: "12px" }}>
-                    <strong style={{ fontSize: "2.5rem", color: result.projected_spr_days_cover < 3.0 ? "#ef4444" : result.projected_spr_days_cover < 7.0 ? "#f59e0b" : "#10b981" }}>
-                      {result.projected_spr_days_cover.toFixed(1)}
-                    </strong>
-                    <span style={{ fontSize: "1rem", color: "#8b949e" }}>days</span>
-                  </div>
-                </div>
-                <div style={{ fontSize: "0.8rem", color: "#8b949e", marginTop: "16px", borderTop: "1px solid #21262d", paddingTop: "12px" }}>
-                  Baseline starting reserve: ~9.5 days net import cover | Window: 30-day disruption.
-                </div>
-              </div>
-            </div>
-
-            {/* Narrative Box */}
-            <div
-              className="detail-card"
-              style={{
-                background: "#0d1117",
-                border: "1px solid #21262d",
-                borderRadius: "12px",
-                padding: "20px",
-              }}
-            >
-              <h3 style={{ color: "#38bdf8", marginBottom: "8px", fontSize: "0.95rem" }}>
-                Simulation Impact Narrative
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.95rem", lineHeight: "1.6", color: "#c9d1d9" }}>
-                {simulating ? "Re-simulating cascades..." : result.narrative_text}
-              </p>
-            </div>
-          </div>
-        )}
+    <div ref={containerRef} className="p-6 md:p-10 max-w-[95%] xl:max-w-[1500px] mx-auto flex flex-col gap-8 w-full">
+      <div className="sim-fade">
+        <h2 className="section-header mb-2 flex items-center gap-2">
+          <Activity className="w-5 h-5" /> Simulation Engine
+        </h2>
+        <h1 className="text-4xl font-bold text-slate-100 mb-4 tracking-tight">Strategic Reserve & Flow Simulator</h1>
+        <p className="text-lg text-slate-400 leading-relaxed max-w-3xl">
+          Model a supply chain crisis along the Strait of Hormuz. Adjust the capacity slider to simulate blockades or shipping route disruptions, observing cascading effects on crude import shortfalls and strategic reserve drawdowns.
+        </p>
       </div>
+
+      <GlassCard className="sim-fade p-8" glowColor={capacityColor}>
+        <div className="flex justify-between items-center mb-6 border-b border-slate-800/80 pb-4">
+          <span className="text-lg font-semibold text-slate-200">
+            Strait of Hormuz Available Capacity
+          </span>
+          <div className={cn(
+            "text-4xl font-black tabular-nums tracking-tighter",
+            capacityColor === "red" ? "text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.3)]" :
+            capacityColor === "amber" ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]" :
+            "text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]"
+          )}>
+            {sliderValue}%
+          </div>
+        </div>
+
+        <div className="px-2">
+          <CustomSlider
+            value={sliderValue}
+            onChange={(v) => setSliderValue(v)}
+            min={0} max={100} step={5}
+            ariaLabel="Corridor Capacity Available"
+            colorScheme={capacityColor === "green" ? "blue" : undefined}
+          />
+        </div>
+
+        <div className="flex justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 px-2">
+          <span>0% (Full Closure)</span>
+          <span>30% (Worst Historical)</span>
+          <span>100% (Normal)</span>
+        </div>
+      </GlassCard>
+
+      {error && (
+        <GlassCard glowColor="red" className="sim-fade p-6 bg-red-950/20 border-red-900/30">
+          <h3 className="text-xl font-bold text-red-400 flex items-center gap-2 mb-2">
+            <AlertTriangle className="w-5 h-5" /> Simulator Error
+          </h3>
+          <p className="text-red-200/70">{error}</p>
+        </GlassCard>
+      )}
+
+      {result && (
+        <div className="flex flex-col gap-8">
+          <div className="sim-fade bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex gap-4 items-start shadow-inner">
+            <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+            <div className="text-sm text-amber-500/90 leading-relaxed">
+              <strong className="block text-amber-500 font-bold mb-1 text-base">Calibration Notice</strong> 
+              This simulation uses a two-point linear interpolation based on historical benchmarks. Note that two real data points do not make a validated curve.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Metric 1: Import decline */}
+            <GlassCard 
+              className="sim-fade p-8 flex flex-col justify-between"
+              glowColor={result.projected_import_volume_change_pct < -15 ? "red" : undefined}
+            >
+              <div>
+                <span className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                  <Droplets className="w-4 h-4" /> Projected Import Loss
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <AnimatedCounter 
+                    value={result.projected_import_volume_change_pct} 
+                    decimals={1} 
+                    className={cn(
+                      "text-5xl font-black tracking-tighter drop-shadow-sm",
+                      result.projected_import_volume_change_pct < -20 ? "text-red-400" : 
+                      result.projected_import_volume_change_pct < -10 ? "text-amber-400" : "text-slate-100"
+                    )}
+                  />
+                  <span className="text-2xl text-slate-400 font-bold">%</span>
+                </div>
+              </div>
+              <div className="text-xs font-medium text-slate-500 mt-8 pt-4 border-t border-slate-800/80">
+                Baseline: 100% capacity <span className="mx-2 opacity-50">|</span> Anchor: -23.0% drop at 30% available
+              </div>
+            </GlassCard>
+
+            {/* Metric 2: SPR Days Cover remaining */}
+            <GlassCard 
+              className="sim-fade p-8 flex flex-col justify-between"
+              glowColor={result.projected_spr_days_cover < 5 ? "red" : undefined}
+            >
+              <div>
+                <span className="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                  <ShieldAlert className="w-4 h-4" /> Remaining Reserves Cover
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <AnimatedCounter 
+                    value={result.projected_spr_days_cover} 
+                    decimals={1} 
+                    className={cn(
+                      "text-5xl font-black tracking-tighter drop-shadow-sm",
+                      result.projected_spr_days_cover < 3.0 ? "text-red-400" : 
+                      result.projected_spr_days_cover < 7.0 ? "text-amber-400" : "text-emerald-400"
+                    )}
+                  />
+                  <span className="text-lg font-bold text-slate-400 uppercase tracking-widest ml-1">Days</span>
+                </div>
+              </div>
+              <div className="text-xs font-medium text-slate-500 mt-8 pt-4 border-t border-slate-800/80">
+                Baseline starting reserve: ~9.5 days <span className="mx-2 opacity-50">|</span> Window: 30-day disruption
+              </div>
+            </GlassCard>
+          </div>
+
+          <GlassCard glowColor="blue" className="sim-fade p-8 bg-slate-900/90 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-400 via-purple-500 to-sky-400" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-sky-400 mb-4">
+              Simulation Impact Narrative
+            </h3>
+            <div className="min-h-[120px]">
+              {simulating ? (
+                <div className="flex flex-col gap-3 animate-pulse mt-4">
+                  <div className="h-4 bg-slate-800 rounded w-full"></div>
+                  <div className="h-4 bg-slate-800 rounded w-5/6"></div>
+                  <div className="h-4 bg-slate-800 rounded w-4/6"></div>
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <TextGenerateEffect 
+                    words={result.narrative_text} 
+                    className="text-lg leading-relaxed text-slate-200 font-normal"
+                    duration={0.5}
+                  />
+                </div>
+              )}
+            </div>
+          </GlassCard>
+        </div>
+      )}
     </div>
   );
 }

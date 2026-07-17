@@ -1,5 +1,5 @@
 // HONEST LABEL: Custom equivalent of Cult UI Hover Video Player. Developed as a native CSS/JS react hover preview card since shadcn CLI add for Cult UI requires components.json initialization which is not active in this workspace.
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface HoverVideoPlayerProps {
   thumbnailUrl: string;
@@ -10,6 +10,17 @@ interface HoverVideoPlayerProps {
 
 export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata }: HoverVideoPlayerProps) {
   const [hovered, setHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!videoUrl || !videoRef.current) return;
+    if (hovered) {
+      videoRef.current.play().catch(() => {});
+    } else {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [hovered, videoUrl]);
 
   return (
     <div
@@ -31,17 +42,44 @@ export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata
       {/* Background Thumbnail Image */}
       <div
         style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
           width: "100%",
           height: "100%",
           backgroundImage: `url(${thumbnailUrl})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: hovered ? "brightness(0.3) blur(2px)" : "brightness(0.8)",
-          transition: "filter 0.3s ease",
+          filter: hovered ? "brightness(0.15) blur(1px)" : "brightness(0.7)",
+          transition: "all 0.3s ease",
+          zIndex: 1,
         }}
       />
 
-      {/* Hover Overlay */}
+      {/* Video Player */}
+      {videoUrl && (
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          loop
+          muted
+          playsInline
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: hovered ? 0.3 : 0,
+            transition: "opacity 0.3s ease",
+            zIndex: 2,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
+      {/* Center Hover text */}
       <div
         style={{
           position: "absolute",
@@ -58,6 +96,8 @@ export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata
           padding: "16px",
           boxSizing: "border-box",
           textAlign: "center",
+          pointerEvents: "none",
+          zIndex: 3,
         }}
       >
         <span
@@ -72,19 +112,42 @@ export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata
         >
           {overlayText}
         </span>
-        {metadata && (
-          <div
+        {videoUrl && (
+          <span
             style={{
+              fontSize: "0.65rem",
               color: "#94a3b8",
-              fontSize: "0.75rem",
+              background: "rgba(15, 23, 42, 0.8)",
+              padding: "2px 6px",
+              borderRadius: "4px",
+              border: "1px solid rgba(255, 255, 255, 0.05)",
               transform: hovered ? "translateY(0)" : "translateY(10px)",
-              transition: "transform 0.3s ease 0.1s",
+              transition: "transform 0.3s ease 0.05s",
             }}
           >
-            {metadata}
-          </div>
+            Illustrative Stock Preview
+          </span>
         )}
       </div>
+
+      {/* Metadata Overlay (Always visible, slightly fades on hover to let center text show) */}
+      {metadata && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            opacity: hovered ? 0.15 : 1,
+            transition: "opacity 0.3s ease",
+            pointerEvents: "none",
+            zIndex: 4,
+          }}
+        >
+          {metadata}
+        </div>
+      )}
 
       {/* Play/Preview icon */}
       <div
@@ -101,6 +164,7 @@ export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata
           justifyContent: "center",
           border: "1px solid rgba(255,255,255,0.1)",
           color: "#38bdf8",
+          zIndex: 5,
         }}
       >
         <svg

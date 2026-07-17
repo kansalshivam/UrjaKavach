@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import GdeltArticle, RiskScore
+from app.db.models import GdeltArticle, RiskScore, PricePoint, AisSnapshot
 from app.db.session import get_session
 from app.scoring.risk_score import DEFAULT_WEIGHTS
 
@@ -23,6 +23,19 @@ async def dashboard_summary(session: AsyncSession = Depends(get_session)) -> dic
             .limit(1)
         )
         if row:
+            # Query last updated timestamps for each feed
+            gdelt_time = await session.scalar(
+                select(func.max(GdeltArticle.fetched_at))
+                .where(GdeltArticle.corridor == corridor)
+            )
+            price_time = await session.scalar(
+                select(func.max(PricePoint.fetched_at))
+            )
+            ais_time = await session.scalar(
+                select(func.max(AisSnapshot.captured_at))
+                .where(AisSnapshot.bounding_box == corridor)
+            )
+
             risk_scores_list.append({
                 "id": row.id,
                 "corridor": row.corridor,
@@ -37,12 +50,16 @@ async def dashboard_summary(session: AsyncSession = Depends(get_session)) -> dic
                 "component_price_stale": row.component_price_stale,
                 "component_ais_stale": row.component_ais_stale,
                 "component_sanctions_stale": row.component_sanctions_stale,
+                "last_updated_gdelt": gdelt_time.isoformat() if gdelt_time else None,
+                "last_updated_price": price_time.isoformat() if price_time else None,
+                "last_updated_ais": ais_time.isoformat() if ais_time else None,
+                "last_updated_sanctions": row.computed_at.isoformat(),
             })
 
     # 2. Fetch historical risk scores for trend charts (last 100 entries, ordered chronologically)
     history_result = await session.execute(
         select(RiskScore)
-        .order_by(RiskScore.computed_at.asc())
+        .order_by(RiskScore.computed_at.desc())
         .limit(100)
     )
     history_rows = history_result.scalars().all()
@@ -54,6 +71,7 @@ async def dashboard_summary(session: AsyncSession = Depends(get_session)) -> dic
         }
         for r in history_rows
     ]
+    history_list.reverse()
 
     # 3. Fetch recent GDELT articles
     articles_result = await session.execute(
@@ -70,6 +88,7 @@ async def dashboard_summary(session: AsyncSession = Depends(get_session)) -> dic
             "url": a.url,
             "seendate": a.seendate,
             "domain": a.domain,
+            "is_synthetic": a.is_synthetic,
         }
         for a in articles_rows
     ]

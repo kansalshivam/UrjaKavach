@@ -29,7 +29,9 @@ class MockResult:
 
 
 async def mock_get_session():
+    from unittest.mock import MagicMock
     session = AsyncMock()
+    session.add = MagicMock()
     session.execute.return_value = MockResult()
     yield session
 

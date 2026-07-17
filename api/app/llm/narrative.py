@@ -77,6 +77,11 @@ async def generate_narrative(
         f"- Jamnagar & Vadinar Import Ports: {ais_counts.get('jamnagar_vadinar', 'N/A')} vessels\n\n"
         "### Recent Geopolitical News Headlines:\n"
         f"{articles_summary}\n\n"
+        "NOTE: Under the free tier, AIS vessel tracking coverage is structurally limited to the Americas box. "
+        "The Strait of Hormuz, West Africa, and Russia corridors currently have zero AIS stream coverage and are "
+        "excluded from risk scoring calculations (+0.0% contribution). State this limitation plainly and do "
+        "not fabricate real-world explanations (such as tanker rerouting or traffic suspension) for the absence of "
+        "AIS data in these zones.\n\n"
         "Highlight the primary threat corridors (especially Hormuz if elevated) and assess their potential impact on India's energy supply chain resilience. "
         "Format your response as a professional markdown document with clear headings. Do not include meta-commentary or conversational intros."
     )
@@ -86,7 +91,7 @@ async def generate_narrative(
         try:
             logger.info("Attempting narrative generation via Gemini API...")
             async with httpx.AsyncClient(timeout=10.0) as client:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={gemini_key}"
                 payload = {
                     "contents": [{
                         "parts": [{"text": prompt}]
@@ -110,7 +115,7 @@ async def generate_narrative(
                 url = "https://api.groq.com/openai/v1/chat/completions"
                 headers = {"Authorization": f"Bearer {groq_key}"}
                 payload = {
-                    "model": "llama3-70b-8192",
+                    "model": "openai/gpt-oss-120b",
                     "messages": [{"role": "user", "content": prompt}],
                     "temperature": 0.3,
                 }

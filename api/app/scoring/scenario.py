@@ -23,8 +23,15 @@ def calculate_scenario_effects(capacity_available_pct: float) -> tuple[float, fl
     - 100% capacity available -> 0% import change, 9.5 SPR days cover
     - 30% capacity available -> -23% import change, 2.6 SPR days cover (after 30-day drawdown)
     """
-    # Linear interpolation of import change: (100 -> 0%, 30 -> -23%, 0 -> -32.8%)
-    import_volume_change_pct = -(100.0 - capacity_available_pct) * (23.0 / 70.0)
+    # Piecewise interpolation of import change:
+    # - Linear from 100% (0% drop) to 30% (-23% drop)
+    # - Non-linear quadratic plateau from 30% (-23% drop) to 0% (~-32.857% drop)
+    if capacity_available_pct >= 30.0:
+        import_volume_change_pct = -(100.0 - capacity_available_pct) * (23.0 / 70.0)
+    else:
+        # y = -23.0 - a * (30 - x)^2 where y(0) = -32.857142857 -> a = 9.857142857 / 900.0
+        a = 9.857142857 / 900.0
+        import_volume_change_pct = -23.0 - a * ((30.0 - capacity_available_pct) ** 2)
 
     # SPR days cover remaining after 30-day drawdown at the shortfall rate
     shortfall_ratio = abs(import_volume_change_pct) / 100.0

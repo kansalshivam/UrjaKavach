@@ -7,9 +7,9 @@ from datetime import datetime, timezone, timedelta
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from app.db.session import SessionLocal
-from app.ingestion.eia import EiaConfigurationError, fetch_brent_spot_price
-from app.ingestion.gdelt import GdeltRateLimitedError, fetch_gdelt_articles
-from app.ingestion.ofac import compute_sanctions_diff
+from app.ingestion.eia import EiaConfigurationError, fetch_spot_prices
+from app.ingestion.gdelt import GdeltRateLimitedError, fetch_gdelt_articles, is_article_relevant
+from app.ingestion.ofac import compute_sanctions_diff_for_all
 from app.ingestion.repository import store_gdelt_articles, store_price_points
 from app.scoring.risk_score import compute_and_store_risk_score
 import app.ingestion.ais as ais_module
@@ -17,9 +17,11 @@ import app.ingestion.ais as ais_module
 logger = logging.getLogger(__name__)
 
 CORRIDOR_QUERIES = [
-    ("hormuz", '"Strait of Hormuz"'),
-    ("non_hormuz_west_africa", '"Bab el-Mandeb" oil'),
-    ("hormuz", '"Iran oil sanctions"'),
+    ("hormuz", '"Strait of Hormuz" (oil OR tanker OR shipping OR blockade OR military OR irgc OR strike OR conflict)'),
+    ("hormuz", '"Iran oil sanctions" (tanker OR export OR shipping OR blockade)'),
+    ("non_hormuz_west_africa", '"Bab el-Mandeb" (oil OR tanker OR shipping OR houthi OR blockade OR conflict)'),
+    ("non_hormuz_americas", '("Gulf of Mexico" OR "Guyana oil" OR "Guyana crude" OR "Exxon Guyana" OR "US oil imports" OR "US crude exports") (oil OR tanker OR import OR refinery OR export)'),
+    ("non_hormuz_russia", '("Sokol oil" OR "Urals crude" OR "Russia oil India") (sanctions OR import OR shipping)'),
 ]
 
 # Corridors to compute risk scores for (Execution Plan §5)
@@ -30,40 +32,123 @@ RISK_CORRIDORS = [
     "non_hormuz_russia",
 ]
 
-# Module-level cache for latest OFAC diff count (used by risk score job)
-_latest_sanctions_count: int = 0
+# Module-level cache for latest OFAC diff counts per corridor
+_latest_sanctions_counts: dict[str, int] = {}
 LAST_OFAC_SUCCESS_TIME: datetime | None = None
+
+
+async def run_model_health_check() -> None:
+    logger.info("Starting scheduled daily model health check...")
+    try:
+        from app.llm.model_health import check_model_health
+        await check_model_health()
+    except Exception as exc:
+        logger.error("Error during scheduled model health check: %s", exc)
 
 
 def build_scheduler() -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler(timezone="UTC")
-    scheduler.add_job(run_gdelt_poll, "interval", minutes=15, id="gdelt_poll", replace_existing=True)
-    scheduler.add_job(run_eia_poll, "interval", hours=1, id="eia_poll", replace_existing=True)
-    scheduler.add_job(run_ofac_poll, "interval", hours=24, id="ofac_poll", replace_existing=True)
+    now = datetime.now(timezone.utc)
+    scheduler.add_job(run_gdelt_poll, "interval", minutes=15, id="gdelt_poll", replace_existing=True, next_run_time=now)
+    scheduler.add_job(run_eia_poll, "interval", hours=1, id="eia_poll", replace_existing=True, next_run_time=now)
+    scheduler.add_job(run_ofac_poll, "interval", hours=24, id="ofac_poll", replace_existing=True, next_run_time=now)
+    scheduler.add_job(run_model_health_check, "interval", hours=24, id="model_health_check", replace_existing=True, next_run_time=now)
     # Risk score recompute every 10 minutes, matching GDELT poll cadence (HLD/LLD §2.5)
-    scheduler.add_job(run_risk_score_compute, "interval", minutes=10, id="risk_score_compute", replace_existing=True)
+    # Start it 15 seconds after ingestion to utilize the fresh fetched data
+    scheduler.add_job(run_risk_score_compute, "interval", minutes=10, id="risk_score_compute", replace_existing=True, next_run_time=now + timedelta(seconds=15))
     return scheduler
+
+
+GOLDEN_FALLBACK_ARTICLES = {
+    "hormuz": [
+        {
+            "title": "Middle East Tensions Surge as Tanker Deviates near Strait of Hormuz",
+            "url": "https://golden-fallback.internal/business/energy/tanker-hormuz-disruption-2026",
+            "seendate": "20260714T100000Z",
+            "domain": "golden-fallback.internal",
+        },
+        {
+            "title": "US Navy Confirms Incident in Strait of Hormuz affecting Oil Cargo Flow",
+            "url": "https://golden-fallback.internal/news/navy-hormuz-incident-2026",
+            "seendate": "20260714T101500Z",
+            "domain": "golden-fallback.internal",
+        },
+        {
+            "title": "Brent Crude Volatility Rises as Tanker Traffic Slows in Chokepoint",
+            "url": "https://golden-fallback.internal/news/articles/brent-crude-volatility-hormuz-2026",
+            "seendate": "20260714T110000Z",
+            "domain": "golden-fallback.internal",
+        }
+    ],
+    "non_hormuz_west_africa": [
+        {
+            "title": "Red Sea Shipping Reroutes via West Africa as Bab el-Mandeb Risks Escalated",
+            "url": "https://golden-fallback.internal/news/articles/red-sea-shipping-reroutes-2026",
+            "seendate": "20260714T120000Z",
+            "domain": "golden-fallback.internal",
+        },
+        {
+            "title": "Nigeria Crude Exports Rise to Meet Indian Refinery Demand Shifts",
+            "url": "https://golden-fallback.internal/business/energy/nigeria-crude-exports-india-2026",
+            "seendate": "20260714T123000Z",
+            "domain": "golden-fallback.internal",
+        }
+    ],
+    "non_hormuz_americas": [
+        {
+            "title": "Indian Refiners Boost Gulf of Mexico Purchases Amid Middle East Pipeline Outages",
+            "url": "https://golden-fallback.internal/business/energy/india-us-crude-imports-surge-2026",
+            "seendate": "20260714T130000Z",
+            "domain": "golden-fallback.internal",
+        }
+    ],
+    "non_hormuz_russia": [
+        {
+            "title": "Sokol Oil Shipments to India Flowing Steadily Despite Sanctions Tensions",
+            "url": "https://golden-fallback.internal/news/articles/sokol-oil-shipments-india-2026",
+            "seendate": "20260714T140000Z",
+            "domain": "golden-fallback.internal",
+        }
+    ]
+}
 
 
 async def run_gdelt_poll() -> None:
     for corridor, query in CORRIDOR_QUERIES:
         try:
-            articles = await fetch_gdelt_articles(query=query, maxrecords=25)
-        except GdeltRateLimitedError as exc:
-            logger.warning("GDELT query %s rate limited after cooldown of %s seconds", query, exc.retry_after_seconds)
-            return
-        except Exception:
-            logger.exception("GDELT poll failed for query %s", query)
-            continue
+            articles = await fetch_gdelt_articles(query=query, maxrecords=100)
+            articles = [art for art in articles if is_article_relevant(art.title, corridor)]
+            logger.info("GDELT query %s returned %s relevant live articles", query, len(articles))
+        except Exception as exc:
+            logger.warning(
+                "GDELT query %s failed or rate-limited: %s. Falling back to local golden dataset.",
+                query, exc
+            )
+            # Load golden fallback articles
+            from app.ingestion.gdelt import GdeltArticle as FetchedGdeltArticle
+            fallbacks = GOLDEN_FALLBACK_ARTICLES.get(corridor, [])
+            articles = [
+                FetchedGdeltArticle(
+                    title=art["title"],
+                    url=art["url"],
+                    seendate=art["seendate"],
+                    domain=art["domain"],
+                    language="en",
+                    source_country=None,
+                    is_synthetic=True
+                )
+                for art in fallbacks
+            ]
+
         async with SessionLocal() as session:
             stored = await store_gdelt_articles(session, corridor=corridor, query=query, articles=articles)
-        logger.info("GDELT query %s returned %s articles and stored %s new rows", query, len(articles), stored)
+        logger.info("GDELT corridor %s stored %s new rows (live or golden fallback)", corridor, stored)
         await asyncio.sleep(6)
 
 
 async def run_eia_poll() -> None:
     try:
-        points = await fetch_brent_spot_price(days_back=7)
+        points = await fetch_spot_prices(days_back=7)
     except EiaConfigurationError:
         logger.info("EIA poll skipped because EIA_API_KEY is not configured")
         return
@@ -72,20 +157,17 @@ async def run_eia_poll() -> None:
         return
     async with SessionLocal() as session:
         stored = await store_price_points(session, source="EIA", points=points)
-    logger.info("EIA Brent spot query returned %s price points and stored %s rows", len(points), stored)
+    logger.info("EIA spot query returned %s price points and stored %s rows", len(points), stored)
 
 
 async def run_ofac_poll() -> None:
-    """Daily OFAC SDN diff — updates the module-level sanctions count for risk scoring."""
-    global _latest_sanctions_count, LAST_OFAC_SUCCESS_TIME
+    """Daily OFAC SDN diff — updates the module-level sanctions counts per corridor for risk scoring."""
+    global _latest_sanctions_counts, LAST_OFAC_SUCCESS_TIME
     try:
-        diff = await compute_sanctions_diff()
-        _latest_sanctions_count = diff.new_iran_entries
+        diffs = await compute_sanctions_diff_for_all()
+        _latest_sanctions_counts = diffs
         LAST_OFAC_SUCCESS_TIME = datetime.now(timezone.utc)
-        logger.info(
-            "OFAC poll complete: %d new Iran entries, %d total Iran entries",
-            diff.new_iran_entries, diff.total_iran_entries,
-        )
+        logger.info("OFAC poll complete: %s", diffs)
     except Exception:
         logger.exception("OFAC poll failed")
 
@@ -109,7 +191,7 @@ async def run_risk_score_compute() -> None:
                 row = await compute_and_store_risk_score(
                     session=session,
                     corridor=corridor,
-                    sanctions_count=_latest_sanctions_count,
+                    sanctions_count=_latest_sanctions_counts.get(corridor, 0),
                     ais_stale=ais_stale,
                     sanctions_stale=sanctions_stale,
                 )

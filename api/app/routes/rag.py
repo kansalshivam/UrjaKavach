@@ -15,6 +15,8 @@ class DocumentMetadata(BaseModel):
     source: str
     date: str
     summary: str
+    is_synthetic: bool = True
+    disclosure: str = "Synthetic reference data model for simulation calibration only."
 
 class DocumentDetail(BaseModel):
     id: str
@@ -22,6 +24,8 @@ class DocumentDetail(BaseModel):
     source: str
     date: str
     content: str
+    is_synthetic: bool = True
+    disclosure: str = "Synthetic reference data model for simulation calibration only."
 
 class QueryRequest(BaseModel):
     query: str
@@ -29,6 +33,8 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     retrieved_documents: List[str]
+    is_synthetic: bool = True
+    disclosure: str = "RAG search utilizes synthetic model documents from the local specification library."
 
 # Renamed to make it unambiguously synthetic and rephrased to be technical reference specifications
 DOCUMENTS = [
@@ -74,7 +80,9 @@ def get_documents_list():
             title=d["title"],
             source=d["source"],
             date=d["date"],
-            summary=d["summary"]
+            summary=d["summary"],
+            is_synthetic=True,
+            disclosure="Synthetic reference data model for simulation calibration only."
         ) for d in DOCUMENTS
     ]
 
@@ -87,13 +95,31 @@ def get_document_detail(doc_id: str):
                 title=d["title"],
                 source=d["source"],
                 date=d["date"],
-                content=d["content"]
+                content=d["content"],
+                is_synthetic=True,
+                disclosure="Synthetic reference data model for simulation calibration only."
             )
-    return DocumentDetail(id="not-found", title="Not Found", source="", date="", content="Document not found.")
+    return DocumentDetail(
+        id="not-found",
+        title="Not Found",
+        source="",
+        date="",
+        content="Document not found.",
+        is_synthetic=True,
+        disclosure="N/A"
+    )
+
+STOP_WORDS = {"what", "is", "the", "of", "in", "a", "an", "and", "to", "for", "on", "with", "at", "by", "from", "how", "why", "where", "which", "who", "whom", "about", "are", "do"}
 
 def simple_retrieval(query: str) -> List[Dict]:
     scored_docs = []
-    query_words = set(query.lower().split())
+    # Strip common punctuation
+    cleaned_query = query.lower().replace("?", "").replace(".", "").replace(",", "").replace("!", "")
+    query_words = set(cleaned_query.split()) - STOP_WORDS
+    
+    if not query_words:
+        return []
+
     for doc in DOCUMENTS:
         content_lower = doc["content"].lower()
         title_lower = doc["title"].lower()
@@ -103,10 +129,11 @@ def simple_retrieval(query: str) -> List[Dict]:
                 score += 1
             if word in title_lower:
                 score += 2
-        scored_docs.append((score, doc))
+        if score > 0:
+            scored_docs.append((score, doc))
     
     scored_docs.sort(key=lambda x: x[0], reverse=True)
-    return [scored_docs[0][1], scored_docs[1][1]]
+    return [item[1] for item in scored_docs[:2]]
 
 def get_template_fallback_answer(query: str, retrieved: List[Dict]) -> str:
     # Removed blockquote formatting
@@ -122,6 +149,14 @@ def get_template_fallback_answer(query: str, retrieved: List[Dict]) -> str:
 async def query_rag_engine(req: QueryRequest):
     retrieved = simple_retrieval(req.query)
     retrieved_ids = [d["id"] for d in retrieved]
+
+    if not retrieved:
+        return QueryResponse(
+            answer="No matching reference specifications were found in the library for your query.",
+            retrieved_documents=[],
+            is_synthetic=True,
+            disclosure="RAG search utilizes synthetic model documents from the local specification library."
+        )
 
     gemini_key = os.getenv("GEMINI_API_KEY")
     groq_key = os.getenv("GROQ_API_KEY")
@@ -146,7 +181,7 @@ async def query_rag_engine(req: QueryRequest):
         try:
             logger.info("Attempting RAG Q&A via Gemini API...")
             async with httpx.AsyncClient(timeout=10.0) as client:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={gemini_key}"
                 payload = {"contents": [{"parts": [{"text": prompt}]}]}
                 res = await client.post(url, json=payload)
                 if res.status_code == 200:
@@ -162,7 +197,7 @@ async def query_rag_engine(req: QueryRequest):
                 url = "https://api.groq.com/openai/v1/chat/completions"
                 headers = {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
                 payload = {
-                    "model": "llama3-8b-8192",
+                    "model": "openai/gpt-oss-20b",
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],
@@ -179,4 +214,9 @@ async def query_rag_engine(req: QueryRequest):
         logger.info("Falling back to local document template builder for RAG answer.")
         answer = get_template_fallback_answer(req.query, retrieved)
 
-    return QueryResponse(answer=answer, retrieved_documents=retrieved_ids)
+    return QueryResponse(
+        answer=answer,
+        retrieved_documents=retrieved_ids,
+        is_synthetic=True,
+        disclosure="RAG search utilizes synthetic model documents from the local specification library."
+    )

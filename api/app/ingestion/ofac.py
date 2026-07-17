@@ -27,7 +27,12 @@ USER_AGENT = (
     "Chrome/126.0.0.0 Safari/537.36"
 )
 OFAC_CACHE_DIR = Path("/tmp/urja_kavach_ofac")
-IRAN_PROGRAM_KEYWORDS = {"IRAN", "IRAN-HR", "IRAN-TRA", "IRAN-EO13846"}
+CORRIDOR_PROGRAM_KEYWORDS = {
+    "hormuz": {"IRAN", "IRAN-HR", "IRAN-TRA", "IRAN-EO13846"},
+    "non_hormuz_west_africa": {"IRAN", "IRAN-HR", "IRAN-TRA", "IRAN-EO13846", "YEMEN", "YEMEN-HR"},
+    "non_hormuz_americas": {"VENEZUELA", "VENEZUELA-EO13850", "VENEZUELA-EO13884"},
+    "non_hormuz_russia": {"RUSSIA", "UKRAINE-EO13660", "UKRAINE-EO13661", "UKRAINE-EO13662"},
+}
 
 
 @dataclass
@@ -39,16 +44,17 @@ class OfacDiffResult:
     previous_count: int | None
 
 
-def _extract_iran_entry_ids(csv_text: str) -> set[str]:
-    """Extract unique entry IDs (column 0) where the Programs column contains an Iran-related program."""
+def _extract_corridor_entry_ids(csv_text: str, corridor: str) -> set[str]:
+    """Extract unique entry IDs where the Programs column matches the corridor program keywords."""
     ids: set[str] = set()
+    keywords = CORRIDOR_PROGRAM_KEYWORDS.get(corridor, set())
     reader = csv.reader(io.StringIO(csv_text))
     for row in reader:
         if len(row) < 12:
             continue
         entry_id = row[0].strip()
         programs = row[11].strip().upper() if len(row) > 11 else ""
-        if any(kw in programs for kw in IRAN_PROGRAM_KEYWORDS):
+        if any(kw in programs for kw in keywords):
             ids.add(entry_id)
     return ids
 
@@ -62,50 +68,47 @@ async def fetch_ofac_sdn() -> str:
     return resp.text
 
 
-async def compute_sanctions_diff() -> OfacDiffResult:
-    """Fetch the current SDN list, diff against the cached previous version,
-    and return the count of new Iran-linked entries in the trailing period.
+async def compute_sanctions_diff_for_all() -> dict[str, int]:
+    """Fetch the current SDN list once, and compute corridor-specific diffs.
+
+    Returns:
+        dict mapping corridor name to the count of new sanctions entries.
     """
     OFAC_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    cache_file = OFAC_CACHE_DIR / "sdn_iran_ids.txt"
-    now = datetime.now(timezone.utc)
-
-    # Load previous snapshot
-    previous_ids: set[str] = set()
-    previous_count: int | None = None
-    if cache_file.exists():
-        previous_ids = set(cache_file.read_text(encoding="utf-8").strip().splitlines())
-        previous_count = len(previous_ids)
-
-    # Fetch current
     try:
         csv_text = await fetch_ofac_sdn()
     except Exception:
-        logger.exception("OFAC SDN fetch failed; returning 0 new entries")
-        return OfacDiffResult(
-            new_iran_entries=0,
-            total_iran_entries=previous_count or 0,
-            diff_date=now,
-            previous_count=previous_count,
+        logger.exception("OFAC SDN fetch failed; returning 0 new entries for all corridors")
+        return {c: 0 for c in CORRIDOR_PROGRAM_KEYWORDS}
+
+    now = datetime.now(timezone.utc)
+    results = {}
+
+    for corridor in CORRIDOR_PROGRAM_KEYWORDS:
+        cache_file = OFAC_CACHE_DIR / f"sdn_{corridor}_ids.txt"
+        previous_ids: set[str] = set()
+        previous_count: int | None = None
+        if cache_file.exists():
+            try:
+                previous_ids = set(cache_file.read_text(encoding="utf-8").strip().splitlines())
+                previous_count = len(previous_ids)
+            except Exception:
+                logger.warning("Failed to load previous cache for %s, treating as new", corridor)
+
+        current_ids = _extract_corridor_entry_ids(csv_text, corridor)
+        new_entries = current_ids - previous_ids
+        new_count = len(new_entries) if previous_count is not None else 0
+
+        # Save cache for next run
+        try:
+            cache_file.write_text("\n".join(sorted(current_ids)), encoding="utf-8")
+        except Exception:
+            logger.exception("Failed to write OFAC cache for %s", corridor)
+
+        results[corridor] = new_count
+        logger.info(
+            "OFAC SDN diff for %s: total=%d, previous=%s, new=%d",
+            corridor, len(current_ids), previous_count, new_count
         )
 
-    current_ids = _extract_iran_entry_ids(csv_text)
-
-    # Compute diff
-    new_entries = current_ids - previous_ids
-    new_iran_count = len(new_entries) if previous_count is not None else 0
-
-    # Save current snapshot for next diff
-    cache_file.write_text("\n".join(sorted(current_ids)), encoding="utf-8")
-
-    logger.info(
-        "OFAC SDN diff: total_iran=%d, previous=%s, new=%d",
-        len(current_ids), previous_count, new_iran_count,
-    )
-
-    return OfacDiffResult(
-        new_iran_entries=new_iran_count,
-        total_iran_entries=len(current_ids),
-        diff_date=now,
-        previous_count=previous_count,
-    )
+    return results

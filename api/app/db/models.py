@@ -83,6 +83,7 @@ class GdeltArticle(Base):
     domain: Mapped[str | None] = mapped_column(Text)
     language: Mapped[str | None] = mapped_column(Text)
     source_country: Mapped[str | None] = mapped_column(Text)
+    is_synthetic: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
 
 class PricePoint(Base):
@@ -143,4 +144,21 @@ class SecurityAuditLog(Base):
     action_source: Mapped[str] = mapped_column(Text, nullable=False)
     action_type: Mapped[str] = mapped_column(Text, nullable=False)
     payload: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+
+class GeopoliticalAlert(Base):
+    __tablename__ = "geopolitical_alerts"
+    __table_args__ = (
+        Index("ix_geopolitical_alerts_corridor_triggered_at", "corridor", "triggered_at"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    corridor: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    alert_type: Mapped[str] = mapped_column(Text, nullable=False)
+    triggered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    value: Mapped[float] = mapped_column(Double, nullable=False)
+    threshold: Mapped[float] = mapped_column(Double, nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    raw_payload: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
 

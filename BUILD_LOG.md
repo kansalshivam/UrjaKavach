@@ -347,6 +347,36 @@
   - *Reserve Planner (Screen 6):* Discovered a ~6% systematic discrepancy in MMT-to-barrel conversion (7.33 vs. the dossier's implied 6.926829 cavern rate), a unit-basis discrepancy on the OMC buffer (import capacity vs. national consumption), and an unverified 9.5/64.5 days split. All were reconciled to the dossier's exact arithmetic and logged.
   - *Reference Library (Screen 7):* Curated document excerpts were initially written as synthetic summaries but formatted with realistic government press release prefixes (e.g. `PIB-2026-03`, `PPAC-2026-02`) and direct minister speech attribution. Stripped the blockquote formatting, renamed the files to `SYNTH-MODEL-*` tags, changed UI headers to "Reference Model Specifications Library", and added a permanent warning banner to prevent any demonstration-day deception.
 - **Outcome:** The codebase is now in an arithmetically self-consistent and transparently labeled state, ready for final deployment packaging.
+## 2026-07-15 - Tier 3: Geopolitical Alert Archive & Export (Candidate 2) Implementation
+- **Schema Implementation:** Proposed the `geopolitical_alerts` table columns and index. The user approved the schema with one addition: `raw_payload` of type `JSONB` (Nullable = True). Applied Alembic migration `0006_add_geopolitical_alerts.py` to create the table and indexes.
+- **Trigger Logic:** Wired alert writes into `compute_and_store_risk_score` in `risk_score.py`. An alert of type `gdelt_zscore` triggers when `gdelt_zscore > 2.0` (capturing GDELT z-score and recent articles in `raw_payload`). An alert of type `price_volatility` triggers when `abs(price_vol) >= 10.0` (capturing spot prices used in `raw_payload`). Added a 1-hour duplicate filter to prevent alert spamming.
+- **Forced Trigger Testing:**
+  - Volatility alert: Inserted a Brent spot price point of `85.00` for `2026-07-07` in `price_points` to force a 3-day volatility of `24.03%`. Executed scoring run and verified a price volatility alert landed in the database.
+  - GDELT z-score alert: Distributed GDELT article dates to build a baseline, then inserted 10 mock articles with current timestamp to push `gdelt_zscore` to `20.51`. Executed scoring run and verified a GDELT z-score alert landed in the database.
+- **API Endpoints:** Implemented `GET /api/alerts` (list alerts sorted desc) and `GET /api/alerts/export` (stream real CSV download) in a new alerts router `api/app/routes/alerts.py`.
+- **Frontend Integration:** Implemented the new screen `web/src/screens/AlertsArchive.tsx` showing the alerts list and a verifiable payload code viewer. Registered the new tab button and tab case in `web/src/screens/App.tsx` (the minimal modification needed for routing, preserving shared layout code).
+- **Verification Outputs:**
+  - Backend pytest: Added `api/tests/test_alerts.py` containing `test_list_alerts` and `test_export_alerts_csv`. Full test suite passed (28 passed in 2.08s).
+  - Frontend Vitest DOM test: Added `web/src/screens/AlertsArchive.test.tsx` verifying DOM rendering, click updates, and CSV download trigger. Full Vitest suite passed (6 passed in 8.85s).
+  - Frontend production build: Compiled Vite app successfully (`dist/assets/index-*.js`) with zero errors.
 
-
-
+## 2026-07-15 - Tier 3: LLM Verification & Platform-Wide Backend Stress Test
+- **LLM API Verification (Part A):**
+  - Confirmed `GEMINI_API_KEY` and `GROQ_API_KEY` are mounted to the authoritative `api` container.
+  - Traced the narrative generation fallback logic (`api/app/llm/narrative.py`). Verified that `gemini-1.5-flash` (Gemini API) and `llama3-70b-8192` (Groq API) were decommissioned/deprecated and returned 404/400.
+  - Patched `api/app/llm/narrative.py` and `api/app/routes/rag.py` to use `gemini-2.0-flash` (which returns a correct 429 quota exhaustion on free-tier keys) and `llama-3.3-70b-versatile` / `llama-3.1-8b-instant` (active Groq models).
+  - Executed a live narrative request, verifying that Uvicorn logs show Gemini returning a 429 and the fallback chain successfully routing to Groq, which generated the strategic narrative briefing text.
+- **Backend Edge-Case Payload Stress Testing (Part B, Item 1):**
+  - Implemented `/api/tests/run_stress_test.py` to test scenarios, reserve planner, RAG, recomputation, and procurement recommendations routes under empty, negative, overflow, and malformed inputs.
+  - Verified that all edge cases were caught cleanly via Pydantic model validation (returning status code 422 with clear missing/greater_than/less_than violation descriptions) or handled gracefully by routers without causing server crashes.
+- **Forced Ingestion Staleness Verification (Part B, Item 2):**
+  - Forced stale states in the DB: updated GDELT articles to 30 min old (> 25 min threshold) and EIA price points to 130 min old (> 120 min threshold).
+  - Ran scoring engine and verified `component_gdelt_stale = True` and `component_price_stale = True` were correctly logged.
+  - Verified that scheduling stale arguments correctly wrote `component_ais_stale = True` and `component_sanctions_stale = True` to the `risk_scores` table.
+- **Database Integrity Check (Part B, Item 3):**
+  - Built database from scratch using `docker compose down -v`.
+  - Applied Alembic migrations 0001 through 0006 cleanly.
+  - Inspected database constraints using postgres schema queries, confirming all primary keys, foreign key references (edges mapping to nodes, scenario runs mapping to scenarios), unique constraints (GDELT url, EIA series/period), and indexes were created successfully.
+- **Backend Test Suite verification (Part B, Item 4):**
+  - Renamed stress test helper functions to prevent collision with pytest.
+  - Ran full FastAPI `pytest` suite inside container, verifying **28 passed** with 0 failures.

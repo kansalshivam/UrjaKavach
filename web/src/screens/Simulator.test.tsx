@@ -48,9 +48,9 @@ describe("Simulator Component DOM Render Test", () => {
 
     // 4. Verify projections render on screen
     await waitFor(() => {
-      expect(screen.getByText("-23.0%")).toBeDefined();
-      expect(screen.getByText("2.6")).toBeDefined();
-      expect(screen.getByText("days")).toBeDefined();
+      expect(screen.getAllByText(/-23\.0/)[0]).toBeDefined();
+      expect(screen.getAllByText(/2\.6/)[0]).toBeDefined();
+      expect(screen.getAllByText(/days/i)[0]).toBeDefined();
     });
   });
 });

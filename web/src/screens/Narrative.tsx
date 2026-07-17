@@ -1,9 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { FileText, RefreshCw, AlertTriangle } from "lucide-react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 export function Narrative() {
   const [narrativeText, setNarrativeText] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.from(".narrative-fade", {
+      y: 20,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
+      clearProps: "all"
+    });
+  }, { scope: containerRef });
 
   const fetchNarrative = () => {
     setLoading(true);
@@ -33,17 +51,17 @@ export function Narrative() {
       const trimmed = line.trim();
 
       // Headers
-      if (trimmed.startsWith("###")) {
+      if (trimmed.startsWith("### ")) {
         return (
-          <h3 key={idx} style={{ color: "#38bdf8", marginTop: "16px", marginBottom: "8px", fontSize: "1.1rem" }}>
-            {trimmed.replace("###", "").trim()}
+          <h3 key={idx} className="text-xl font-bold text-sky-400 mt-6 mb-3">
+            {trimmed.replace("### ", "").trim()}
           </h3>
         );
       }
-      if (trimmed.startsWith("####")) {
+      if (trimmed.startsWith("#### ")) {
         return (
-          <h4 key={idx} style={{ color: "#94a3b8", marginTop: "12px", marginBottom: "6px", fontSize: "0.95rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            {trimmed.replace("####", "").trim()}
+          <h4 key={idx} className="text-sm font-bold text-slate-400 mt-5 mb-2 uppercase tracking-wider">
+            {trimmed.replace("#### ", "").trim()}
           </h4>
         );
       }
@@ -57,8 +75,8 @@ export function Narrative() {
           const boldPart = content.substring(2, boldEndIndex);
           const restPart = content.substring(boldEndIndex + 4);
           return (
-            <li key={idx} style={{ marginLeft: "16px", marginBottom: "6px", fontSize: "0.9rem", color: "#c9d1d9" }}>
-              <strong style={{ color: "#f1f5f9" }}>{boldPart}</strong>: {restPart}
+            <li key={idx} className="ml-4 mb-2 text-slate-300 leading-relaxed relative pl-2 before:content-[''] before:absolute before:left-[-12px] before:top-[10px] before:w-1.5 before:h-1.5 before:bg-sky-500 before:rounded-full">
+              <strong className="text-slate-100 font-semibold">{boldPart}</strong>: {restPart}
             </li>
           );
         }
@@ -72,8 +90,8 @@ export function Narrative() {
         if (linkMatch) {
           const [, linkText, linkUrl, restText] = linkMatch;
           return (
-            <li key={idx} style={{ marginLeft: "16px", marginBottom: "6px", fontSize: "0.9rem", color: "#c9d1d9" }}>
-              <a href={linkUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#38bdf8", textDecoration: "none" }}>
+            <li key={idx} className="ml-4 mb-2 text-slate-300 leading-relaxed relative pl-2 before:content-[''] before:absolute before:left-[-12px] before:top-[10px] before:w-1.5 before:h-1.5 before:bg-slate-500 before:rounded-full">
+              <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300 underline underline-offset-4 decoration-sky-400/30 transition-colors">
                 {linkText}
               </a>
               {restText}
@@ -81,7 +99,7 @@ export function Narrative() {
           );
         }
         return (
-          <li key={idx} style={{ marginLeft: "16px", marginBottom: "6px", fontSize: "0.9rem", color: "#c9d1d9" }}>
+          <li key={idx} className="ml-4 mb-2 text-slate-300 leading-relaxed relative pl-2 before:content-[''] before:absolute before:left-[-12px] before:top-[10px] before:w-1.5 before:h-1.5 before:bg-slate-500 before:rounded-full">
             {content}
           </li>
         );
@@ -90,7 +108,7 @@ export function Narrative() {
       // Bold text line
       if (trimmed.startsWith("**") && trimmed.endsWith("**")) {
         return (
-          <p key={idx} style={{ fontWeight: 600, fontSize: "0.95rem", margin: "8px 0", color: "#f1f5f9" }}>
+          <p key={idx} className="font-bold text-slate-100 my-3 text-lg">
             {trimmed.replace(/\*\*/g, "")}
           </p>
         );
@@ -99,20 +117,20 @@ export function Narrative() {
         // Simple inline bolding
         const parts = trimmed.split("**");
         return (
-          <p key={idx} style={{ fontSize: "0.9rem", lineHeight: "1.5", margin: "8px 0", color: "#c9d1d9" }}>
-            {parts.map((part, pidx) => pidx % 2 === 1 ? <strong key={pidx} style={{ color: "#f1f5f9" }}>{part}</strong> : part)}
+          <p key={idx} className="text-slate-300 leading-relaxed my-3">
+            {parts.map((part, pidx) => pidx % 2 === 1 ? <strong key={pidx} className="text-slate-100 font-semibold">{part}</strong> : part)}
           </p>
         );
       }
 
       // Empty line
       if (trimmed === "") {
-        return <div key={idx} style={{ height: "8px" }} />;
+        return <div key={idx} className="h-2" />;
       }
 
       // Standard paragraph
       return (
-        <p key={idx} style={{ fontSize: "0.9rem", lineHeight: "1.5", margin: "8px 0", color: "#c9d1d9" }}>
+        <p key={idx} className="text-slate-300 leading-relaxed my-3">
           {trimmed}
         </p>
       );
@@ -120,47 +138,56 @@ export function Narrative() {
   };
 
   return (
-    <div className="narrative-view" style={{ padding: "32px", height: "100%", overflowY: "auto" }}>
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-          <div>
-            <h2 className="eyebrow" style={{ color: "#38bdf8", margin: 0 }}>Executive Intelligence</h2>
-            <h1 style={{ fontSize: "2rem", margin: "4px 0 0" }}>Strategic Risk Narrative</h1>
-          </div>
-          <button
-            className="btn-close"
-            style={{ width: "auto", padding: "8px 16px" }}
-            onClick={fetchNarrative}
-            disabled={loading}
-          >
-            {loading ? "Generating..." : "Regenerate Briefing"}
-          </button>
+    <div ref={containerRef} className="p-6 md:p-10 max-w-[95%] xl:max-w-[1400px] mx-auto flex flex-col gap-6 w-full">
+      <div className="narrative-fade flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+        <div>
+          <h2 className="section-header mb-2 flex items-center gap-2">
+            <FileText className="w-5 h-5" /> Executive Intelligence
+          </h2>
+          <h1 className="text-4xl font-bold text-slate-100 tracking-tight">Strategic Risk Narrative</h1>
         </div>
-
-        {loading ? (
-          <div className="detail-card" style={{ padding: "32px", textAlign: "center", color: "#8b949e" }}>
-            <p>Synthesizing GDELT news flows, price signals, and vessel densities into a strategic narrative...</p>
-          </div>
-        ) : error ? (
-          <div className="error-panel">
-            <h3>Narrative Service Offline</h3>
-            <p>{error}</p>
-          </div>
-        ) : (
-          <div
-            className="detail-card"
-            style={{
-              background: "#161b22",
-              border: "1px solid #21262d",
-              borderRadius: "12px",
-              padding: "32px",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
-            }}
-          >
-            <div className="markdown-content">{renderMarkdown(narrativeText)}</div>
-          </div>
-        )}
+        <ShimmerButton
+          onClick={fetchNarrative}
+          loading={loading}
+          variant="secondary"
+          className="shrink-0"
+        >
+          <RefreshCw className="w-4 h-4 mr-2" />
+          {loading ? "Generating Briefing..." : "Regenerate Briefing"}
+        </ShimmerButton>
       </div>
+
+      {loading ? (
+        <GlassCard className="narrative-fade p-8 flex flex-col gap-6" animate={false}>
+          <div className="flex items-center gap-3 mb-4 text-sky-400 font-medium animate-pulse">
+            <RefreshCw className="w-5 h-5 animate-spin" />
+            Synthesizing GDELT news flows, price signals, and vessel densities into a strategic narrative...
+          </div>
+          <Skeleton height={32} width="40%" />
+          <Skeleton height={80} />
+          <Skeleton height={24} width="20%" className="mt-4" />
+          <Skeleton height={16} width="80%" />
+          <Skeleton height={16} width="75%" />
+          <Skeleton height={16} width="85%" />
+        </GlassCard>
+      ) : error ? (
+        <GlassCard glowColor="red" className="narrative-fade p-8 bg-red-950/20 border-red-900/30">
+          <h3 className="text-xl font-bold text-red-400 flex items-center gap-2 mb-2">
+            <AlertTriangle className="w-5 h-5" /> Narrative Service Offline
+          </h3>
+          <p className="text-red-200/70">{error}</p>
+        </GlassCard>
+      ) : (
+        <GlassCard 
+          className="narrative-fade p-8 md:p-10" 
+          glowColor="blue"
+          animate={false}
+        >
+          <div className="prose prose-invert max-w-none">
+            {renderMarkdown(narrativeText)}
+          </div>
+        </GlassCard>
+      )}
     </div>
   );
 }

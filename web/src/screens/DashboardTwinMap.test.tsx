@@ -98,7 +98,7 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
     mockFetch.mockReset();
     
     // Dynamic Mocking by URL endpoint
-    mockFetch.mockImplementation(async (url: string) => {
+    mockFetch.mockImplementation(async (url: string, options?: RequestInit) => {
       if (url.includes("/api/twin/nodes")) {
         return { ok: true, json: async () => mockTwinNodes };
       }
@@ -109,7 +109,15 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
         return { ok: true, json: async () => mockDashboardSummary };
       }
       if (url.includes("/api/twin/recompute")) {
-        return { ok: true, json: async () => mockRecomputeResponse };
+        if (options && typeof options.body === "string") {
+          try {
+            const body = JSON.parse(options.body);
+            if (body.gdelt_volume === 0) {
+              return { ok: true, json: async () => mockRecomputeResponse };
+            }
+          } catch (e) {}
+        }
+        return { ok: true, json: async () => ({ node_risks: { refinery_jamnagar: 20.0 } }) };
       }
       return { ok: false, status: 404 };
     });
@@ -122,6 +130,10 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
     const loginButton = screen.getByText("Authorize System Access");
     fireEvent.click(loginButton);
 
+    // Click Map Tab
+    const initialMapTab = await screen.findByText("Digital Twin Map");
+    fireEvent.click(initialMapTab);
+
     // 2. Verify Map Tab loads refinery marker in initial Green state (< 25 risk)
     await waitFor(() => expect(mockFetch).toHaveBeenCalled());
     const marker = await screen.findByTestId("map-marker");
@@ -132,7 +144,7 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
     expect(initialIconHtml).toContain("#10b981");
 
     // 3. Switch to Dashboard Tab
-    const dashboardTab = screen.getByRole("button", { name: "Command Dashboard" });
+    const dashboardTab = await screen.findByText("Command Dashboard");
     fireEvent.click(dashboardTab);
     
     // Wait for dashboard to fetch and render
@@ -146,7 +158,9 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
     // Wait for the recompute POST call to execute
     await waitFor(() => {
       const calls = mockFetch.mock.calls;
-      const recomputeCall = calls.find(call => call[0].includes("/api/twin/recompute"));
+      const recomputeCalls = calls.filter(call => call[0].includes("/api/twin/recompute"));
+      expect(recomputeCalls.length).toBeGreaterThan(0);
+      const recomputeCall = recomputeCalls[recomputeCalls.length - 1];
       expect(recomputeCall).toBeDefined();
       const body = recomputeCall && recomputeCall[1] ? recomputeCall[1].body : undefined;
       expect(body).toBeDefined();
@@ -154,7 +168,7 @@ describe("Interactive Weight Customization & Map Marker Color Integration Test",
     });
 
     // 5. Navigate back to Map Tab to verify marker color shifted to Red (#ef4444)
-    const mapTab = screen.getByRole("button", { name: "Digital Twin Map" });
+    const mapTab = await screen.findByText("Digital Twin Map");
     fireEvent.click(mapTab);
 
     const updatedMarker = await screen.findByTestId("map-marker");

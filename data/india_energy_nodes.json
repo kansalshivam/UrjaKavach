@@ -1,4 +1,4 @@
-﻿{
+{
   "nodes": [
     {"id":"spr_visakhapatnam","node_type":"spr","name":"ISPRL Visakhapatnam SPR","lat":17.69,"lon":83.22,"capacity_value":1.33,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; capacity verified in Part 0."},
     {"id":"spr_mangaluru","node_type":"spr","name":"ISPRL Mangaluru SPR","lat":12.91,"lon":74.86,"capacity_value":1.5,"capacity_unit":"MMT","source_note":"FINAL_ALIGNED_DOSSIER Part 3.1; capacity verified in Part 0."},
@@ -40,7 +40,10 @@
     {"id":"pipeline_mumbai_manmad_delhi","node_type":"pipeline_segment","name":"Mumbai-Manmad-Delhi Product Pipeline","lat":21.50,"lon":75.70,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
     {"id":"pipeline_hbj_gas","node_type":"pipeline_segment","name":"Hazira-Bijaipur-Jagdishpur Gas Pipeline","lat":23.45,"lon":76.90,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4; named pipeline example."},
 
-    {"id":"corridor_hormuz","node_type":"pipeline_segment","name":"Strait of Hormuz Shipping Corridor","lat":26.57,"lon":56.25,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Parts 1, 3, and 4.1; AIS bounding-box corridor for Tier 1."}
+    {"id":"corridor_hormuz","node_type":"pipeline_segment","name":"Strait of Hormuz Shipping Corridor","lat":26.57,"lon":56.25,"capacity_value":null,"capacity_unit":null,"source_note":"FINAL_ALIGNED_DOSSIER Parts 1, 3, and 4.1; AIS bounding-box corridor for Tier 1."},
+    {"id":"non_hormuz_west_africa","node_type":"pipeline_segment","name":"Bab el-Mandeb Shipping Corridor","lat":12.5,"lon":43.5,"capacity_value":null,"capacity_unit":null,"source_note":"Bab el-Mandeb corridor"},
+    {"id":"non_hormuz_americas","node_type":"pipeline_segment","name":"Americas Shipping Corridor","lat":24.0,"lon":-88.0,"capacity_value":null,"capacity_unit":null,"source_note":"Americas shipping corridor"},
+    {"id":"non_hormuz_russia","node_type":"pipeline_segment","name":"Russia Sokol Shipping Corridor","lat":51.5,"lon":140.75,"capacity_value":null,"capacity_unit":null,"source_note":"Russia Sokol export route"}
   ],
   "edges": [
     {"id":"edge_hormuz_jamnagar_sikka","from_node_id":"corridor_hormuz","to_node_id":"port_jamnagar_sikka","edge_type":"shipping_corridor","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.3; west-coast Gulf-route exposure."},
@@ -61,6 +64,12 @@
     {"id":"edge_haldia_iocl","from_node_id":"port_haldia","to_node_id":"refinery_iocl_haldia","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.2-3.3."},
     {"id":"edge_salaya_mathura_refinery","from_node_id":"pipeline_salaya_mathura","to_node_id":"refinery_iocl_mathura","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."},
     {"id":"edge_kandla_bhatinda_panipat","from_node_id":"pipeline_kandla_bhatinda","to_node_id":"refinery_iocl_panipat","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."},
-    {"id":"edge_mumbai_pipeline_hpcl","from_node_id":"pipeline_mumbai_manmad_delhi","to_node_id":"refinery_hpcl_mumbai","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."}
+    {"id":"edge_mumbai_pipeline_hpcl","from_node_id":"pipeline_mumbai_manmad_delhi","to_node_id":"refinery_hpcl_mumbai","edge_type":"pipeline","capacity_value":null,"source_note":"FINAL_ALIGNED_DOSSIER Part 3.4."},
+    {"id":"edge_wa_kochi","from_node_id":"non_hormuz_west_africa","to_node_id":"port_kochi","edge_type":"shipping_corridor","capacity_value":null,"source_note":"West Africa to Kochi"},
+    {"id":"edge_wa_mumbai","from_node_id":"non_hormuz_west_africa","to_node_id":"port_mumbai_jnpt","edge_type":"shipping_corridor","capacity_value":null,"source_note":"West Africa to Mumbai"},
+    {"id":"edge_americas_vizag","from_node_id":"non_hormuz_americas","to_node_id":"port_visakhapatnam","edge_type":"shipping_corridor","capacity_value":null,"source_note":"Americas to Visakhapatnam"},
+    {"id":"edge_americas_chennai","from_node_id":"non_hormuz_americas","to_node_id":"port_chennai_ennore","edge_type":"shipping_corridor","capacity_value":null,"source_note":"Americas to Chennai"},
+    {"id":"edge_russia_paradip","from_node_id":"non_hormuz_russia","to_node_id":"port_paradip","edge_type":"shipping_corridor","capacity_value":null,"source_note":"Russia to Paradip"},
+    {"id":"edge_russia_haldia","from_node_id":"non_hormuz_russia","to_node_id":"port_haldia","edge_type":"shipping_corridor","capacity_value":null,"source_note":"Russia to Haldia"}
   ]
 }

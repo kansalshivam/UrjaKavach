@@ -1,0 +1,72 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: urjakavach
+          POSTGRES_PASSWORD: urjakavach_dev
+          POSTGRES_DB: urjakavach_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          cd api
+          pip install --no-cache-dir .
+          pip install pytest-cov pip-audit
+      - name: Run migrations on a clean DB
+        run: |
+          cd api
+          alembic upgrade head
+        env:
+          DATABASE_URL: postgresql+asyncpg://urjakavach:urjakavach_dev@localhost:5432/urjakavach_test
+      - name: Run full test suite with coverage
+        run: |
+          cd api
+          PYTHONPATH=. pytest --cov=app --cov-report=term-missing --cov-fail-under=60
+        env:
+          DATABASE_URL: postgresql+asyncpg://urjakavach:urjakavach_dev@localhost:5432/urjakavach_test
+          GEMINI_API_KEY: PLACEHOLDER_PLEASE_ROTATE_KEY
+          GROQ_API_KEY: PLACEHOLDER
+      - name: Dependency vulnerability scan
+        run: |
+          pip-audit
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: |
+          cd web
+          npm ci
+      - name: Dependency audit
+        run: |
+          cd web
+          npm audit --audit-level=high
+      - name: Run frontend tests
+        run: |
+          cd web
+          npx vitest run --environment jsdom
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for credentials in Git history
+        run: |
+          if git log -p --all | grep -iE "(api[_-]?key|password|secret|token)\s*=\s*['\"][A-Za-z0-9_\-]{16,}['\"]"; then
+            echo "Potential secret found in git history"; exit 1
+          fi

@@ -14,6 +14,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
 
   api:
     build: ./api
@@ -24,7 +29,14 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - ./api/app:/app/app
+      - ./api/tests:/app/tests
       - ./data:/app/data:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   web:
     build: ./web
@@ -33,6 +45,14 @@ services:
       - api
     ports:
       - "5173:5173"
+    volumes:
+      - ./web/src:/app/src
+    command: npm run dev -- --force --host 0.0.0.0
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
 volumes:
   pgdata:

@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import { InteractiveGrid } from "../components/backgrounds/InteractiveGrid";
+import React, { useState, useRef } from "react";
 import { CircularGallery } from "../components/gallery/CircularGallery";
 import { TimelineSync } from "../components/timeline/TimelineSync";
 import { HoverVideoPlayer } from "../components/media/HoverVideoPlayer";
 import { ScrollProgress } from "../components/motion/ScrollProgress";
+import { Particles } from "@/components/ui/Particles";
+import { TextGenerateEffect } from "@/components/ui/TextGenerateEffect";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { useGSAP } from "@gsap/react";
+import { InteractiveGrid } from "../components/backgrounds/InteractiveGrid";
+import gsap from "gsap";
 
 interface LandingProps {
   onLogin: () => void;
@@ -23,7 +30,21 @@ export function Landing({ onLogin }: LandingProps) {
   const [operatorId, setOperatorId] = useState("IND-2026-OPS");
   const [password, setPassword] = useState("••••••••");
   const [error, setError] = useState<string | null>(null);
-  const [activeTimelineIndex, setActiveTimelineIndex] = useState(4); // Default to July 6
+  const [activeTimelineIndex, setActiveTimelineIndex] = useState(4);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const tl = gsap.timeline();
+    tl.from(".gsap-fade", {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: "power3.out",
+      clearProps: "all"
+    });
+  }, { scope: containerRef });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,65 +52,58 @@ export function Landing({ onLogin }: LandingProps) {
       setError("Please fill in all security authorization fields.");
       return;
     }
-    onLogin();
+    setIsAuthenticating(true);
+    setTimeout(() => {
+      onLogin();
+    }, 800); // Fake delay to show shimmer button loading state
   };
 
   return (
     <div
-      className="landing-view"
-      style={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        width: "100vw",
-        background: "radial-gradient(circle at center, #0f172a 0%, #020617 100%)",
-        color: "#e2e8f0",
-        fontFamily: "system-ui, sans-serif",
-        padding: "40px 20px",
-        overflowY: "auto",
-        boxSizing: "border-box",
-      }}
+      ref={containerRef}
+      className="relative flex flex-col items-center justify-start h-screen w-full bg-slate-950 text-slate-200 p-6 md:p-10 lg:p-12 lg:justify-center overflow-y-auto overflow-x-hidden font-sans"
     >
-      {/* Scroll Progress Indicator */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black z-0" />
+      <Particles quantity={80} className="z-0" />
+      <InteractiveGrid />
       <ScrollProgress />
 
-      {/* Interactive Grid Background */}
-      <InteractiveGrid />
-
-      {/* Main Content Layout */}
-      <div 
-        style={{ 
-          position: "relative",
-          zIndex: 10,
-          maxWidth: "1360px", 
-          width: "100%", 
-          display: "grid", 
-          gridTemplateColumns: "1.25fr 0.75fr", 
-          gap: "80px", 
-          alignItems: "center" 
-        }}
-      >
+      <div className="relative z-10 w-full max-w-[90%] xl:max-w-[1500px] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-12 items-center py-4">
         
-        {/* LEFT COLUMN: Framing, 3D Circular Gallery & Sync Scrubber */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-          <div>
-            <span style={{ fontSize: "0.85rem", background: "rgba(56, 189, 248, 0.1)", color: "#38bdf8", padding: "6px 12px", borderRadius: "9999px", fontWeight: 600, border: "1px solid rgba(56, 189, 248, 0.2)" }}>
+        {/* LEFT COLUMN */}
+        <div className="flex flex-col gap-6">
+          <div className="gsap-fade">
+            <span className="inline-block px-4 py-1 rounded-full text-xs font-bold text-sky-400 bg-sky-500/10 border border-sky-500/20 mb-4 uppercase tracking-wider shadow-[0_0_15px_rgba(56,189,248,0.15)]">
               Ministry Control-Room View — Prototype
             </span>
-            <h1 style={{ fontSize: "3.75rem", fontWeight: 900, color: "#f8fafc", margin: "20px 0 12px", letterSpacing: "-0.03em", lineHeight: "1.1" }}>
-              Urja Kavach
-            </h1>
-            <p style={{ fontSize: "1.2rem", color: "#cbd5e1", margin: 0, lineHeight: "1.6", maxWidth: "680px" }}>
+            <TextGenerateEffect 
+              words="Urja Kavach" 
+              className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-100 mb-2 tracking-tighter"
+              duration={0.8}
+            />
+            <p className="text-base md:text-lg text-slate-400 leading-relaxed max-w-xl mt-2">
               AI-Driven Energy Supply Chain Resilience Operations console for import-dependent economies.
             </p>
+            
+            {/* Animated Metrics Strip */}
+            <div className="flex flex-wrap gap-8 md:gap-12 mt-4 border-t border-slate-800/80 pt-4">
+              <div>
+                <AnimatedCounter value={37} className="text-4xl text-sky-400" />
+                <div className="text-xs uppercase text-slate-500 font-bold tracking-wider mt-1">Supply Nodes</div>
+              </div>
+              <div>
+                <AnimatedCounter value={4} className="text-4xl text-purple-400" />
+                <div className="text-xs uppercase text-slate-500 font-bold tracking-wider mt-1">Threat Vectors</div>
+              </div>
+              <div>
+                <AnimatedCounter value={24} suffix="/7" className="text-4xl text-amber-400" />
+                <div className="text-xs uppercase text-slate-500 font-bold tracking-wider mt-1">Live Coverage</div>
+              </div>
+            </div>
           </div>
 
-          {/* Circular 3D Timeline Gallery */}
-          <div style={{ background: "rgba(15, 23, 42, 0.4)", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.05)", padding: "10px" }}>
-            <h3 style={{ fontSize: "0.8rem", textTransform: "uppercase", color: "#64748b", letterSpacing: "0.05em", margin: "10px 0 0 16px" }}>
+          <GlassCard className="p-4" animate={false}>
+            <h3 className="text-xs font-bold uppercase text-slate-500 tracking-widest ml-4 mt-2" style={{ color: "#94a3b8" }}>
               Geopolitical Crisis Interactive Timeline
             </h3>
             
@@ -99,112 +113,77 @@ export function Landing({ onLogin }: LandingProps) {
               onSelect={(idx) => setActiveTimelineIndex(idx)} 
             />
 
-            {/* Sync Scrubber */}
-            <div style={{ padding: "0 20px 20px" }}>
+            <div className="px-5 pb-5 mt-2">
               <TimelineSync 
                 events={TIMELINE_EVENTS} 
                 activeIndex={activeTimelineIndex} 
                 onChangeActiveIndex={(idx) => setActiveTimelineIndex(idx)} 
               />
             </div>
-          </div>
+          </GlassCard>
         </div>
 
-        {/* RIGHT COLUMN: Demo Login Form & Hover Video Player */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-          {/* Operator Auth Card */}
-          <div
-            className="detail-card"
-            style={{
-              background: "rgba(11, 15, 25, 0.9)",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(56, 189, 248, 0.1)",
-              borderRadius: "16px",
-              padding: "36px",
-              boxShadow: "0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.05)",
-            }}
-          >
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, margin: "0 0 6px", color: "#f8fafc" }}>
+        {/* RIGHT COLUMN */}
+        <div className="flex flex-col gap-8">
+          <GlassCard glowColor="blue" className="p-8" animate={false} style={{ background: 'rgba(10, 15, 30, 0.95)', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: "#f8fafc" }}>
               Operator Authentication
             </h2>
-            <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "0 0 24px" }}>
+            <p className="text-sm mb-8" style={{ color: "#94a3b8" }}>
               Enter security authorization keycodes to access the resilience console.
             </p>
 
-            <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 500 }}>Operator ID</label>
+            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#94a3b8" }}>Operator ID</label>
                 <input
                   type="text"
                   value={operatorId}
                   onChange={(e) => setOperatorId(e.target.value)}
-                  style={{
-                    background: "#030712",
-                    border: "1px solid #1e293b",
-                    borderRadius: "6px",
-                    padding: "12px",
-                    color: "#f1f5f9",
-                    outline: "none",
-                    fontSize: "0.9rem",
-                  }}
+                  className="border border-slate-600 rounded-lg p-3 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all text-base"
+                  style={{ color: '#f8fafc', backgroundColor: 'rgba(2, 6, 23, 0.85)' }}
                 />
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "0.75rem", color: "#94a3b8", fontWeight: 500 }}>Security Passcode</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#94a3b8" }}>Security Passcode</label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={{
-                    background: "#030712",
-                    border: "1px solid #1e293b",
-                    borderRadius: "6px",
-                    padding: "12px",
-                    color: "#f1f5f9",
-                    outline: "none",
-                    fontSize: "0.9rem",
-                  }}
+                  className="border border-slate-600 rounded-lg p-3 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all text-base"
+                  style={{ color: '#f8fafc', backgroundColor: 'rgba(2, 6, 23, 0.85)' }}
                 />
               </div>
 
               {error && (
-                <p style={{ fontSize: "0.8rem", color: "#ef4444", margin: 0 }}>
+                <p className="text-sm text-red-400 m-0">
                   {error}
                 </p>
               )}
 
-              <button
-                type="submit"
-                style={{
-                  background: "#0284c7",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "14px",
-                  color: "#ffffff",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  marginTop: "8px",
-                  boxShadow: "0 4px 12px rgba(2, 132, 199, 0.3)",
-                }}
-                onMouseOver={(e) => (e.currentTarget.style.background = "#0369a1")}
-                onMouseOut={(e) => (e.currentTarget.style.background = "#0284c7")}
+              <ShimmerButton 
+                type="submit" 
+                className="mt-4 w-full" 
+                size="lg"
+                loading={isAuthenticating}
               >
                 Authorize System Access
-              </button>
+              </ShimmerButton>
             </form>
-          </div>
+          </GlassCard>
 
-          {/* Hover Video Player for System Video Walkthrough / Briefing */}
-          <div style={{ height: "160px" }}>
+          <div className="gsap-fade h-36">
             <HoverVideoPlayer 
               thumbnailUrl="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80"
+              videoUrl="https://assets.mixkit.co/videos/preview/mixkit-cargo-ship-sailing-in-the-sea-aerial-view-34282-large.mp4"
               overlayText="Geospatial Control Room Briefing Overview"
               metadata={
-                <div>
-                  <p style={{ margin: "4px 0 0" }}>System walk-through: Screens 1 to 4</p>
-                  <p style={{ margin: "2px 0 0", color: "#38bdf8" }}>Click/hover to play preview</p>
+                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950/40 backdrop-blur-[1px] p-4 text-center">
+                  <p className="m-0 text-sm text-slate-200 font-semibold tracking-wide">System Walk-Through: Screens 1 to 4</p>
+                  <p className="m-0 mt-2 text-[10px] text-sky-400 font-bold tracking-widest uppercase bg-sky-950/60 border border-sky-500/30 px-3 py-1 rounded-full">
+                    Hover to Play Preview
+                  </p>
                 </div>
               }
             />

@@ -53,11 +53,11 @@ describe("Procurement Component DOM Render Test", () => {
 
     // 1. Verify Initial Mount & API fetch
     await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
-    expect(screen.getByText("Procurement Diversification recommendations")).toBeDefined();
+    expect(screen.getByText("Procurement Diversification Models")).toBeDefined();
     
     // 2. Verify DOM renders the initial 95% score card
     expect(screen.getByText("Russia")).toBeDefined();
-    expect(screen.getByText("95%")).toBeDefined();
+    expect(screen.getAllByText(/95/)[0]).toBeDefined();
 
     // 3. Find Slider DOM element & assert default state
     const slider = screen.getByRole("slider") as HTMLInputElement;
@@ -72,9 +72,9 @@ describe("Procurement Component DOM Render Test", () => {
 
     // 6. Verify DOM renders the updated 97% score dynamically
     await waitFor(() => {
-      expect(screen.getByText("97%")).toBeDefined();
+      expect(screen.getAllByText(/97/)[0]).toBeDefined();
     });
     // Ensure the old 95% element is no longer in the document
-    expect(screen.queryByText("95%")).toBeNull();
+    expect(screen.queryAllByText(/95/).length).toBe(0);
   });
 });

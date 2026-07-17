@@ -1,4 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
+  --bg-primary: #0b0f19;
+  --bg-secondary: #0f172a;
+  --bg-card: rgba(15, 23, 42, 0.92);
+  --bg-card-hover: rgba(15, 23, 42, 0.98);
+  --border-primary: #1e293b;
+  --border-hover: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dimmed: #64748b;
+  --accent-blue: #38bdf8;
+  --accent-cyan: #22d3ee;
+  --accent-purple: #a855f7;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-green: #10b981;
+  --shadow-glow-blue: 0 0 20px rgba(56, 189, 248, 0.15);
+  --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.15);
+  --shadow-glow-amber: 0 0 20px rgba(245, 158, 11, 0.15);
+  --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.15);
+  --shadow-glow-purple: 0 0 20px rgba(168, 85, 247, 0.15);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+
   color: #f6f7f9;
   background: #111418;
   font-family:
@@ -7,10 +41,30 @@
   text-rendering: optimizeLegibility;
 }
 
-body {
-  margin: 0;
+/* ── Responsive base font scaling for smaller screens ── */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
 }
 
+@media (max-width: 1366px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+body {
+  margin: 0;
+  overflow: hidden; /* Prevent double scrollbars — scrolling handled by .main-content > div */
+}
+
+/* ── Legacy layout classes (kept for compatibility) ── */
 .app-shell {
   align-items: center;
   display: flex;
@@ -39,8 +93,8 @@ body {
 }
 
 h1 {
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  line-height: 1;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.1;
   margin: 0;
 }
 
@@ -84,11 +138,14 @@ h1 {
   }
 }
 
-/* Navigation and App layout */
+/* ═══════════════════════════════════════════════════════
+   APP LAYOUT — Fixed header + scrollable content area
+   ═══════════════════════════════════════════════════════ */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh; /* dynamic viewport height for mobile */
   width: 100vw;
   overflow: hidden;
   background: #0b0d10;
@@ -99,10 +156,20 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  padding: 10px 20px;
   background: #11141a;
   border-bottom: 1px solid #1e293b;
   z-index: 100;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 16px;
+  }
 }
 
 .logo-section h1 {
@@ -115,18 +182,23 @@ h1 {
 
 .nav-tabs {
   display: flex;
-  gap: 8px;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .tab-btn {
   background: transparent;
   border: 1px solid transparent;
   color: #94a3b8;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-weight: 500;
+  font-size: 0.8125rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .tab-btn:hover {
@@ -140,6 +212,7 @@ h1 {
   border-color: rgba(56, 189, 248, 0.2);
 }
 
+/* The main content area — fills remaining viewport and scrolls internally */
 .main-content {
   flex: 1;
   min-height: 0;
@@ -149,14 +222,24 @@ h1 {
   flex-direction: column;
 }
 
+/* Every direct child div of main-content gets internal scrolling */
 .main-content > div {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS/trackpads */
 }
 
-/* Twin Map Container */
+/* Map tab: no scrolling — Leaflet handles everything */
+.main-content > div.map-active {
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TWIN MAP LAYOUT
+   ═══════════════════════════════════════════════════════ */
 .twin-container {
   display: flex;
   height: 100%;
@@ -329,3 +412,196 @@ h1 {
   display: block;
 }
 
+/* ═══════════════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes beam-flow {
+  0% { stroke-dashoffset: 200; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   COMPONENT CLASSES (Tailwind @layer)
+   ═══════════════════════════════════════════════════════ */
+@layer components {
+  /* Glass card — SOLID enough to be visible against dark backgrounds */
+  .glass-card {
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(51, 65, 85, 0.5);
+    border-radius: 12px;
+  }
+  
+  .glass-card-hover {
+    @apply hover:border-slate-600/60 hover:shadow-lg transition-all duration-300;
+  }
+
+  .glass-card-hover:hover {
+    background: rgba(15, 23, 42, 0.98);
+  }
+  
+  .glow-border-blue {
+    box-shadow: var(--shadow-glow-blue);
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+  
+  .glow-border-red {
+    box-shadow: var(--shadow-glow-red);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  
+  .glow-border-amber {
+    box-shadow: var(--shadow-glow-amber);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+  
+  .glow-border-green {
+    box-shadow: var(--shadow-glow-green);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  
+  .glow-border-purple {
+    box-shadow: var(--shadow-glow-purple);
+    border-color: rgba(168, 85, 247, 0.3);
+  }
+
+  /* Hover variants for glow borders */
+  .hover-glow-blue:hover {
+    box-shadow: var(--shadow-glow-blue);
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+  .hover-glow-red:hover {
+    box-shadow: var(--shadow-glow-red);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  .hover-glow-amber:hover {
+    box-shadow: var(--shadow-glow-amber);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+  .hover-glow-green:hover {
+    box-shadow: var(--shadow-glow-green);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  .hover-glow-purple:hover {
+    box-shadow: var(--shadow-glow-purple);
+    border-color: rgba(168, 85, 247, 0.3);
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-purple-500;
+  }
+  
+  .text-gradient-amber {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500;
+  }
+  
+  .shimmer-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shimmer-effect::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+  }
+  
+  .section-header {
+    @apply text-xs font-bold tracking-widest uppercase text-sky-400;
+  }
+  
+  .card-title {
+    @apply text-lg font-bold text-slate-100;
+  }
+  
+  .card-subtitle {
+    @apply text-sm text-slate-400;
+  }
+  
+  .metric-value {
+    @apply text-3xl font-extrabold tracking-tight;
+  }
+  
+  .metric-label {
+    @apply text-xs text-slate-500 uppercase tracking-wide;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   FORM INPUT CONTRAST (ensures inputs are always visible)
+   ═══════════════════════════════════════════════════════ */
+.glass-card input[type="text"],
+.glass-card input[type="email"],
+.glass-card input[type="password"],
+.glass-card input[type="number"],
+.glass-card textarea,
+.glass-card select {
+  background: rgba(2, 6, 23, 0.7) !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155;
+}
+
+.glass-card input:focus,
+.glass-card textarea:focus,
+.glass-card select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}
+
+.glass-card label {
+  color: #94a3b8;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCROLLBAR STYLING
+   ═══════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 
 def database_url() -> str:
-    password = os.environ["POSTGRES_PASSWORD"]
+    if "DATABASE_URL" in os.environ:
+        return os.environ["DATABASE_URL"]
+    password = os.environ.get("POSTGRES_PASSWORD", "urjakavach_dev")
     return f"postgresql+asyncpg://urjakavach:{password}@postgres:5432/urjakavach"
 
 

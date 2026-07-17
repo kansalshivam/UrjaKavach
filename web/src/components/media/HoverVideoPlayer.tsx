@@ -15,7 +15,10 @@ export function HoverVideoPlayer({ thumbnailUrl, videoUrl, overlayText, metadata
   useEffect(() => {
     if (!videoUrl || !videoRef.current) return;
     if (hovered) {
-      videoRef.current.play().catch(() => {});
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
     } else {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;

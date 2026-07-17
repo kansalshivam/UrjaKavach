@@ -91,7 +91,7 @@ async def generate_narrative(
         try:
             logger.info("Attempting narrative generation via Gemini API...")
             async with httpx.AsyncClient(timeout=10.0) as client:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={gemini_key}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
                 payload = {
                     "contents": [{
                         "parts": [{"text": prompt}]
@@ -115,7 +115,7 @@ async def generate_narrative(
                 url = "https://api.groq.com/openai/v1/chat/completions"
                 headers = {"Authorization": f"Bearer {groq_key}"}
                 payload = {
-                    "model": "openai/gpt-oss-120b",
+                    "model": "llama-3.3-70b-versatile",
                     "messages": [{"role": "user", "content": prompt}],
                     "temperature": 0.3,
                 }

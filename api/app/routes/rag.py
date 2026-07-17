@@ -181,7 +181,7 @@ async def query_rag_engine(req: QueryRequest):
         try:
             logger.info("Attempting RAG Q&A via Gemini API...")
             async with httpx.AsyncClient(timeout=10.0) as client:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={gemini_key}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}"
                 payload = {"contents": [{"parts": [{"text": prompt}]}]}
                 res = await client.post(url, json=payload)
                 if res.status_code == 200:
@@ -197,7 +197,7 @@ async def query_rag_engine(req: QueryRequest):
                 url = "https://api.groq.com/openai/v1/chat/completions"
                 headers = {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
                 payload = {
-                    "model": "openai/gpt-oss-20b",
+                    "model": "llama-3.3-70b-versatile",
                     "messages": [
                         {"role": "user", "content": prompt}
                     ],

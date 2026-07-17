@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://urjakavach-api.onrender.com/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://urjakavach-api.onrender.com/health"
+    }
+  ]
+}

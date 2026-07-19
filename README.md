@@ -119,14 +119,29 @@ where $S$ is the set of corridor source nodes and $d(s,n)$ is the shortest graph
 
 ## Data Integrity & Fallback Transparency
 
-| Feed | Live Source | Cadence | Fallback |
+This section documents exactly what data is live, what is baseline-calibrated, and where the system uses modeled parameters. This level of transparency is intentional — Urja Kavach is designed for trust, and every number in the system has a documented origin.
+
+| Feed | Live Source | Coverage | Fallback Behaviour |
 |---|---|---|---|
-| **GDELT News** | GDELT Project v1 | Every 15 min | Cached historical dossier of relevant energy headlines |
-| **Crude Prices** | US EIA APIv2 (RBRTE, RWTC) | Every 1 hour | Latest stored price point |
-| **AIS Telemetry** | AISstream WebSocket | Real-time | Golden snapshot baselines |
-| **OFAC Sanctions** | US Treasury SDN XML | Every 24 hours | Previous diff counts retained in memory |
+| **GDELT News** | GDELT Project DOC 2.0 API | Global, all 4 corridors | Cached dossier of 2026 energy security headlines stored in `gdelt_articles` table |
+| **Crude Prices (Brent/WTI)** | US EIA APIv2 — series RBRTE & RWTC | Live daily close | Latest stored price point; volatility component remains stable |
+| **AIS Vessel Telemetry** | AISstream WebSocket | **Americas corridor only** (free-tier spatial limit) | All other corridors (Hormuz, West Africa, Russia) use 30-day golden snapshot baselines with ±10% deterministic fluctuation to prevent stale zeroes |
+| **OFAC Sanctions** | US Treasury SDN XML diff | All corridors | Because sanctions additions are irregular (often 0 new entries per day), the scoring engine applies a corridor-level heuristic count to keep the signal active between real diffs |
+
+### Honest Notes on AIS Coverage
+
+The free-tier [AISstream.io](https://aisstream.io/) WebSocket API restricts the bounding box subscription to a region covering the Americas. This means **live vessel counts for Hormuz, West Africa, and Russia corridors are not available under the current API tier**.
+
+The AIS signal for these corridors is computed from stored baselines in `ais_vessel_counts` table, which were seeded from verified historical snapshots. The baseline deviation formula — $A = \max(0, 1 - r)$ — still produces a meaningful risk signal when the baseline is realistic.
+
+**Production upgrade path:** Kpler, Lloyd's List Intelligence, or Spire Maritime provide full global satellite AIS coverage via paid API.
+
+### Honest Notes on OFAC Scoring
+
+The US Treasury SDN XML is polled every 24 hours. In practice, new SDN additions relevant to energy corridors occur infrequently. To prevent the OFAC component from contributing a flat zero on every non-event day (which would make the weight meaningless), the scoring engine applies a per-corridor heuristic count. This is documented in `api/app/scoring/risk_score.py`.
 
 ---
+
 
 ## Technology Stack
 

@@ -208,8 +208,13 @@ def simple_retrieval(query: str) -> List[Dict]:
 
     expanded = _expand_query(query_words)
 
-    # Build bigrams from the raw query for phrase-level bonus scoring
-    bigrams = [" ".join(raw_words[i:i + 2]) for i in range(len(raw_words) - 1)]
+    # Build bigrams from the raw query for phrase-level bonus scoring, excluding stop-word-only bigrams
+    bigrams = []
+    for i in range(len(raw_words) - 1):
+        w1, w2 = raw_words[i], raw_words[i + 1]
+        if w1 in STOP_WORDS and w2 in STOP_WORDS:
+            continue
+        bigrams.append(f"{w1} {w2}")
 
     scored_docs = []
     for doc in DOCUMENTS:

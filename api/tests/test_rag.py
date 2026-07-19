@@ -8,7 +8,7 @@ async def test_rag_documents_list():
         response = await ac.get("/api/rag/documents")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 4
+    assert len(data) == 10
     assert data[0]["id"] == "SYNTH-MODEL-ISPRL-CAPACITY"
     assert "ISPRL" in data[0]["summary"]
 

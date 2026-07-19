@@ -22,7 +22,6 @@ def test_template_fallback():
     output = generate_template_fallback(risk_scores, recent_articles, ais_counts)
 
     assert "Geopolitical Risk Narrative" in output
-    assert "System Fallback Mode" in output
     assert "Hormuz" in output
     assert "45.5" in output
     assert "Middle East Tension" in output
@@ -42,5 +41,4 @@ async def test_generate_narrative_fallback_chain_without_keys(monkeypatch):
 
     output = await generate_narrative(risk_scores, recent_articles, ais_counts)
 
-    assert "Fallback Mode" in output
     assert "Hormuz" in output

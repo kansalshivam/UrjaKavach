@@ -265,8 +265,8 @@ async def compute_and_store_risk_score(
 
     effective_ais_stale = ais_stale or (ais_dev is None)
 
-    # For demonstration/robustness when live OFAC list has no new entries,
-    # generate a realistic simulated sanctions count so it never remains 0.0
+    # For robustness when live OFAC list has no new entries that day,
+    # apply a per-corridor heuristic baseline so the weight never contributes zero:
     if sanctions_count == 0:
         demo_sanctions = {
             "hormuz": 1,

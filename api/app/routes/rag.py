@@ -69,6 +69,54 @@ DOCUMENTS = [
         "date": "July 8, 2021",
         "summary": "Synthetic modeling reference for planned expansion caverns at Chandikhole (4.0 MMT) and Padur (2.5 MMT).",
         "content": "Model Reference: Future capacity scenarios model the establishment of additional Strategic Petroleum Reserves (SPR) caverns under Phase II. The expansion includes two planned caverns: a 4.0 MMT facility at Chandikhole in Odisha, and a 2.5 MMT facility at Padur in Karnataka. This adds 6.5 MMT of storage capacity, bringing total strategic reserve capacity to 11.83 MMT to support energy security evaluations aligned with the IEA's 90-day recommended cover target."
+    },
+    {
+        "id": "SYNTH-MODEL-HORMUZ-RISK",
+        "title": "Reference Specification: Strait of Hormuz Chokepoint Risk Assessment",
+        "source": "Urja Kavach Reference Data Model",
+        "date": "March 20, 2026",
+        "summary": "Synthetic modeling reference for Hormuz transit risk, tanker traffic baselines, and closure impact projections on India's crude supply.",
+        "content": "Model Reference: The Strait of Hormuz is the world's most critical oil chokepoint. Approximately 60% of India's crude imports transit this corridor, representing ~2.64 million bpd of the 4.4 million bpd total import base. The navigable channel is 2-3 miles wide in each direction, with an average daily transit of 17-20 Very Large Crude Carriers (VLCCs). A sustained 50% capacity disruption is modeled to reduce India's crude availability by ~1.32 million bpd, triggering emergency SPR drawdown at approximately 139,000 metric tonnes per day. The IRGC (Islamic Revolutionary Guard Corps) seizure risk is modeled as a binary trigger correlated with GDELT news volume z-scores above 2.0. Primary naval chokepoint coordinates: 26.57N, 56.45E. The corridor risk weight in Urja Kavach is 0.35 for GDELT news volume, 0.30 for AIS vessel deviation, 0.25 for Brent price volatility, and 0.10 for OFAC sanctions flag."
+    },
+    {
+        "id": "SYNTH-MODEL-IMPORT-MATRIX",
+        "title": "Reference Specification: India Crude Oil Import Dependency Matrix",
+        "source": "Urja Kavach Reference Data Model",
+        "date": "April 1, 2026",
+        "summary": "Synthetic modeling reference for India crude source composition by corridor, grade requirements, and diversification targets.",
+        "content": "Model Reference: India's crude import matrix is modeled with a total import volume of 4.4 million bpd. Source composition by corridor: Hormuz corridor (Iraq, Saudi Arabia, UAE, Kuwait): 60% or 2.64 million bpd; West Africa (Nigeria, Angola): 12% or 528,000 bpd; Americas (US Gulf Coast, Guyana, Mexico): 9% or 396,000 bpd; Russia (Sokol, Urals, ESPO): 15% or 660,000 bpd; Others: 4% or 176,000 bpd. Jamnagar complex (Reliance) processes predominantly medium-sour grades (API 28-34, Sulfur 1.8-2.5%) aligned with Basra Medium and Arab Heavy benchmarks. IOC Panipat and Mathura refineries require sweet grades for full utilization. The national diversification target is to shift the Hormuz share from 60% to 45% within 18 months of a sustained risk event."
+    },
+    {
+        "id": "SYNTH-MODEL-CAPE-REROUTING",
+        "title": "Reference Specification: Cape of Good Hope Contingency Routing Analysis",
+        "source": "Urja Kavach Reference Data Model",
+        "date": "March 28, 2026",
+        "summary": "Synthetic modeling reference for alternative tanker rerouting via Cape of Good Hope when Hormuz or Bab el-Mandeb is disrupted.",
+        "content": "Model Reference: If the Strait of Hormuz is blocked, tankers from Middle Eastern terminals (Ras Tanura, Fujairah) must reroute via the Cape of Good Hope, adding approximately 6,000-6,500 nautical miles and 10-14 transit days per voyage. This rerouting reduces delivered volume capacity by 20-25% due to extended vessel turnaround time. The Cape route is modeled as available at 100% capacity with no chokepoint restriction. The additional transit cost is modeled at USD 1.2-1.8 million per voyage (bunker and hire combined). Bab el-Mandeb closure forces combined Cape plus West Africa rerouting, compounding transit costs to USD 2.1-2.7 million per voyage. The IFC-IOR (Information Fusion Centre Indian Ocean Region) coordinates vessel tracking for the Cape corridor."
+    },
+    {
+        "id": "SYNTH-MODEL-RUSSIA-OFAC",
+        "title": "Reference Specification: Russia Sokol & Urals Crude Sanctions Impact Analysis",
+        "source": "Urja Kavach Reference Data Model",
+        "date": "March 15, 2026",
+        "summary": "Synthetic modeling reference for OFAC sanctions effects on Russian crude imports to India via shadow fleet routing.",
+        "content": "Model Reference: Russia's crude exports to India are modeled under active OFAC secondary sanctions risk. The primary Russian grades are Sokol (East Siberian, API 37, sulfur 0.19%) and Urals (API 31, sulfur 1.55%). Indian imports of Russian crude are modeled at 660,000 bpd which is 15% of total imports. The shadow fleet of approximately 300-400 non-G7 flagged tankers facilitates the majority of this trade. OFAC SDN list additions targeting vessel operators, insurance providers, or trading entities constitute a binary sanctions flag trigger in the Urja Kavach risk scoring model. A scenario with full OFAC enforcement blocking Indian bank payments is modeled as reducing Russian corridor capacity to zero, requiring immediate 660,000 bpd reallocation: West Africa plus 330,000 bpd and Americas plus 330,000 bpd, increasing SPR drawdown pressure by approximately 3.5 days per month."
+    },
+    {
+        "id": "SYNTH-MODEL-AIS-METHODOLOGY",
+        "title": "Reference Specification: AIS Vessel Tracking Methodology & Deviation Scoring",
+        "source": "Urja Kavach Reference Data Model",
+        "date": "March 22, 2026",
+        "summary": "Synthetic modeling reference for AIS deviation scoring, vessel count baselines, transit anomaly detection across monitored bounding boxes.",
+        "content": "Model Reference: The AIS (Automatic Identification System) deviation component tracks vessel counts within defined geographic bounding boxes. The Strait of Hormuz bounding box is defined as 24.0N-27.5N, 55.5E-58.0E. The 30-day baseline average vessel count is computed from historical AIS snapshots stored in the database. A current-to-baseline ratio below 1.0 indicates reduced transit activity and contributes positively to the risk score using the formula: AIS_deviation = max(0, 1 minus current_count divided by baseline_count). Baseline vessel counts for the Hormuz bounding box are modeled at 85-100 vessels in normal operating conditions, dropping to 40-60 during moderate tension events and below 30 in severe disruption scenarios. The AIS risk weight in the composite index is 0.30, making it the second largest contributor after GDELT news volume at 0.35. The Jamnagar and Vadinar bounding box covers 22.0N-23.2N, 69.5E-70.8E, monitoring inbound crude tanker density at India's primary import port cluster."
+    },
+    {
+        "id": "SYNTH-MODEL-SPR-PROTOCOL",
+        "title": "Reference Specification: SPR Emergency Drawdown Protocol & Autonomy Calculations",
+        "source": "Urja Kavach Reference Data Model",
+        "date": "April 5, 2026",
+        "summary": "Synthetic modeling reference for ISPRL emergency drawdown procedures, cavern release rates, days of autonomy, and replenishment lead times.",
+        "content": "Model Reference: The ISPRL emergency drawdown protocol is modeled in three trigger tiers: Tier 1 (risk score 60-79) triggers advisory alert and pre-positions procurement alternatives; Tier 2 (score 80-89) activates OMC commercial reserve drawdown with 64.5 days available; Tier 3 (score 90-100) authorizes ISPRL strategic cavern release. Maximum strategic cavern release rate is modeled at 200,000 bpd across all three ISPRL facilities combined. At a national consumption of 5.0 million bpd and current ISPRL fill level of 63.26% equaling 3.372 MMT or approximately 23.36 million barrels, the strategic reserve provides approximately 4.67 days of cover at maximum drawdown rate. Combined with OMC commercial reserves providing 64.5 days, total national autonomy is modeled at 69.17 days under a zero-import scenario. Replenishment lead time after drawdown is modeled at 21-30 days for the West Africa corridor and 14-21 days for the Americas corridor."
     }
 ]
 
@@ -109,31 +157,102 @@ def get_document_detail(doc_id: str):
         disclosure="N/A"
     )
 
-STOP_WORDS = {"what", "is", "the", "of", "in", "a", "an", "and", "to", "for", "on", "with", "at", "by", "from", "how", "why", "where", "which", "who", "whom", "about", "are", "do"}
+STOP_WORDS = {"what", "is", "the", "of", "in", "a", "an", "and", "to", "for", "on", "with", "at", "by", "from", "how", "why", "where", "which", "who", "whom", "about", "are", "do", "can", "it", "its", "be", "as", "or", "has", "have"}
+
+# Energy-domain synonym map — expands single query terms to related concepts
+ENERGY_SYNONYMS: dict[str, list[str]] = {
+    "oil": ["crude", "petroleum", "brent", "wti"],
+    "crude": ["oil", "petroleum", "brent"],
+    "vessel": ["tanker", "ship", "carrier", "vlcc"],
+    "tanker": ["vessel", "ship", "carrier", "vlcc"],
+    "hormuz": ["strait", "chokepoint", "persian"],
+    "strait": ["hormuz", "chokepoint", "bab"],
+    "sanction": ["sanctions", "ofac", "embargo"],
+    "sanctions": ["sanction", "ofac", "embargo"],
+    "ofac": ["sanctions", "sanction", "sdn"],
+    "russia": ["russian", "sokol", "urals", "espo"],
+    "india": ["indian", "iocl", "hpcl", "bpcl", "isprl"],
+    "reserve": ["spr", "isprl", "strategic", "cavern", "caverns"],
+    "spr": ["reserve", "isprl", "strategic", "cavern"],
+    "import": ["imports", "importing", "sourcing"],
+    "route": ["routing", "corridor", "pathway", "lane", "rerouting"],
+    "routing": ["route", "corridor", "pathway", "rerouting"],
+    "risk": ["threat", "disruption", "vulnerability"],
+    "price": ["brent", "wti", "crude", "volatility", "spot"],
+    "ais": ["vessel", "ship", "tracking", "maritime"],
+    "africa": ["nigeria", "angola", "west"],
+    "drawdown": ["release", "depletion", "protocol", "emergency"],
+    "refinery": ["refining", "jamnagar", "throughput"],
+    "capacity": ["mmtpa", "throughput", "volume"],
+}
+
+
+def _expand_query(query_words: set) -> set:
+    """Expand query terms to include energy-domain synonyms."""
+    expanded = set(query_words)
+    for word in list(query_words):
+        for key, synonyms in ENERGY_SYNONYMS.items():
+            if word == key or word in synonyms:
+                expanded.add(key)
+                expanded.update(synonyms)
+    return expanded
+
 
 def simple_retrieval(query: str) -> List[Dict]:
-    scored_docs = []
-    # Strip common punctuation
-    cleaned_query = query.lower().replace("?", "").replace(".", "").replace(",", "").replace("!", "")
-    query_words = set(cleaned_query.split()) - STOP_WORDS
-    
+    """Score and retrieve the most relevant documents for a query.
+
+    Uses weighted multi-field matching (title > summary > content),
+    energy-domain synonym expansion, and bigram phrase bonuses.
+    Returns up to 3 best-matching documents.
+    """
+    cleaned_query = (
+        query.lower()
+        .replace("?", "")
+        .replace(".", "")
+        .replace(",", "")
+        .replace("!", "")
+        .replace("'", "")
+    )
+    raw_words = cleaned_query.split()
+    query_words = set(raw_words) - STOP_WORDS
+
     if not query_words:
         return []
 
+    expanded = _expand_query(query_words)
+
+    # Build bigrams from the raw query for phrase-level bonus scoring
+    bigrams = [" ".join(raw_words[i:i + 2]) for i in range(len(raw_words) - 1)]
+
+    scored_docs = []
     for doc in DOCUMENTS:
         content_lower = doc["content"].lower()
         title_lower = doc["title"].lower()
+        summary_lower = doc["summary"].lower()
         score = 0
-        for word in query_words:
-            if word in content_lower:
-                score += 1
+
+        for word in expanded:
+            if len(word) < 3:
+                continue
             if word in title_lower:
-                score += 2
+                score += 4   # Title matches are highest signal
+            if word in summary_lower:
+                score += 2   # Summary is second
+            if word in content_lower:
+                score += 1   # Content is broadest field
+
+        # Bigram phrase bonus — exact two-word phrases are strong intent signals
+        for bigram in bigrams:
+            if bigram in title_lower:
+                score += 6
+            elif bigram in content_lower:
+                score += 3
+
         if score > 0:
             scored_docs.append((score, doc))
-    
+
     scored_docs.sort(key=lambda x: x[0], reverse=True)
-    return [item[1] for item in scored_docs[:2]]
+    return [item[1] for item in scored_docs[:3]]
 
 def get_template_fallback_answer(query: str, retrieved: List[Dict]) -> str:
     # Removed blockquote formatting

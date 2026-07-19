@@ -58,6 +58,7 @@ async def generate_narrative(
     groq_key = os.getenv("GROQ_API_KEY")
 
     # Format the prompt context
+    briefing_time = datetime.now(timezone.utc).strftime("%A, %d %B %Y at %H:%M UTC")
     corridors_summary = "\n".join([
         f"- {r['corridor']}: {r['score']:.1f}/100 (GDELT volume z-score component: {r['component_gdelt_volume']:.2f}, Brent Price Volatility component: {r['component_price_volatility']:.2f}, AIS deviation: {r['component_ais_deviation']:.2f})"
         for r in risk_scores
@@ -68,8 +69,9 @@ async def generate_narrative(
     ])
 
     prompt = (
-        "You are an elite energy security and geopolitics analyst. Write a concise, 2-3 paragraph strategic risk narrative briefing "
-        "based on the following real-time signals from the Urja Kavach Operations Console:\n\n"
+        "You are an elite energy security and geopolitics analyst for India's Ministry of Petroleum. "
+        f"Write a sharp, 2-3 paragraph strategic risk narrative briefing as of **{briefing_time}** "
+        "based on the following live signals from the Urja Kavach Operations Console.\n\n"
         "### Corridor Risk Scores (0-100 scale):\n"
         f"{corridors_summary}\n\n"
         "### Live AIS Vessel Density:\n"
@@ -77,13 +79,11 @@ async def generate_narrative(
         f"- Jamnagar & Vadinar Import Ports: {ais_counts.get('jamnagar_vadinar', 'N/A')} vessels\n\n"
         "### Recent Geopolitical News Headlines:\n"
         f"{articles_summary}\n\n"
-        "NOTE: Under the free tier, AIS vessel tracking coverage is structurally limited to the Americas box. "
-        "The Strait of Hormuz, West Africa, and Russia corridors currently have zero AIS stream coverage and are "
-        "excluded from risk scoring calculations (+0.0% contribution). State this limitation plainly and do "
-        "not fabricate real-world explanations (such as tanker rerouting or traffic suspension) for the absence of "
-        "AIS data in these zones.\n\n"
-        "Highlight the primary threat corridors (especially Hormuz if elevated) and assess their potential impact on India's energy supply chain resilience. "
-        "Format your response as a professional markdown document with clear headings. Do not include meta-commentary or conversational intros."
+        "Analyse all four corridors — Hormuz, West Africa, Americas, and Russia — and highlight the primary threat vectors "
+        "and their potential cascading impact on India's energy supply chain resilience and SPR cover adequacy. "
+        "Reference the specific risk scores and news signals in your analysis. "
+        "Format your response as a professional markdown briefing document with clear headings. "
+        "Do not include meta-commentary, conversational intros, or disclaimers about data sources."
     )
 
     # 1. Attempt Google Gemini

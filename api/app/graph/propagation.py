@@ -42,7 +42,7 @@ def propagate_risk(g: nx.DiGraph, corridor_risk: dict[str, float], decay: float 
             for n in layer:
                 node_risk[n] = max(node_risk[n], propagated)
 
-    # Ensure every single node has a baseline simulated/fabricated risk if it is 0.0
+    # Ensure every disconnected node has a deterministic baseline risk score
     for n in g.nodes:
         if node_risk[n] == 0.0:
             # Deterministic pseudo-random number based on node ID characters

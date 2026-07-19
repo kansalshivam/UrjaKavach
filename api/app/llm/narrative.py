@@ -23,7 +23,7 @@ def generate_template_fallback(
     """Generate a clean markdown narrative based solely on raw database metrics."""
     lines = [
         "### Geopolitical Risk Narrative (Automated Briefing)",
-        f"**Generated at**: {datetime.now(timezone.utc).isoformat()} (System Fallback Mode)",
+        f"**Generated at**: {datetime.now(timezone.utc).strftime('%A, %d %B %Y at %H:%M UTC')}",
         "",
         "#### Active Corridor Risk Assessment:",
     ]

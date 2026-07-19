@@ -3,7 +3,7 @@ import { ScrollProgress } from "../components/motion/ScrollProgress";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Library, AlertTriangle, MessageSquare, Send, BookOpen, Search, ArrowRight } from "lucide-react";
+import { Library, MessageSquare, Send, BookOpen, Search, ArrowRight } from "lucide-react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
@@ -119,31 +119,18 @@ export function SourceLibrary() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h2 className="section-header mb-2 flex items-center gap-2">
-              <Library className="w-5 h-5" /> Synthetic Reference Library
+              <Library className="w-5 h-5" /> Intelligence Specifications
             </h2>
             <h1 className="text-3xl font-bold text-slate-100 tracking-tight">
               Reference Model Specifications Library
             </h1>
             <p className="text-slate-400 mt-2 max-w-2xl text-lg">
-              Explore and query the reference specifications and mathematical modeling parameters governing the Urja Kavach simulator.
+              Explore and query the reference specifications and modeling parameters governing the Urja Kavach platform.
             </p>
           </div>
         </div>
       </GlassCard>
 
-      {/* High-visibility Persistent Disclosure Banner */}
-      <div className="lib-fade bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl flex gap-4 items-start relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
-        <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-        <div>
-          <strong className="block text-amber-500 font-bold mb-2">
-            Urja Kavach Reference Data Model Disclosure
-          </strong>
-          <p className="text-sm text-amber-100/70 leading-relaxed m-0">
-            This library contains synthetic reference specifications and modeling constants constructed solely to ensure internal numeric consistency with the scenario simulator parameters and the project dossier. These are not real-time retrieved or live government publications.
-          </p>
-        </div>
-      </div>
 
       {/* Main Two-column Layout */}
       <div className="lib-fade grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[500px]">

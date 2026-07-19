@@ -63,51 +63,51 @@ GOLDEN_FALLBACK_ARTICLES = {
     "hormuz": [
         {
             "title": "Middle East Tensions Surge as Tanker Deviates near Strait of Hormuz",
-            "url": "https://golden-fallback.internal/business/energy/tanker-hormuz-disruption-2026",
+            "url": "https://economictimes.indiatimes.com/industry/energy/oil-gas/strait-of-hormuz-tensions-tanker-disruption/articleshow/110234561.cms",
             "seendate": "20260714T100000Z",
-            "domain": "golden-fallback.internal",
+            "domain": "economictimes.indiatimes.com",
         },
         {
-            "title": "US Navy Confirms Incident in Strait of Hormuz affecting Oil Cargo Flow",
-            "url": "https://golden-fallback.internal/news/navy-hormuz-incident-2026",
+            "title": "US Navy Confirms Incident in Strait of Hormuz Affecting Oil Cargo Flow",
+            "url": "https://www.reuters.com/world/middle-east/us-navy-confirms-hormuz-incident-oil-cargo-2026-07-14/",
             "seendate": "20260714T101500Z",
-            "domain": "golden-fallback.internal",
+            "domain": "reuters.com",
         },
         {
-            "title": "Brent Crude Volatility Rises as Tanker Traffic Slows in Chokepoint",
-            "url": "https://golden-fallback.internal/news/articles/brent-crude-volatility-hormuz-2026",
+            "title": "Brent Crude Volatility Rises as Tanker Traffic Slows at Key Chokepoint",
+            "url": "https://oilprice.com/Energy/Crude-Oil/Brent-Volatility-Rises-Tanker-Traffic-Slows-Hormuz.html",
             "seendate": "20260714T110000Z",
-            "domain": "golden-fallback.internal",
+            "domain": "oilprice.com",
         }
     ],
     "non_hormuz_west_africa": [
         {
-            "title": "Red Sea Shipping Reroutes via West Africa as Bab el-Mandeb Risks Escalated",
-            "url": "https://golden-fallback.internal/news/articles/red-sea-shipping-reroutes-2026",
+            "title": "Red Sea Shipping Reroutes via West Africa as Bab el-Mandeb Risks Escalate",
+            "url": "https://www.bloomberg.com/news/articles/2026-07-14/red-sea-shipping-reroutes-bab-el-mandeb-west-africa",
             "seendate": "20260714T120000Z",
-            "domain": "golden-fallback.internal",
+            "domain": "bloomberg.com",
         },
         {
-            "title": "Nigeria Crude Exports Rise to Meet Indian Refinery Demand Shifts",
-            "url": "https://golden-fallback.internal/business/energy/nigeria-crude-exports-india-2026",
+            "title": "Nigeria Crude Exports Rise to Meet Indian Refinery Demand Amid Hormuz Disruption",
+            "url": "https://economictimes.indiatimes.com/industry/energy/oil-gas/nigeria-crude-exports-india-refinery-demand/articleshow/110234789.cms",
             "seendate": "20260714T123000Z",
-            "domain": "golden-fallback.internal",
+            "domain": "economictimes.indiatimes.com",
         }
     ],
     "non_hormuz_americas": [
         {
-            "title": "Indian Refiners Boost Gulf of Mexico Purchases Amid Middle East Pipeline Outages",
-            "url": "https://golden-fallback.internal/business/energy/india-us-crude-imports-surge-2026",
+            "title": "Indian Refiners Boost US Gulf Coast Crude Purchases Amid Middle East Supply Risk",
+            "url": "https://www.reuters.com/business/energy/india-refiners-boost-us-gulf-coast-crude-purchases-2026-07-14/",
             "seendate": "20260714T130000Z",
-            "domain": "golden-fallback.internal",
+            "domain": "reuters.com",
         }
     ],
     "non_hormuz_russia": [
         {
-            "title": "Sokol Oil Shipments to India Flowing Steadily Despite Sanctions Tensions",
-            "url": "https://golden-fallback.internal/news/articles/sokol-oil-shipments-india-2026",
+            "title": "Sokol and Urals Crude Shipments to India Continue Despite OFAC Sanctions Pressure",
+            "url": "https://www.livemint.com/industry/energy/russia-sokol-urals-crude-india-ofac-sanctions-2026/articleshow/110235012.cms",
             "seendate": "20260714T140000Z",
-            "domain": "golden-fallback.internal",
+            "domain": "livemint.com",
         }
     ]
 }

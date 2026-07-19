@@ -9,16 +9,16 @@ async def test_rag_documents_list():
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 10
-    assert data[0]["id"] == "SYNTH-MODEL-ISPRL-CAPACITY"
+    assert data[0]["id"] == "UK-SPEC-ISPRL-CAPACITY"
     assert "ISPRL" in data[0]["summary"]
 
 @pytest.mark.anyio
 async def test_rag_document_detail():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/api/rag/documents/SYNTH-MODEL-ISPRL-CAPACITY")
+        response = await ac.get("/api/rag/documents/UK-SPEC-ISPRL-CAPACITY")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == "SYNTH-MODEL-ISPRL-CAPACITY"
+    assert data["id"] == "UK-SPEC-ISPRL-CAPACITY"
     assert "Visakhapatnam" in data["content"]
 
 @pytest.mark.anyio
@@ -33,9 +33,9 @@ async def test_rag_query_engine():
     data = response.json()
     assert "answer" in data
     assert "retrieved_documents" in data
-    assert "SYNTH-MODEL-ISPRL-CAPACITY" in data["retrieved_documents"]
+    assert "UK-SPEC-ISPRL-CAPACITY" in data["retrieved_documents"]
     # Check that it cites the retrieved doc
-    assert "SYNTH-MODEL-ISPRL-CAPACITY" in data["answer"]
+    assert "UK-SPEC-ISPRL-CAPACITY" in data["answer"]
 
 
 @pytest.mark.anyio

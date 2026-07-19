@@ -155,7 +155,7 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
 
   if (loading) {
     return (
-      <div className="p-6 md:p-8 h-full flex flex-col gap-6 w-full max-w-[1400px] mx-auto">
+      <div className="p-6 md:p-8 h-full flex flex-col gap-6 w-full max-w-[95%] xl:max-w-[1800px] mx-auto">
         <Skeleton height={80} className="w-1/3" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Skeleton height={140} />
@@ -405,7 +405,7 @@ export function Dashboard({ weights, setWeights, setCustomNodeRisks }: Dashboard
             </div>
           </GlassCard>
 
-          <GlassCard className="dashboard-fade-in h-[320px] overflow-hidden p-0 border-0" animate={false}>
+          <GlassCard className="dashboard-fade-in h-[320px] overflow-y-auto p-0 border-0" animate={false}>
             <AuditLogs />
           </GlassCard>
         </div>

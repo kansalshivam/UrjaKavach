@@ -68,7 +68,7 @@ export function Landing({ onLogin }: LandingProps) {
       <InteractiveGrid />
       <ScrollProgress />
 
-      <div className="relative z-10 w-full max-w-[90%] xl:max-w-[1500px] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-12 items-center py-4">
+      <div className="relative z-10 w-full max-w-[90%] xl:max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-12 items-center py-4">
         
         {/* LEFT COLUMN */}
         <div className="flex flex-col gap-6">

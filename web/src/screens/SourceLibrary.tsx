@@ -133,9 +133,9 @@ export function SourceLibrary() {
 
 
       {/* Main Two-column Layout */}
-      <div className="lib-fade grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[500px]">
+      <div className="lib-fade grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Curated Library Panel (Scrollable with ScrollProgress) */}
-        <GlassCard className="flex flex-col overflow-hidden h-[600px] relative" animate={false}>
+        <GlassCard className="flex flex-col overflow-hidden min-h-[400px] max-h-[70vh] relative" animate={false}>
           {/* Scroll progress bar tracking library document list reading progress */}
           <ScrollProgress containerRef={docContainerRef as any} />
 
@@ -206,7 +206,7 @@ export function SourceLibrary() {
         </GlassCard>
 
         {/* Right Column: Q&A Engine Client */}
-        <GlassCard className="flex flex-col overflow-hidden h-[600px]" animate={false}>
+        <GlassCard className="flex flex-col overflow-hidden min-h-[400px] max-h-[70vh]" animate={false}>
           <div className="p-5 border-b border-slate-800 flex items-center gap-3">
             <div className="w-8 h-8 rounded bg-emerald-500/20 flex items-center justify-center text-emerald-400">
               <MessageSquare className="w-4 h-4" />

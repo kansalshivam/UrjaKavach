@@ -161,14 +161,14 @@ export function Reserve() {
         {/* Results Panel */}
         <div className="lg:col-span-8 flex flex-col gap-6">
           {loading || !result ? (
-            <GlassCard className="p-20 flex flex-col items-center justify-center gap-4 text-sky-400">
+            <GlassCard className="p-10 flex flex-col items-center justify-center gap-4 text-sky-400">
               <Activity className="w-8 h-8 animate-pulse" />
               <p className="font-medium animate-pulse">Calculating reserve models...</p>
             </GlassCard>
           ) : (
             <>
               {/* Top metrics rows */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                 {/* Daily Shortfall Card */}
                 <GlassCard className="res-fade p-6 flex flex-col justify-between" glowColor="red">
                   <div>
@@ -210,7 +210,7 @@ export function Reserve() {
                 </GlassCard>
 
                 {/* Net Days of Cover Card */}
-                <GlassCard className="res-fade p-6 flex flex-col justify-between md:col-span-2 xl:col-span-1" glowColor={result.days_cover_remaining >= 90.0 ? "green" : "amber"}>
+                <GlassCard className="res-fade p-6 flex flex-col justify-between md:col-span-2 lg:col-span-1 xl:col-span-1" glowColor={result.days_cover_remaining >= 90.0 ? "green" : "amber"}>
                   <div>
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Net Days of National Cover</span>
                     <div className="flex items-baseline gap-1">

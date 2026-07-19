@@ -106,12 +106,12 @@ export function AlertsArchive() {
           </h3>
 
           {loading ? (
-            <GlassCard className="h-[600px] flex flex-col items-center justify-center text-center" animate={false} hover={false}>
+            <GlassCard className="min-h-[400px] max-h-[70vh] flex flex-col items-center justify-center text-center" animate={false} hover={false}>
               <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className="text-slate-400">Fetching assessed threats...</p>
             </GlassCard>
           ) : alerts.length === 0 ? (
-            <GlassCard className="h-[600px] flex flex-col items-center justify-center text-center text-slate-400 gap-3" animate={false} hover={false}>
+            <GlassCard className="min-h-[400px] max-h-[70vh] flex flex-col items-center justify-center text-center text-slate-400 gap-3" animate={false} hover={false}>
               <Info className="w-8 h-8 text-slate-500" />
               <p>No geopolitical alerts have crossed thresholds yet.</p>
               <p className="text-xs text-slate-500 max-w-[400px]">
@@ -119,7 +119,7 @@ export function AlertsArchive() {
               </p>
             </GlassCard>
           ) : (
-            <div className="flex flex-col gap-3 h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="flex flex-col gap-3 min-h-[400px] max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
               {alerts.map((alert) => (
                 <div
                   key={alert.id}
@@ -179,7 +179,7 @@ export function AlertsArchive() {
             Verifiable Evidence Payload
           </h3>
 
-          <GlassCard className="p-6 h-[600px] flex flex-col" glowColor="purple" animate={false} hover={false}>
+          <GlassCard className="p-6 min-h-[400px] max-h-[70vh] flex flex-col" glowColor="purple" animate={false} hover={false}>
             {selectedAlert ? (
               <div className="flex flex-col h-full min-h-0">
                 <div className="border-b border-slate-800 pb-4 mb-4 flex justify-between items-start gap-4">

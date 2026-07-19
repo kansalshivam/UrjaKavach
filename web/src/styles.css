@@ -227,7 +227,7 @@ h1 {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: clip;
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS/trackpads */
 }

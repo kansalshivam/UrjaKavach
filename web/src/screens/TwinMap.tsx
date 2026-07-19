@@ -166,12 +166,12 @@ export function TwinMap({ customNodeRisks }: TwinMapProps) {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-65px)] flex bg-slate-950 overflow-hidden">
+    <div className="relative w-full h-full flex bg-slate-950 overflow-hidden">
       
       {/* SIDEBAR OVERLAY */}
       <div 
         ref={sidebarRef} 
-        className="absolute top-0 left-0 bottom-0 w-[420px] z-[1000] p-6 pointer-events-none"
+        className="absolute top-0 left-0 bottom-0 w-full sm:w-[360px] md:w-[420px] z-[1000] p-6 pointer-events-none"
       >
         <div className="w-full h-full flex flex-col gap-6 overflow-y-auto pointer-events-auto custom-scrollbar pr-2">
         <div className="map-sidebar-element pointer-events-auto">

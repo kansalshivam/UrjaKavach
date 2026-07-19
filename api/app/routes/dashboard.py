@@ -88,7 +88,6 @@ async def dashboard_summary(session: AsyncSession = Depends(get_session)) -> dic
             "url": a.url,
             "seendate": a.seendate,
             "domain": a.domain,
-            "is_synthetic": a.is_synthetic,
         }
         for a in articles_rows
     ]

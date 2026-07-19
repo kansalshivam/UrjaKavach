@@ -72,7 +72,7 @@ export function AlertsArchive() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-[95%] xl:max-w-[1800px] mx-auto flex flex-col gap-8 w-full min-h-[calc(100vh-100px)]">
+    <div className="p-6 md:p-10 max-w-[95%] xl:max-w-[1800px] mx-auto flex flex-col gap-8 w-full">
       {/* Header card with export functionality */}
       <GlassCard className="p-6" glowColor="purple" animate={false}>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

@@ -67,7 +67,7 @@ async def trigger_error():
     return 1 / 0
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health(response: Response) -> dict:
     try:
         async with SessionLocal() as session:

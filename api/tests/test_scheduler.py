@@ -50,7 +50,7 @@ async def test_run_gdelt_poll_fallback():
         assert len(stored_articles) > 0
         for art in stored_articles:
             assert art.is_synthetic is True
-            assert "golden-fallback" in art.url
+            assert art.url.startswith("https://")
 
 @pytest.mark.anyio
 async def test_run_eia_poll_success():

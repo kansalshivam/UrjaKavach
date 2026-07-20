@@ -222,9 +222,14 @@ docker compose exec api python tests/trigger_polls.py
 
 ---
 
-## Refreshing Live Data
+## Live Data & Monitoring
 
-To push fresh risk scores and news articles to the production Neon database:
+The production deployment is configured for **fully automatic data refresh** — no manual intervention needed:
+
+- **APScheduler** runs inside the Render service and polls GDELT (every 15 min), EIA prices (every hour), OFAC sanctions (every 24 h), and recomputes risk scores (every 10 min)
+- **UptimeRobot** pings the `/health` endpoint every 5 minutes to keep the Render free-tier service awake and the scheduler running continuously
+
+To manually trigger a one-off poll (e.g. after a cold start or environment reset):
 
 ```powershell
 # Double-click update_render.bat, or run:
@@ -283,7 +288,8 @@ docker compose exec api pytest --cov=app tests/
 ## Built at ET AI Hackathon 2.0
 
 - **Author:** [kansalshivam](https://github.com/kansalshivam)
-- **Development window:** July 14–17, 2026
-- **Commits:** 65+
+- **Development window:** July 14–20, 2026
+- **Commits:** 80+
 - **Tests:** 58 automated
+- **Monitoring:** UptimeRobot (5-minute heartbeat on `/health`)
 - **Live since:** Day 3 of development window
